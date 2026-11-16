@@ -1,0 +1,266 @@
+{
+  "cleaning": {
+    "id": "cleaning",
+    "businessLabel": "Harborview Home Cleaning",
+    "industryTag": "Residential Cleaning",
+    "currency": "$",
+    "minimumOrderCents": 14500,
+    "setupFeeCents": 1500,
+    "setupFeeEnabled": true,
+    "setupFeeLabel": "Eco Supplies & Dispatch",
+    "depositRatePct": 20,
+    "leadTimeText": "Recurring visits by appointment",
+    "primarySlider": {
+      "key": "area",
+      "label": "Home area",
+      "unit": "sq ft",
+      "min": 500,
+      "max": 5000,
+      "step": 50,
+      "defaultVal": 1650
+    },
+    "secondaryNumber": {
+      "key": "bathrooms",
+      "label": "Bathrooms",
+      "unit": "rooms",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "defaultVal": 2
+    },
+    "secondaryRateCents": 2800,
+    "quantity": {
+      "label": "Scheduled visits",
+      "unit": "visits",
+      "min": 1,
+      "max": 12,
+      "defaultVal": 1,
+      "bulkTiers": [
+        {
+          "minQty": 4,
+          "discountPct": 5
+        },
+        {
+          "minQty": 8,
+          "discountPct": 10
+        }
+      ]
+    },
+    "tiers": [
+      {
+        "id": "standard",
+        "name": "Standard Recurring",
+        "subtitle": "Routine maintenance · per sq ft",
+        "rateCentsPerUnit": 10,
+        "multiplierPct": 100
+      },
+      {
+        "id": "deep",
+        "name": "Deep Reset Clean",
+        "subtitle": "Detailed first-visit reset · per sq ft",
+        "rateCentsPerUnit": 18,
+        "multiplierPct": 100
+      },
+      {
+        "id": "move",
+        "name": "Move-In · Move-Out",
+        "subtitle": "Empty-home turnover · per sq ft",
+        "rateCentsPerUnit": 24,
+        "multiplierPct": 100
+      }
+    ],
+    "addons": [
+      {
+        "id": "oven",
+        "name": "Inside Oven & Hood",
+        "priceCents": 4500,
+        "pricingMode": "flat"
+      },
+      {
+        "id": "fridge",
+        "name": "Interior Fridge Detail",
+        "priceCents": 3500,
+        "pricingMode": "flat"
+      },
+      {
+        "id": "windows",
+        "name": "Interior Window Glass",
+        "priceCents": 4,
+        "pricingMode": "per_unit"
+      }
+    ]
+  },
+  "signage": {
+    "id": "signage",
+    "businessLabel": "Northline Sign & Print",
+    "industryTag": "Print & Signage",
+    "currency": "$",
+    "minimumOrderCents": 4500,
+    "setupFeeCents": 2000,
+    "setupFeeEnabled": true,
+    "setupFeeLabel": "Pre-flight & RIP Setup",
+    "depositRatePct": 100,
+    "leadTimeText": "Standard production: 2–3 business days",
+    "minimumAreaSqFt": 4,
+    "primarySlider": {
+      "key": "width",
+      "label": "Width",
+      "unit": "ft",
+      "min": 1,
+      "max": 24,
+      "step": 0.5,
+      "defaultVal": 6
+    },
+    "secondaryNumber": {
+      "key": "height",
+      "label": "Height",
+      "unit": "ft",
+      "min": 1,
+      "max": 12,
+      "step": 0.5,
+      "defaultVal": 4
+    },
+    "quantity": {
+      "label": "Print quantity",
+      "unit": "pcs",
+      "min": 1,
+      "max": 250,
+      "defaultVal": 1,
+      "bulkTiers": [
+        {
+          "minQty": 5,
+          "discountPct": 8
+        },
+        {
+          "minQty": 20,
+          "discountPct": 15
+        }
+      ]
+    },
+    "tiers": [
+      {
+        "id": "banner",
+        "name": "13oz Matte Scrim Banner",
+        "subtitle": "Outdoor banner · per sq ft",
+        "rateCentsPerUnit": 375,
+        "multiplierPct": 100
+      },
+      {
+        "id": "vinyl",
+        "name": "3M IJ35C Gloss Vinyl Decal",
+        "subtitle": "Printed adhesive vinyl · per sq ft",
+        "rateCentsPerUnit": 550,
+        "multiplierPct": 100
+      },
+      {
+        "id": "dibond",
+        "name": "3mm Dibond Brushed Aluminum Sign",
+        "subtitle": "Printed rigid panel · per sq ft",
+        "rateCentsPerUnit": 1100,
+        "multiplierPct": 100
+      }
+    ],
+    "addons": [
+      {
+        "id": "grommets",
+        "name": "Brass Grommets Every 2ft",
+        "priceCents": 25,
+        "pricingMode": "per_unit"
+      },
+      {
+        "id": "laminate",
+        "name": "UV Matte Overlaminate",
+        "priceCents": 150,
+        "pricingMode": "per_unit"
+      },
+      {
+        "id": "rush",
+        "name": "24h Rush Production",
+        "priceCents": 7500,
+        "pricingMode": "flat"
+      }
+    ]
+  },
+  "epoxy": {
+    "id": "epoxy",
+    "businessLabel": "Ridgeway Garage Coatings",
+    "industryTag": "Epoxy Flooring",
+    "currency": "$",
+    "minimumOrderCents": 120000,
+    "setupFeeCents": 18500,
+    "setupFeeEnabled": true,
+    "setupFeeLabel": "Concrete Hardness & Moisture Test",
+    "depositRatePct": 25,
+    "leadTimeText": "Installed by appointment",
+    "secondaryRateCents": 750,
+    "primarySlider": {
+      "key": "area",
+      "label": "Floor area",
+      "unit": "sq ft",
+      "min": 200,
+      "max": 2400,
+      "step": 25,
+      "defaultVal": 500
+    },
+    "secondaryNumber": {
+      "key": "stemWall",
+      "label": "Stem wall height",
+      "unit": "in",
+      "min": 0,
+      "max": 12,
+      "step": 2,
+      "defaultVal": 4
+    },
+    "quantity": {
+      "label": "Equal-size bays / zones",
+      "unit": "zones",
+      "min": 1,
+      "max": 4,
+      "defaultVal": 1,
+      "bulkTiers": []
+    },
+    "tiers": [
+      {
+        "id": "solid",
+        "name": "2-Coat Polyaspartic Solid",
+        "subtitle": "Solid color · per sq ft",
+        "rateCentsPerUnit": 575,
+        "multiplierPct": 100
+      },
+      {
+        "id": "flake",
+        "name": "Full-Broadcast Vinyl Flake",
+        "subtitle": "Full flake broadcast · per sq ft",
+        "rateCentsPerUnit": 725,
+        "multiplierPct": 100
+      },
+      {
+        "id": "quartz",
+        "name": "3-Layer Metallic Quartz",
+        "subtitle": "Decorative three-layer system · per sq ft",
+        "rateCentsPerUnit": 1050,
+        "multiplierPct": 100
+      }
+    ],
+    "addons": [
+      {
+        "id": "cracks",
+        "name": "Diamond Crack & Spall Grind",
+        "priceCents": 85,
+        "pricingMode": "per_unit"
+      },
+      {
+        "id": "moisture",
+        "name": "Moisture Vapor Barrier Coat",
+        "priceCents": 175,
+        "pricingMode": "per_unit"
+      },
+      {
+        "id": "grip",
+        "name": "Anti-Slip SharkGrip Topcoat",
+        "priceCents": 55,
+        "pricingMode": "per_unit"
+      }
+    ]
+  }
+}
