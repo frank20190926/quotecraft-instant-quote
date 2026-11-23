@@ -1,0 +1,765 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Interactive Quote Preview — Terra Nature Nest</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F7F6F2; --card:#FFFFFF; --line:#E2E0D8; --green:#0B3D20; --ink:#141615;
+  --muted:#5C5F58; --step:#F1F0EA; --blind:#22A05A; --glass:#5B9BC8;
+  --sans:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.5}
+button,input,output{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+.num,output,.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+/* concept banner */
+.concept{border-bottom:1px solid var(--line);background:var(--bg);padding:7px 20px;font-family:var(--mono);font-size:11.5px;color:var(--muted);text-align:center;letter-spacing:.01em}
+
+/* masthead */
+.mast{max-width:1240px;margin:0 auto;padding:28px 20px 22px;display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap}
+.brand{font-weight:700;font-size:22px;letter-spacing:-.025em;color:var(--green);line-height:1.1}
+.addr{margin-top:6px;font-size:12.5px;color:var(--muted)}
+.mast h1{margin:0;font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink)}
+
+/* layout */
+.wrap{max-width:1240px;margin:0 auto;padding:0 20px 56px;display:grid;grid-template-columns:minmax(0,1fr) 392px;gap:20px;align-items:start}
+.card{background:var(--card);border:1px solid var(--line);border-radius:2px}
+.card+.card{margin-top:20px}
+.card>header{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:14px 20px;border-bottom:1px solid var(--line)}
+.card>header h2{margin:0;font-size:13px;font-weight:700;letter-spacing:.07em;text-transform:uppercase}
+.card>header .hint{font-size:12px;color:var(--muted)}
+.body{padding:18px 20px}
+
+/* drawing */
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:2px;overflow:hidden}
+.seg button{border:0;background:var(--card);padding:6px 12px;font-size:12.5px;font-weight:500;color:var(--muted)}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed="true"]{background:var(--green);color:#fff}
+.draw{padding:8px 12px 0}
+.draw .cap{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:8px 8px 0}
+.draw svg{display:block;width:100%;height:auto}
+svg text{font-family:var(--mono)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line);margin-top:8px}
+.stats>div{padding:12px 20px}
+.stats>div+div{border-left:1px solid var(--line)}
+.stats .k{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.stats .v{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:18px;font-weight:600;letter-spacing:-.02em}
+.legend{display:flex;flex-wrap:wrap;gap:6px 20px;padding:10px 20px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:8px}
+.legend svg{width:26px;height:10px}
+
+/* controls */
+.grp+.grp{margin-top:26px;padding-top:22px;border-top:1px solid var(--line)}
+.lab{font-size:12px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin:0 0 12px}
+.series{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.sc{display:flex;flex-direction:column;gap:2px;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:2px;padding:14px 16px;min-height:118px}
+.sc:hover{border-color:#B9B7AC}
+.sc[aria-pressed="true"]{border-color:var(--green);outline:1px solid var(--green);background:#F4F7F2}
+.sc .nm{font-weight:700;font-size:15px;letter-spacing:-.015em}
+.sc .ds{font-size:12.5px;color:var(--muted)}
+.sc .op{font-size:12px;color:var(--muted);margin-top:2px}
+.sc .pr{margin-top:auto;padding-top:10px;font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:13px;font-weight:600}
+.sc .pr small{font-family:var(--sans);font-weight:400;color:var(--muted);font-size:12px;margin-right:6px}
+
+.slr{display:grid;grid-template-columns:1fr auto;gap:0 16px;align-items:center;margin-bottom:16px}
+.slr:last-child{margin-bottom:0}
+.slr .t{font-weight:600;font-size:13.5px}
+.slr .t span{font-weight:400;color:var(--muted);font-size:12px;margin-left:8px}
+.slr output{font-size:16px;font-weight:600;letter-spacing:-.02em;text-align:right;min-width:72px}
+.slr .rg{grid-column:1/-1}
+.rng{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:-2px}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:26px;margin:0;background:transparent;--pct:0%}
+input[type=range]::-webkit-slider-runnable-track{height:2px;background:linear-gradient(to right,var(--green) var(--pct),#CBC9BE var(--pct))}
+input[type=range]::-moz-range-track{height:2px;background:#CBC9BE}
+input[type=range]::-moz-range-progress{height:2px;background:var(--green)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;margin-top:-7px;border-radius:2px;background:var(--green);border:2px solid #fff;outline:1px solid var(--green)}
+input[type=range]::-moz-range-thumb{width:12px;height:12px;border-radius:2px;background:var(--green);border:2px solid #fff;outline:1px solid var(--green)}
+
+.cols2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.opt{display:flex;flex-direction:column;align-items:flex-start;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:2px;padding:11px 14px}
+.opt[aria-pressed="true"]{border-color:var(--green);outline:1px solid var(--green);background:#F4F7F2}
+.opt:disabled{cursor:not-allowed;color:#8A8C86;background:var(--step)}
+.opt .a{font-weight:600;font-size:13.5px}
+.opt .b{font-size:12px;color:var(--muted)}
+.note{font-size:12px;color:var(--muted);margin:10px 0 0}
+.swatches{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.sw{background:var(--card);border:1px solid var(--line);border-radius:2px;padding:8px;text-align:left}
+.sw i{display:block;height:34px;border:1px solid rgba(20,22,21,.28);border-radius:1px;margin-bottom:8px}
+.sw .a{font-weight:600;font-size:13px;display:block}
+.sw .b{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.sw[aria-pressed="true"]{border-color:var(--green);outline:1px solid var(--green)}
+
+.row{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:12px 0;border-bottom:1px solid var(--line)}
+.row:first-of-type{padding-top:0}
+.row:last-child{border-bottom:0;padding-bottom:0}
+.row .rl{font-weight:600;font-size:13.5px}
+.row .rs{font-size:12px;color:var(--muted)}
+.step{display:inline-flex;align-items:stretch;border:1px solid var(--line);border-radius:2px}
+.step button{width:34px;height:34px;border:0;background:var(--card);font-size:17px;line-height:1}
+.step button:disabled{color:#B5B6B0;cursor:not-allowed;background:var(--step)}
+.step button:not(:disabled):hover{background:var(--step)}
+.step output{min-width:36px;display:flex;align-items:center;justify-content:center;font-weight:600;border-left:1px solid var(--line);border-right:1px solid var(--line)}
+.chk{display:flex;align-items:center;gap:10px;cursor:pointer}
+.chk input{width:16px;height:16px;accent-color:var(--green);margin:0}
+.chk input:disabled{cursor:not-allowed}
+.row.off .rl,.row.off .rs,.row.off .price{color:#8A8C86}
+.price{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:13px;font-weight:500;white-space:nowrap}
+
+/* quote */
+aside{position:sticky;top:16px;max-height:calc(100vh - 32px);overflow:auto}
+.qhead{display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:14px 20px;border-bottom:1px solid var(--line)}
+.qhead h2{margin:0;font-size:13px;font-weight:700;letter-spacing:.07em;text-transform:uppercase}
+.qhead .mono{font-size:11px;color:var(--muted)}
+.spec{margin:0;padding:12px 20px;background:var(--step);border-bottom:1px solid var(--line);display:grid;grid-template-columns:auto 1fr;gap:3px 14px;font-size:12.5px}
+.spec dt{color:var(--muted)}
+.spec dd{margin:0;text-align:right;font-weight:500}
+.spec dd.mono{font-size:12px}
+.ql{display:grid;grid-template-columns:1fr auto;column-gap:14px;padding:9px 20px;border-bottom:1px solid var(--line)}
+.ql .n{font-weight:500;font-size:13px}
+.ql .a{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:13px;white-space:nowrap}
+.ql .a.inc{font-family:var(--sans);color:var(--muted);font-size:12.5px}
+.ql .s{grid-column:1;font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+.ql.sub{background:var(--step)}
+.ql.sub .n{font-weight:700}
+.ql.sub .a{font-weight:700}
+.ql.off .n,.ql.off .a{color:var(--muted)}
+.tot{padding:16px 20px;border-bottom:1px solid var(--line)}
+.tot .k{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.tot .v{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:24px;font-weight:600;letter-spacing:-.03em;color:var(--green);margin-top:2px;line-height:1.2}
+.disc{padding:12px 20px 0;font-size:12px;color:var(--muted);margin:0}
+.acts{padding:16px 20px 20px;display:grid;gap:10px}
+.btn{display:block;width:100%;text-align:center;border-radius:2px;padding:12px 14px;font-weight:600;font-size:13.5px;border:1px solid var(--ink);background:var(--card);color:var(--ink)}
+.btn:hover{background:var(--step)}
+.btn.pri{background:var(--green);border-color:var(--green);color:#fff}
+.btn.pri:hover{background:#08301A}
+.foot{max-width:1240px;margin:0 auto;padding:0 20px 40px;font-size:12px;color:var(--muted)}
+.mbar{display:none}
+
+/* dialog */
+dialog{width:min(640px,calc(100vw - 24px));max-height:calc(100vh - 32px);padding:0;border:1px solid var(--ink);border-radius:2px;background:var(--card);color:var(--ink);overflow:auto}
+dialog::backdrop{background:rgba(20,22,21,.55)}
+.dh{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;border-bottom:1px solid var(--line)}
+.dh h3{margin:0;font-size:14px;letter-spacing:-.01em}
+.x{border:1px solid var(--line);background:var(--card);width:30px;height:30px;border-radius:2px;font-size:16px;line-height:1}
+.db{padding:18px 20px 20px}
+.f{display:grid;gap:14px}
+.f label{display:grid;gap:5px;font-size:12.5px;font-weight:600}
+.f input{border:1px solid #B9B7AC;border-radius:2px;padding:10px 12px;font-size:14px;background:var(--card);font-weight:400}
+.f input:focus{outline:2px solid var(--green);outline-offset:0;border-color:var(--green)}
+.f .err{color:#9B1C1C;font-weight:500;font-size:12px;min-height:0}
+.f .two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mini{font-size:12.5px;color:var(--muted);margin:0 0 14px}
+.lead{border:1px solid var(--line);margin:0 0 14px}
+.lead .h{padding:8px 12px;background:var(--step);border-bottom:1px solid var(--line);font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase}
+.lead dl{margin:0;display:grid;grid-template-columns:150px 1fr}
+.lead dt,.lead dd{margin:0;padding:7px 12px;border-bottom:1px solid var(--line);font-size:12.5px}
+.lead dt{color:var(--muted)}
+.lead dd{font-weight:500}
+.lead dd.mono{font-size:12px}
+.lead dl>:nth-last-child(-n+2){border-bottom:0}
+pre{margin:0 0 14px;padding:12px;background:var(--ink);color:#E9E8E1;font-family:var(--mono);font-size:11.5px;line-height:1.55;overflow:auto;max-height:240px;border-radius:2px}
+.dact{display:flex;gap:10px;flex-wrap:wrap}
+.dact .btn{width:auto;flex:1;min-width:140px}
+[hidden]{display:none!important}
+
+/* responsive */
+@media (max-width:980px){
+  .wrap{grid-template-columns:1fr}
+  aside{position:static;max-height:none;overflow:visible}
+  body{padding-bottom:64px}
+  .mbar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:5;background:var(--card);border-top:1px solid var(--ink);padding:10px 16px;justify-content:space-between;align-items:center;gap:12px}
+  .mbar .k{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  .mbar .v{font-family:var(--mono);font-variant-numeric:tabular-nums;font-weight:600;font-size:15px;color:var(--green)}
+  .mbar a{color:#fff;background:var(--green);padding:9px 14px;border-radius:2px;font-weight:600;font-size:13px;text-decoration:none}
+}
+@media (max-width:600px){
+  .series,.cols2{grid-template-columns:1fr}
+  .swatches{grid-template-columns:1fr 1fr}
+  .stats{grid-template-columns:1fr 1fr}
+  .stats>div:nth-child(3){border-left:0}
+  .stats>div:nth-child(n+3){border-top:1px solid var(--line)}
+  .f .two{grid-template-columns:1fr}
+  .lead dl{grid-template-columns:110px 1fr}
+  .mast{padding-top:20px}
+}
+
+/* print sheet (hidden on screen) */
+#printSheet{display:none}
+@page{size:A4;margin:14mm}
+@media print{
+  html,body{background:#fff!important}
+  body{padding:0!important;font-size:10pt}
+  body>*:not(#printSheet){display:none!important}
+  #printSheet{display:block;color:#141615;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  #printSheet .ph{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:1.5pt solid #0B3D20;padding-bottom:8pt;margin-bottom:12pt}
+  #printSheet .pb{font-size:18pt;font-weight:700;letter-spacing:-.02em;color:#0B3D20}
+  #printSheet .pa{font-size:8.5pt;color:#4A4D47;margin-top:3pt}
+  #printSheet .pt{text-align:right;font-size:9pt}
+  #printSheet .pt b{display:block;font-size:12pt;letter-spacing:.06em;text-transform:uppercase}
+  #printSheet h4{margin:14pt 0 5pt;font-size:8.5pt;letter-spacing:.08em;text-transform:uppercase}
+  #printSheet table{width:100%;border-collapse:collapse;font-size:9.5pt;break-inside:avoid}
+  #printSheet td,#printSheet th{padding:4pt 6pt;border-bottom:.5pt solid #C9C7BC;text-align:left;vertical-align:top}
+  #printSheet th{font-size:8pt;letter-spacing:.06em;text-transform:uppercase;color:#4A4D47;border-bottom:1pt solid #141615}
+  #printSheet td.r,#printSheet th.r{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+  #printSheet td .s{display:block;font-family:var(--mono);font-size:8pt;color:#4A4D47}
+  #printSheet tr.sub td{font-weight:700;background:#F1F0EA}
+  #printSheet tr.grand td{font-weight:700;font-size:11pt;color:#0B3D20;border-bottom:1.5pt solid #0B3D20}
+  #printSheet .spc td:first-child{width:34%;color:#4A4D47}
+  #printSheet .pd{font-size:8pt;color:#4A4D47;margin-top:12pt;border-top:.5pt solid #C9C7BC;padding-top:6pt}
+  #printSheet .pg{break-before:page}
+  #printSheet .pg svg{display:block;width:100%;height:auto;max-height:100mm;margin-bottom:6mm}
+}
+</style>
+</head>
+<body>
+
+<div class="concept">Interactive Quote Preview for Terra Nature Nest — Designed to embed directly into /pages/get-a-custom-quote (Shopify)</div>
+
+<div class="mast">
+  <div>
+    <div class="brand">Terra Nature Nest</div>
+    <div class="addr">Sydney Showroom: 1/200 Fairfield Rd, Yennora NSW 2161 · Factory-Direct Aluminium Louvred Pergolas &amp; Outdoor Blinds</div>
+  </div>
+  <h1>Pergola &amp; Wind Blind Quote Preview</h1>
+</div>
+
+<div class="wrap">
+  <main>
+    <!-- DRAWING -->
+    <section class="card" aria-label="Live drawing">
+      <header>
+        <h2>Live Drawing</h2>
+        <div class="seg" role="group" aria-label="Drawing view">
+          <button type="button" data-act="view" data-v="both" aria-pressed="true">Plan + Elevation</button>
+          <button type="button" data-act="view" data-v="plan" aria-pressed="false">Plan</button>
+          <button type="button" data-act="view" data-v="elev" aria-pressed="false">Elevation</button>
+        </div>
+      </header>
+      <div class="draw">
+        <div id="vPlan"><div class="cap">Top Plan View</div><div id="svgPlan"></div></div>
+        <div id="vElev"><div class="cap">Front Elevation</div><div id="svgElev"></div></div>
+      </div>
+      <div class="stats">
+        <div><div class="k">Footprint</div><div class="v" id="stArea">—</div></div>
+        <div><div class="k">Posts</div><div class="v" id="stPosts">—</div></div>
+        <div><div class="k">Clearance</div><div class="v" id="stH">—</div></div>
+        <div><div class="k">Open sides</div><div class="v" id="stOpen">—</div></div>
+      </div>
+      <div class="legend" aria-label="Legend">
+        <span><svg viewBox="0 0 26 10"><line x1="0" y1="5" x2="26" y2="5" stroke="#22A05A" stroke-width="2.4" stroke-dasharray="6 4"/></svg>Zip Track Blinds</span>
+        <span><svg viewBox="0 0 26 10"><line x1="0" y1="3" x2="26" y2="3" stroke="#5B9BC8" stroke-width="1.6"/><line x1="0" y1="7" x2="26" y2="7" stroke="#5B9BC8" stroke-width="1.6"/></svg>Frameless Glass Wall</span>
+        <span><svg viewBox="0 0 26 10"><rect x="9" y="1" width="8" height="8" fill="#141615"/></svg>Post</span>
+        <span><svg viewBox="0 0 26 10"><line x1="4" y1="0" x2="4" y2="10" stroke="#8A8C86"/><line x1="10" y1="0" x2="10" y2="10" stroke="#8A8C86"/><line x1="16" y1="0" x2="16" y2="10" stroke="#8A8C86"/><line x1="22" y1="0" x2="22" y2="10" stroke="#8A8C86"/></svg>Louvre blade direction (plan)</span>
+      </div>
+    </section>
+
+    <!-- CONFIG -->
+    <section class="card" aria-label="Configuration">
+      <header><h2>Configuration</h2><span class="hint">All prices AUD, incl. GST</span></header>
+      <div class="body">
+
+        <div class="grp">
+          <h3 class="lab">1 · Series</h3>
+          <div class="series" id="seriesList"></div>
+        </div>
+
+        <div class="grp">
+          <h3 class="lab">2 · Dimensions</h3>
+          <div class="slr">
+            <div class="t">Length<span>3.0 – 8.0 m, 0.5 m steps</span></div><output id="oL">4.0 m</output>
+            <div class="rg"><input type="range" id="rL" min="3" max="8" step="0.5" value="4" aria-label="Length in metres"><div class="rng"><span>3.0</span><span>8.0</span></div></div>
+          </div>
+          <div class="slr">
+            <div class="t">Projection / Width<span>3.0 – 6.0 m, 0.5 m steps</span></div><output id="oP">3.5 m</output>
+            <div class="rg"><input type="range" id="rP" min="3" max="6" step="0.5" value="3.5" aria-label="Projection in metres"><div class="rng"><span>3.0</span><span>6.0</span></div></div>
+          </div>
+          <div class="slr">
+            <div class="t">Clearance Height<span>2.4 – 3.2 m, 0.1 m steps</span></div><output id="oH">2.7 m</output>
+            <div class="rg"><input type="range" id="rH" min="2.4" max="3.2" step="0.1" value="2.7" aria-label="Clearance height in metres"><div class="rng"><span>2.4</span><span>3.2</span></div></div>
+          </div>
+        </div>
+
+        <div class="grp">
+          <h3 class="lab">3 · Colour</h3>
+          <div class="swatches" id="swList"></div>
+        </div>
+
+        <div class="grp">
+          <h3 class="lab">4 · Installation Structure</h3>
+          <div class="cols2">
+            <button type="button" class="opt" data-act="structure" data-v="free" aria-pressed="true"><span class="a">Freestanding</span><span class="b">4 / 6 posts</span></button>
+            <button type="button" class="opt" data-act="structure" data-v="wall" aria-pressed="false"><span class="a">Wall-Mounted</span><span class="b">2 / 3 front posts</span></button>
+          </div>
+          <p class="note">A middle post is added automatically when the length exceeds 4.5 m.</p>
+        </div>
+
+        <div class="grp">
+          <h3 class="lab">5 · Operation</h3>
+          <div class="cols2">
+            <button type="button" class="opt" id="opManual" data-act="op" data-v="manual" aria-pressed="true"><span class="a">Manual Crank</span><span class="b">Standard</span></button>
+            <button type="button" class="opt" id="opMotor" data-act="op" data-v="motor" aria-pressed="false"><span class="a">Motorised + Remote</span><span class="b" id="opMotorSub">Adds motor and remote</span></button>
+          </div>
+          <p class="note" id="opNote" hidden>Terra Infinity Retractable is motorised as standard — Included.</p>
+        </div>
+
+        <div class="grp">
+          <h3 class="lab">6 · Accessories</h3>
+          <div class="row">
+            <div><div class="rl">Outdoor Zip Track Blinds</div><div class="rs">From $899 / side · 0–4 sides</div></div>
+            <div class="step"><button type="button" data-act="dec" data-k="blinds" aria-label="Fewer zip blinds">&minus;</button><output id="vBlinds">0</output><button type="button" data-act="inc" data-k="blinds" aria-label="More zip blinds">+</button></div>
+          </div>
+          <div class="row">
+            <div><div class="rl">Frameless Glass Walls</div><div class="rs">From $3,799 / side · 0–2 sides</div></div>
+            <div class="step"><button type="button" data-act="dec" data-k="glass" aria-label="Fewer glass walls">&minus;</button><output id="vGlass">0</output><button type="button" data-act="inc" data-k="glass" aria-label="More glass walls">+</button></div>
+          </div>
+          <div class="row">
+            <label class="chk"><input type="checkbox" id="cLed"><span><span class="rl">Perimeter LED Strip Lighting</span></span></label>
+            <span class="price">+$490</span>
+          </div>
+          <div class="row" id="rowSensor">
+            <label class="chk"><input type="checkbox" id="cSensor"><span><span class="rl">Rain &amp; Wind Auto-Close Sensor</span><br><span class="rs" id="sensorSub">Motorised operation only</span></span></label>
+            <span class="price">+$350</span>
+          </div>
+          <div class="row">
+            <label class="chk"><input type="checkbox" id="cInst" checked><span><span class="rl">Sydney Metro Delivery &amp; Installation Estimate</span><br><span class="rs">Listed separately from the product price</span></span></label>
+            <span class="price" id="instHint">—</span>
+          </div>
+          <p class="note" id="sideNote"></p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <aside id="quote" aria-label="Itemised Indicative Quote">
+    <div class="card">
+      <div class="qhead"><h2>Itemised Indicative Quote</h2><span class="mono" id="qRef">—</span></div>
+      <dl class="spec" id="qSpec"></dl>
+      <div id="qLines"></div>
+      <div class="tot"><div class="k" id="totK">Total indicative range</div><div class="v" id="totV">—</div></div>
+      <p class="disc">Indicative only. Product prices include GST; delivery &amp; installation quoted separately. Final price confirmed after site measure.</p>
+      <div class="acts">
+        <button type="button" class="btn pri" id="btnLead">Request Itemised Quote / Book Yennora Showroom</button>
+        <button type="button" class="btn" id="btnPrint">Print / Save PDF Quote</button>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<div class="foot">Model note: &ldquo;From&rdquo; prices, sizes, colours, structures and accessory prices are Terra Nature Nest&rsquo;s published figures. Area rates, motorisation, height and installation estimates in this preview are placeholder pricing logic, to be replaced by the company&rsquo;s own price matrix when embedded.</div>
+
+<div class="mbar"><div><div class="k">Indicative total</div><div class="v" id="mbTotal">—</div></div><a href="#quote">View quote</a></div>
+
+<!-- LEAD DIALOG -->
+<dialog id="dlg" aria-labelledby="dlgT">
+  <div class="dh"><h3 id="dlgT">Request Itemised Quote / Book Yennora Showroom</h3><button type="button" class="x" id="dlgX" aria-label="Close">&times;</button></div>
+  <div class="db">
+    <form id="leadForm" class="f" novalidate>
+      <p class="mini" style="margin:0">Your configuration below is attached to the request automatically.</p>
+      <label>Full name<input id="fName" autocomplete="name" required><span class="err" id="eName"></span></label>
+      <div class="two">
+        <label>Sydney postcode<input id="fPost" inputmode="numeric" maxlength="4" autocomplete="postal-code" placeholder="e.g. 2161" required><span class="err" id="ePost"></span></label>
+        <label>Email<input id="fMail" type="email" autocomplete="email" required><span class="err" id="eMail"></span></label>
+      </div>
+      <button type="submit" class="btn pri">Send request</button>
+    </form>
+    <div id="leadOut" hidden>
+      <p class="mini">Preview of the structured lead that reaches Lawrence&rsquo;s sales team. Demo only — nothing is sent from this page.</p>
+      <div class="lead" id="leadTbl"></div>
+      <pre id="leadJson"></pre>
+      <div class="dact">
+        <button type="button" class="btn" id="btnCopy">Copy lead JSON</button>
+        <button type="button" class="btn" id="btnBack">Back to edit</button>
+        <button type="button" class="btn pri" id="btnDone">Close</button>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<!-- PRINT SHEET -->
+<div id="printSheet" aria-hidden="true"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  var SERIES = {
+    classic:  { name: 'Terra Classic Modular',       desc: 'Standard modular system',   ops: 'Manual / Motorised', from: 1799, rate: 165 },
+    premier:  { name: 'Terra Premier Modular',       desc: 'Advanced modular system',   ops: 'Manual / Motorised', from: 1799, rate: 195 },
+    luxe:     { name: 'Terra Luxe Custom',           desc: 'Custom sizes and 4 colours', ops: 'Manual / Motorised', from: 4399, rate: 310 },
+    infinity: { name: 'Terra Infinity Retractable',  desc: 'Fully Retractable Motorised Louvre Roof', ops: '3-Year Product / 10-Year Structural Warranty', from: 6999, rate: 380, motorIncluded: true }
+  };
+  var COLOURS = [
+    { id: 'white', name: 'White',     hex: '#F4F3EE' },
+    { id: 'grey',  name: 'Dark Grey', hex: '#3A3D40' },
+    { id: 'black', name: 'Black',     hex: '#18191B' },
+    { id: 'brown', name: 'Brown',     hex: '#5B4636' }
+  ];
+  var P_BLIND = 899, P_GLASS = 3799, P_LED = 490, P_SENSOR = 350;
+  var MOTOR_ADD = 690, HEIGHT_ADD = 25, BASE_AREA = 9, BASE_H = 2.7;
+
+  var state = { series: 'classic', L: 4, P: 3.5, H: 2.7, structure: 'free', op: 'manual', colour: 'white',
+                blinds: 0, glass: 0, led: false, sensor: false, inst: true, view: 'both' };
+  var lastLead = null;
+
+  function $(id) { return document.getElementById(id); }
+  var nf = new Intl.NumberFormat('en-AU', { style: 'currency', currency: 'AUD', maximumFractionDigits: 0 });
+  function money(n) { return nf.format(n); }
+  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function m1(n) { return n.toFixed(1); }
+  function colour() { return COLOURS.filter(function (c) { return c.id === state.colour; })[0]; }
+  function lum(hex) { var r = parseInt(hex.substr(1, 2), 16), g = parseInt(hex.substr(3, 2), 16), b = parseInt(hex.substr(5, 2), 16); return (0.299 * r + 0.587 * g + 0.114 * b) / 255; }
+
+  function postsTotal() { return state.structure === 'free' ? (state.L > 4.5 ? 6 : 4) : (state.L > 4.5 ? 3 : 2); }
+  function frontPosts() { return state.L > 4.5 ? 3 : 2; }
+  function openCount() { return state.structure === 'wall' ? 3 : 4; }
+  function maxBlinds() { return openCount() - state.glass; }
+  function maxGlass() { return Math.min(2, openCount() - state.blinds); }
+  function clamp() {
+    if (state.blinds > openCount() - state.glass) state.blinds = openCount() - state.glass;
+    if (state.blinds < 0) state.blinds = 0;
+  }
+  function sides() {
+    var s = { front: 'none', back: state.structure === 'wall' ? 'wall' : 'none', left: 'none', right: 'none' };
+    ['left', 'right'].slice(0, state.glass).forEach(function (k) { s[k] = 'glass'; });
+    var order = ['front', 'left', 'right', 'back'], n = state.blinds;
+    order.forEach(function (k) { if (n > 0 && s[k] === 'none') { s[k] = 'blind'; n--; } });
+    return s;
+  }
+
+  /* ---------- pricing ---------- */
+  function compute() {
+    var s = SERIES[state.series], area = state.L * state.P, extra = Math.max(0, area - BASE_AREA), lines = [], sub = 0;
+    function add(label, note, amt, inc) { lines.push({ label: label, note: note, amt: amt, inc: !!inc }); sub += amt; }
+    add(s.name, 'From price · up to ' + m1(BASE_AREA) + ' m²', s.from);
+    if (extra > 0) add('Additional area', m1(extra) + ' m² × ' + money(s.rate), Math.round(extra * s.rate));
+    if (s.motorIncluded) add('Motorised + Remote', 'Standard on Infinity', 0, true);
+    else if (state.op === 'motor') add('Motorised + Remote', 'Motor, remote and wiring', MOTOR_ADD);
+    else add('Manual Crank', 'Standard', 0, true);
+    var steps = Math.round((state.H - BASE_H) * 10);
+    if (steps > 0) add('Clearance height adjustment', '+' + m1(steps / 10) + ' m × ' + postsTotal() + ' posts', steps * postsTotal() * HEIGHT_ADD);
+    if (state.blinds) add('Outdoor Zip Track Blinds', state.blinds + ' × ' + money(P_BLIND) + ' (from)', state.blinds * P_BLIND);
+    if (state.glass) add('Frameless Glass Walls', state.glass + ' × ' + money(P_GLASS) + ' (from)', state.glass * P_GLASS);
+    if (state.led) add('Perimeter LED Strip Lighting', '1 × ' + money(P_LED), P_LED);
+    if (state.sensor) add('Rain & Wind Auto-Close Sensor', '1 × ' + money(P_SENSOR), P_SENSOR);
+    var iLow = 0, iHigh = 0;
+    if (state.inst) { iLow = Math.round((900 + area * 95) / 10) * 10; iHigh = Math.round((1400 + area * 140) / 10) * 10; }
+    return { lines: lines, sub: sub, area: area, posts: postsTotal(), iLow: iLow, iHigh: iHigh, tLow: sub + iLow, tHigh: sub + iHigh };
+  }
+  function totalText(q) { return state.inst ? money(q.tLow) + ' – ' + money(q.tHigh) : money(q.sub); }
+
+  function refCode() {
+    var str = [state.series, state.L, state.P, state.H, state.structure, state.op, state.colour, state.blinds, state.glass, state.led, state.sensor].join('|'), h = 5381, i;
+    for (i = 0; i < str.length; i++) h = ((h << 5) + h + str.charCodeAt(i)) >>> 0;
+    var d = new Date(), p = function (n) { return (n < 10 ? '0' : '') + n; };
+    return 'TNN-' + d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate()) + '-' + ('0000' + (h % 10000)).slice(-4);
+  }
+  function structLabel() { return state.structure === 'free' ? 'Freestanding · ' + postsTotal() + ' posts' : 'Wall-Mounted · ' + postsTotal() + ' front posts'; }
+  function opLabel() { return (state.op === 'motor' || SERIES[state.series].motorIncluded) ? 'Motorised + Remote' : 'Manual Crank'; }
+
+  /* ---------- drawing ---------- */
+  function hatchDef(p) { return '<defs><pattern id="' + p + 'h" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#9A988E" stroke-width="1"/></pattern></defs>'; }
+  function dimH(x1, x2, y, label) {
+    return '<g stroke="#141615" stroke-width="1" fill="none"><line x1="' + x1 + '" y1="' + y + '" x2="' + x2 + '" y2="' + y + '"/><line x1="' + x1 + '" y1="' + (y - 6) + '" x2="' + x1 + '" y2="' + (y + 6) + '"/><line x1="' + x2 + '" y1="' + (y - 6) + '" x2="' + x2 + '" y2="' + (y + 6) + '"/></g>' +
+      '<text x="' + ((x1 + x2) / 2) + '" y="' + (y + 19) + '" text-anchor="middle" font-size="13" font-weight="600" fill="#141615">' + label + '</text>';
+  }
+  function dimV(x, y1, y2, label) {
+    var cy = (y1 + y2) / 2;
+    return '<g stroke="#141615" stroke-width="1" fill="none"><line x1="' + x + '" y1="' + y1 + '" x2="' + x + '" y2="' + y2 + '"/><line x1="' + (x - 6) + '" y1="' + y1 + '" x2="' + (x + 6) + '" y2="' + y1 + '"/><line x1="' + (x - 6) + '" y1="' + y2 + '" x2="' + (x + 6) + '" y2="' + y2 + '"/></g>' +
+      '<text transform="translate(' + (x + 19) + ',' + cy + ') rotate(-90)" text-anchor="middle" font-size="13" font-weight="600" fill="#141615">' + label + '</text>';
+  }
+
+  function planSVG(p) {
+    var L = state.L, P = state.P, W = 720, H = 400, ml = 60, mr = 84, mt = 44, mb = 76;
+    var s = Math.min((W - ml - mr) / L, (H - mt - mb) / P), w = L * s, h = P * s;
+    var x0 = ml + ((W - ml - mr) - w) / 2, y0 = mt + ((H - mt - mb) - h) / 2;
+    var col = colour().hex, dark = lum(col) < 0.5, bl = dark ? 'rgba(255,255,255,.24)' : 'rgba(20,22,21,.24)', tx = dark ? '#FFFFFF' : '#141615';
+    var sd = sides(), o = [], k, x, y;
+    o.push('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Top plan view, ' + m1(L) + ' by ' + m1(P) + ' metres">' + hatchDef(p));
+    for (k = -Math.ceil(x0 / s); (x = x0 + k * s) <= W; k++) if (x >= 0) o.push('<line x1="' + x + '" y1="0" x2="' + x + '" y2="' + H + '" stroke="#ECEAE2" stroke-width="1"/>');
+    for (k = -Math.ceil(y0 / s); (y = y0 + k * s) <= H; k++) if (y >= 0) o.push('<line x1="0" y1="' + y + '" x2="' + W + '" y2="' + y + '" stroke="#ECEAE2" stroke-width="1"/>');
+    if (state.structure === 'wall') {
+      o.push('<rect x="' + (x0 - 16) + '" y="' + (y0 - 14) + '" width="' + (w + 32) + '" height="14" fill="url(#' + p + 'h)" stroke="#141615" stroke-width="1.2"/>');
+      o.push('<text x="' + (x0 - 16) + '" y="' + (y0 - 20) + '" font-size="10" letter-spacing="1" fill="#5C5F58">EXISTING WALL</text>');
+    }
+    o.push('<rect x="' + x0 + '" y="' + y0 + '" width="' + w + '" height="' + h + '" fill="' + col + '" stroke="#141615" stroke-width="1.6"/>');
+    var pitch = 0.25 * s, n = Math.floor(L / 0.25), i;
+    for (i = 1; i < n; i++) o.push('<line x1="' + (x0 + i * pitch) + '" y1="' + (y0 + 3) + '" x2="' + (x0 + i * pitch) + '" y2="' + (y0 + h - 3) + '" stroke="' + bl + '" stroke-width="1"/>');
+    o.push('<rect x="' + (x0 + 3) + '" y="' + (y0 + 3) + '" width="' + (w - 6) + '" height="' + (h - 6) + '" fill="none" stroke="' + bl + '" stroke-width="1"/>');
+    // glass (double line, outside edge) and blinds (dashed, inside edge)
+    var gl = 'stroke="#5B9BC8" stroke-width="1.6"';
+    if (sd.left === 'glass') o.push('<line x1="' + (x0 - 4) + '" y1="' + y0 + '" x2="' + (x0 - 4) + '" y2="' + (y0 + h) + '" ' + gl + '/><line x1="' + (x0 - 8) + '" y1="' + y0 + '" x2="' + (x0 - 8) + '" y2="' + (y0 + h) + '" ' + gl + '/>');
+    if (sd.right === 'glass') o.push('<line x1="' + (x0 + w + 4) + '" y1="' + y0 + '" x2="' + (x0 + w + 4) + '" y2="' + (y0 + h) + '" ' + gl + '/><line x1="' + (x0 + w + 8) + '" y1="' + y0 + '" x2="' + (x0 + w + 8) + '" y2="' + (y0 + h) + '" ' + gl + '/>');
+    var bd = 'stroke="#22A05A" stroke-width="2.6" stroke-dasharray="7 5"';
+    if (sd.front === 'blind') o.push('<line x1="' + x0 + '" y1="' + (y0 + h - 7) + '" x2="' + (x0 + w) + '" y2="' + (y0 + h - 7) + '" ' + bd + '/>');
+    if (sd.back === 'blind') o.push('<line x1="' + x0 + '" y1="' + (y0 + 7) + '" x2="' + (x0 + w) + '" y2="' + (y0 + 7) + '" ' + bd + '/>');
+    if (sd.left === 'blind') o.push('<line x1="' + (x0 + 7) + '" y1="' + y0 + '" x2="' + (x0 + 7) + '" y2="' + (y0 + h) + '" ' + bd + '/>');
+    if (sd.right === 'blind') o.push('<line x1="' + (x0 + w - 7) + '" y1="' + y0 + '" x2="' + (x0 + w - 7) + '" y2="' + (y0 + h) + '" ' + bd + '/>');
+    // posts
+    var ps = Math.max(8, 0.11 * s), xs = L > 4.5 ? [0, L / 2, L] : [0, L], ys = state.structure === 'free' ? [0, P] : [P];
+    ys.forEach(function (yy) { xs.forEach(function (xx) {
+      o.push('<rect x="' + (x0 + xx * s - ps / 2) + '" y="' + (y0 + yy * s - ps / 2) + '" width="' + ps + '" height="' + ps + '" fill="#141615" stroke="#FFFFFF" stroke-width="1"/>');
+    }); });
+    // centre label
+    o.push('<text x="' + (x0 + w / 2) + '" y="' + (y0 + h / 2 + 7) + '" text-anchor="middle" font-size="22" font-weight="600" fill="' + tx + '" stroke="' + col + '" stroke-width="7" paint-order="stroke" stroke-linejoin="round">' + m1(L * P) + ' m²</text>');
+    o.push(dimH(x0, x0 + w, y0 + h + 28, m1(L) + ' m'));
+    o.push(dimV(x0 + w + 30, y0, y0 + h, m1(P) + ' m'));
+    o.push('</svg>');
+    return o.join('');
+  }
+
+  function elevSVG(p) {
+    var L = state.L, Hc = state.H, rt = 0.24, W = 720, H = 330, ml = 76, mr = 40, mt = 30, mb = 62;
+    var s = Math.min((W - ml - mr) / L, (H - mt - mb) / (Hc + rt)), w = L * s, x0 = ml + ((W - ml - mr) - w) / 2;
+    var yg = H - mb, yu = yg - Hc * s, yt = yg - (Hc + rt) * s;
+    var col = colour().hex, dark = lum(col) < 0.5, bl = dark ? 'rgba(255,255,255,.24)' : 'rgba(20,22,21,.24)';
+    var sd = sides(), o = [], i;
+    o.push('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Front elevation, ' + m1(L) + ' metres long, ' + m1(Hc) + ' metres clearance">' + hatchDef(p));
+    if (state.structure === 'wall') {
+      o.push('<rect x="' + (x0 - 24) + '" y="' + (mt - 16) + '" width="' + (w + 48) + '" height="' + (yg - mt + 16) + '" fill="url(#' + p + 'h)" stroke="#141615" stroke-width="1.2"/>');
+      o.push('<rect x="' + (x0 - 24) + '" y="' + (mt - 16) + '" width="' + (w + 48) + '" height="' + (yg - mt + 16) + '" fill="#F7F6F2" fill-opacity=".55"/>');
+      o.push('<text x="' + (x0 - 18) + '" y="' + (mt - 4) + '" font-size="10" letter-spacing="1" fill="#5C5F58">EXISTING WALL</text>');
+    }
+    o.push('<rect x="20" y="' + yg + '" width="' + (W - 40) + '" height="8" fill="url(#' + p + 'h)"/>');
+    o.push('<line x1="20" y1="' + yg + '" x2="' + (W - 20) + '" y2="' + yg + '" stroke="#141615" stroke-width="1.6"/>');
+    // back blind (behind) when front is not blind
+    var bd = 'stroke="#22A05A" stroke-width="2.4" stroke-dasharray="7 5"';
+    if (sd.back === 'blind' && sd.front !== 'blind') o.push('<rect x="' + (x0 + 4) + '" y="' + (yu + 3) + '" width="' + (w - 8) + '" height="' + (yg - yu - 6) + '" fill="none" ' + bd + ' opacity=".5"/>');
+    if (sd.front === 'blind') o.push('<rect x="' + (x0 + 4) + '" y="' + (yu + 3) + '" width="' + (w - 8) + '" height="' + (yg - yu - 6) + '" fill="rgba(34,160,90,.07)" ' + bd + '/>');
+    // posts
+    var pw = Math.max(6, 0.1 * s), nfp = frontPosts();
+    for (i = 0; i < nfp; i++) {
+      var px = x0 + (L * i / (nfp - 1)) * s;
+      o.push('<rect x="' + (px - pw / 2) + '" y="' + yu + '" width="' + pw + '" height="' + (yg - yu) + '" fill="#141615"/>');
+    }
+    // roof beam
+    o.push('<rect x="' + x0 + '" y="' + yt + '" width="' + w + '" height="' + (rt * s) + '" fill="' + col + '" stroke="#141615" stroke-width="1.5"/>');
+    var n = Math.floor(L / 0.25);
+    for (i = 1; i < n; i++) o.push('<line x1="' + (x0 + i * 0.25 * s) + '" y1="' + (yt + 2) + '" x2="' + (x0 + i * 0.25 * s) + '" y2="' + (yt + rt * s - 2) + '" stroke="' + bl + '" stroke-width="1"/>');
+    // side blinds / glass seen end-on
+    var gl = 'stroke="#5B9BC8" stroke-width="1.6"';
+    if (sd.left === 'glass') o.push('<line x1="' + (x0 - 6) + '" y1="' + yu + '" x2="' + (x0 - 6) + '" y2="' + yg + '" ' + gl + '/><line x1="' + (x0 - 10) + '" y1="' + yu + '" x2="' + (x0 - 10) + '" y2="' + yg + '" ' + gl + '/>');
+    if (sd.right === 'glass') o.push('<line x1="' + (x0 + w + 6) + '" y1="' + yu + '" x2="' + (x0 + w + 6) + '" y2="' + yg + '" ' + gl + '/><line x1="' + (x0 + w + 10) + '" y1="' + yu + '" x2="' + (x0 + w + 10) + '" y2="' + yg + '" ' + gl + '/>');
+    if (sd.left === 'blind') o.push('<line x1="' + (x0 - 8) + '" y1="' + yu + '" x2="' + (x0 - 8) + '" y2="' + yg + '" ' + bd + '/>');
+    if (sd.right === 'blind') o.push('<line x1="' + (x0 + w + 8) + '" y1="' + yu + '" x2="' + (x0 + w + 8) + '" y2="' + yg + '" ' + bd + '/>');
+    o.push(dimH(x0, x0 + w, yg + 26, m1(L) + ' m'));
+    o.push(dimV(x0 - 34, yu, yg, m1(Hc) + ' m'));
+    o.push('</svg>');
+    return o.join('');
+  }
+
+  /* ---------- render ---------- */
+  function pressed(el, on) { el.setAttribute('aria-pressed', on ? 'true' : 'false'); }
+  function render() {
+    var s = SERIES[state.series], q = compute(), motorLock = !!s.motorIncluded;
+    if (motorLock) state.op = 'motor';
+    if (state.op !== 'motor') state.sensor = false;
+    clamp();
+
+    Array.prototype.forEach.call(document.querySelectorAll('[data-act="series"]'), function (b) { pressed(b, b.dataset.v === state.series); });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-act="colour"]'), function (b) { pressed(b, b.dataset.v === state.colour); });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-act="structure"]'), function (b) { pressed(b, b.dataset.v === state.structure); });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-act="view"]'), function (b) { pressed(b, b.dataset.v === state.view); });
+    pressed($('opManual'), state.op === 'manual'); pressed($('opMotor'), state.op === 'motor');
+    $('opManual').disabled = motorLock;
+    $('opMotorSub').textContent = motorLock ? 'Included' : 'Adds motor and remote';
+    $('opNote').hidden = !motorLock;
+
+    $('rL').value = state.L; $('rP').value = state.P; $('rH').value = state.H;
+    [['rL', 3, 8], ['rP', 3, 6], ['rH', 2.4, 3.2]].forEach(function (a) { $(a[0]).style.setProperty('--pct', ((parseFloat($(a[0]).value) - a[1]) / (a[2] - a[1]) * 100) + '%'); });
+    $('oL').textContent = m1(state.L) + ' m'; $('oP').textContent = m1(state.P) + ' m'; $('oH').textContent = m1(state.H) + ' m';
+
+    $('vBlinds').textContent = state.blinds; $('vGlass').textContent = state.glass;
+    document.querySelector('[data-act="dec"][data-k="blinds"]').disabled = state.blinds <= 0;
+    document.querySelector('[data-act="inc"][data-k="blinds"]').disabled = state.blinds >= maxBlinds();
+    document.querySelector('[data-act="dec"][data-k="glass"]').disabled = state.glass <= 0;
+    document.querySelector('[data-act="inc"][data-k="glass"]').disabled = state.glass >= maxGlass();
+    $('sideNote').textContent = (state.structure === 'wall' ? 'Wall-mounted: the back is the house wall, so blinds and glass share 3 open sides. ' : 'Blinds and glass share the 4 open sides. ') +
+      'Glass walls are placed on the left and right sides first.';
+    $('cLed').checked = state.led;
+    $('cSensor').checked = state.sensor; $('cSensor').disabled = state.op !== 'motor';
+    $('rowSensor').classList.toggle('off', state.op !== 'motor');
+    $('sensorSub').textContent = state.op === 'motor' ? 'Closes the roof when rain or wind is detected' : 'Requires Motorised operation';
+    $('cInst').checked = state.inst;
+    $('instHint').textContent = money(q.iLow || Math.round((900 + q.area * 95) / 10) * 10) + ' – ' + money(q.iHigh || Math.round((1400 + q.area * 140) / 10) * 10);
+
+    $('svgPlan').innerHTML = planSVG('a'); $('svgElev').innerHTML = elevSVG('b');
+    $('vPlan').hidden = state.view === 'elev'; $('vElev').hidden = state.view === 'plan';
+    var sd = sides(), openUsed = ['front', 'back', 'left', 'right'].filter(function (k) { return sd[k] === 'blind' || sd[k] === 'glass'; }).length;
+    $('stArea').textContent = m1(q.area) + ' m²'; $('stPosts').textContent = q.posts; $('stH').textContent = m1(state.H) + ' m';
+    $('stOpen').textContent = openUsed + ' / ' + openCount();
+
+    // quote panel
+    $('qRef').textContent = refCode();
+    $('qSpec').innerHTML =
+      '<dt>Series</dt><dd>' + esc(s.name) + '</dd>' +
+      '<dt>Size (L × W × H)</dt><dd class="mono">' + m1(state.L) + ' × ' + m1(state.P) + ' × ' + m1(state.H) + ' m</dd>' +
+      '<dt>Footprint</dt><dd class="mono">' + m1(q.area) + ' m²</dd>' +
+      '<dt>Structure</dt><dd>' + esc(structLabel()) + '</dd>' +
+      '<dt>Colour</dt><dd>' + esc(colour().name) + '</dd>' +
+      '<dt>Operation</dt><dd>' + opLabel() + '</dd>';
+    var h = '';
+    q.lines.forEach(function (l) {
+      h += '<div class="ql"><div class="n">' + esc(l.label) + '</div><div class="a' + (l.inc ? ' inc' : '') + '">' + (l.inc ? 'Included' : money(l.amt)) + '</div><div class="s">' + esc(l.note) + '</div></div>';
+    });
+    h += '<div class="ql sub"><div class="n">Product Estimate (incl. GST)</div><div class="a">' + money(q.sub) + '</div></div>';
+    if (state.inst) h += '<div class="ql"><div class="n">Sydney Metro Delivery &amp; Installation Estimate</div><div class="a">' + money(q.iLow) + ' – ' + money(q.iHigh) + '</div><div class="s">Quoted separately · ' + m1(q.area) + ' m² footprint</div></div>';
+    else h += '<div class="ql off"><div class="n">Delivery &amp; Installation</div><div class="a inc">Not included</div><div class="s">Quoted separately</div></div>';
+    $('qLines').innerHTML = h;
+    $('totK').textContent = state.inst ? 'Total indicative range' : 'Total (product only)';
+    $('totV').textContent = totalText(q);
+    $('mbTotal').textContent = totalText(q);
+    $('printSheet').innerHTML = printHTML(q);
+  }
+
+  function printHTML(q) {
+    var s = SERIES[state.series], d = new Date().toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric' });
+    var sd = sides();
+    function fin(k) { return sd[k] === 'blind' ? 'Zip blind' : sd[k] === 'glass' ? 'Glass wall' : sd[k] === 'wall' ? 'House wall' : 'Open'; }
+    var rows = '';
+    q.lines.forEach(function (l) { rows += '<tr><td>' + esc(l.label) + '<span class="s">' + esc(l.note) + '</span></td><td class="r">' + (l.inc ? 'Included' : money(l.amt)) + '</td></tr>'; });
+    rows += '<tr class="sub"><td>Product Estimate (incl. GST)</td><td class="r">' + money(q.sub) + '</td></tr>';
+    if (state.inst) rows += '<tr><td>Sydney Metro Delivery &amp; Installation Estimate<span class="s">Quoted separately</span></td><td class="r">' + money(q.iLow) + ' – ' + money(q.iHigh) + '</td></tr>';
+    else rows += '<tr><td>Delivery &amp; Installation<span class="s">Quoted separately — not included</span></td><td class="r">—</td></tr>';
+    rows += '<tr class="grand"><td>' + (state.inst ? 'Total indicative range' : 'Total (product only)') + '</td><td class="r">' + totalText(q) + '</td></tr>';
+    return '<div class="ph"><div><div class="pb">Terra Nature Nest</div><div class="pa">Sydney Showroom: 1/200 Fairfield Rd, Yennora NSW 2161<br>Factory-Direct Aluminium Louvred Pergolas &amp; Outdoor Blinds</div></div>' +
+      '<div class="pt"><b>Indicative Quote</b><span class="mono">' + refCode() + '</span><br>' + d + '</div></div>' +
+      '<h4>Configuration</h4><table class="spc"><tbody>' +
+      '<tr><td>Series</td><td>' + esc(s.name) + '</td></tr>' +
+      '<tr><td>Length × Projection × Clearance</td><td class="mono">' + m1(state.L) + ' × ' + m1(state.P) + ' × ' + m1(state.H) + ' m (' + m1(q.area) + ' m²)</td></tr>' +
+      '<tr><td>Structure</td><td>' + esc(structLabel()) + '</td></tr>' +
+      '<tr><td>Colour</td><td>' + esc(colour().name) + ' (' + colour().hex + ')</td></tr>' +
+      '<tr><td>Operation</td><td>' + opLabel() + '</td></tr>' +
+      '<tr><td>Sides (front / left / right / back)</td><td>' + fin('front') + ' / ' + fin('left') + ' / ' + fin('right') + ' / ' + fin('back') + '</td></tr>' +
+      '</tbody></table>' +
+      '<h4>Itemised estimate (AUD)</h4><table><thead><tr><th>Item</th><th class="r">Amount</th></tr></thead><tbody>' + rows + '</tbody></table>' +
+      '<div class="pd">Indicative only. Product prices include GST; delivery &amp; installation quoted separately. Final price confirmed after site measure. This document is not a tax invoice or a contract.</div>' +
+      '<div class="pg"><h4>Top Plan View</h4>' + planSVG('c') + '<h4>Front Elevation</h4>' + elevSVG('d') + '</div>';
+  }
+
+  /* ---------- init UI ---------- */
+  (function build() {
+    var h = '';
+    Object.keys(SERIES).forEach(function (k) {
+      var s = SERIES[k];
+      h += '<button type="button" class="sc" data-act="series" data-v="' + k + '" aria-pressed="false"><span class="nm">' + s.name + '</span><span class="ds">' + s.desc + '</span><span class="op">' + s.ops + '</span><span class="pr"><small>From</small>' + money(s.from) + '</span></button>';
+    });
+    $('seriesList').innerHTML = h;
+    h = '';
+    COLOURS.forEach(function (c) { h += '<button type="button" class="sw" data-act="colour" data-v="' + c.id + '" aria-pressed="false"><i style="background:' + c.hex + '"></i><span class="a">' + c.name + '</span><span class="b">' + c.hex + '</span></button>'; });
+    $('swList').innerHTML = h;
+  })();
+
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest ? e.target.closest('[data-act]') : null;
+    if (!t || t.disabled) return;
+    var a = t.dataset.act, k = t.dataset.k, v = t.dataset.v;
+    if (a === 'series') state.series = v;
+    else if (a === 'colour') state.colour = v;
+    else if (a === 'structure') { state.structure = v; clamp(); }
+    else if (a === 'op') { if (SERIES[state.series].motorIncluded) return; state.op = v; }
+    else if (a === 'view') state.view = v;
+    else if (a === 'inc') { if (k === 'blinds' && state.blinds < maxBlinds()) state.blinds++; if (k === 'glass' && state.glass < maxGlass()) state.glass++; }
+    else if (a === 'dec') { if (state[k] > 0) state[k]--; }
+    render();
+  });
+  $('rL').addEventListener('input', function () { state.L = parseFloat(this.value); render(); });
+  $('rP').addEventListener('input', function () { state.P = parseFloat(this.value); render(); });
+  $('rH').addEventListener('input', function () { state.H = Math.round(parseFloat(this.value) * 10) / 10; render(); });
+  $('cLed').addEventListener('change', function () { state.led = this.checked; render(); });
+  $('cSensor').addEventListener('change', function () { state.sensor = this.checked; render(); });
+  $('cInst').addEventListener('change', function () { state.inst = this.checked; render(); });
+
+  /* ---------- print ---------- */
+  $('btnPrint').addEventListener('click', function () { render(); window.print(); });
+
+  /* ---------- lead dialog ---------- */
+  var dlg = $('dlg');
+  function openDlg() { if (typeof dlg.showModal === 'function') dlg.showModal(); else dlg.setAttribute('open', ''); }
+  function closeDlg() { if (typeof dlg.close === 'function') dlg.close(); else dlg.removeAttribute('open'); }
+  $('btnLead').addEventListener('click', function () { $('leadForm').hidden = false; $('leadOut').hidden = true; openDlg(); });
+  $('dlgX').addEventListener('click', closeDlg);
+  $('btnDone').addEventListener('click', closeDlg);
+  $('btnBack').addEventListener('click', function () { $('leadOut').hidden = true; $('leadForm').hidden = false; });
+  dlg.addEventListener('click', function (e) { if (e.target === dlg) closeDlg(); });
+
+  function zone(pc) {
+    var n = parseInt(pc, 10);
+    if (n >= 2000 && n <= 2234) return 'Sydney Metro range (2000–2234)';
+    if (n >= 2235 && n <= 2999) return 'NSW, outside Sydney Metro range — confirm delivery';
+    return 'Outside NSW — confirm delivery';
+  }
+  function buildLead(name, pc, mail) {
+    var s = SERIES[state.series], q = compute(), sd = sides();
+    var acc = [];
+    if (state.blinds) acc.push('Zip Track Blinds × ' + state.blinds);
+    if (state.glass) acc.push('Frameless Glass Walls × ' + state.glass);
+    if (state.led) acc.push('Perimeter LED Strip Lighting');
+    if (state.sensor) acc.push('Rain & Wind Auto-Close Sensor');
+    return {
+      lead: { name: name, email: mail, postcode: pc, postcode_zone: zone(pc) },
+      configuration: {
+        series: s.name, length_m: state.L, projection_m: state.P, clearance_m: state.H, footprint_m2: q.area,
+        structure: state.structure === 'free' ? 'Freestanding' : 'Wall-Mounted', posts: q.posts,
+        colour: colour().name + ' ' + colour().hex, operation: opLabel(),
+        sides: { front: sd.front, left: sd.left, right: sd.right, back: sd.back }
+      },
+      accessories: { zip_blinds: state.blinds, glass_walls: state.glass, led_strip: state.led, auto_close_sensor: state.sensor, install_estimate_requested: state.inst },
+      budget_aud_inc_gst: { product_estimate: q.sub, install_low: q.iLow, install_high: q.iHigh, total_low: q.tLow, total_high: q.tHigh },
+      meta: { quote_ref: refCode(), source: '/pages/get-a-custom-quote', generated: new Date().toISOString() }
+    };
+  }
+  function countKeys(o) { var n = 0; Object.keys(o).forEach(function (k) { n += (o[k] && typeof o[k] === 'object') ? countKeys(o[k]) : 1; }); return n; }
+
+  $('leadForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var name = $('fName').value.trim(), pc = $('fPost').value.trim(), mail = $('fMail').value.trim(), ok = true;
+    $('eName').textContent = name ? '' : 'Please enter your name.'; if (!name) ok = false;
+    $('ePost').textContent = /^\d{4}$/.test(pc) ? '' : 'Enter a 4-digit postcode.'; if (!/^\d{4}$/.test(pc)) ok = false;
+    var mailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail);
+    $('eMail').textContent = mailOk ? '' : 'Enter a valid email address.'; if (!mailOk) ok = false;
+    if (!ok) return;
+    var lead = buildLead(name, pc, mail), q = compute(), c = lead.configuration;
+    lastLead = lead;
+    var rows = [
+      ['Contact', esc(name) + ' · ' + esc(mail)],
+      ['Postcode', '<span class="mono">' + esc(pc) + '</span> — ' + esc(lead.lead.postcode_zone)],
+      ['Series', esc(c.series)],
+      ['Size', '<span class="mono">' + m1(state.L) + ' × ' + m1(state.P) + ' × ' + m1(state.H) + ' m · ' + m1(q.area) + ' m²</span>'],
+      ['Structure', esc(structLabel())],
+      ['Colour', esc(c.colour)],
+      ['Operation', esc(c.operation)],
+      ['Accessories', lead.accessories.zip_blinds || lead.accessories.glass_walls || state.led || state.sensor ? esc([state.blinds ? 'Zip Track Blinds × ' + state.blinds : '', state.glass ? 'Frameless Glass Walls × ' + state.glass : '', state.led ? 'LED Strip Lighting' : '', state.sensor ? 'Auto-Close Sensor' : ''].filter(Boolean).join(', ')) : 'None'],
+      ['Product estimate', '<span class="mono">' + money(q.sub) + '</span> incl. GST'],
+      ['Install estimate', state.inst ? '<span class="mono">' + money(q.iLow) + ' – ' + money(q.iHigh) + '</span> (Sydney Metro, separate)' : 'Not requested'],
+      ['Budget band', '<span class="mono">' + totalText(q) + '</span>'],
+      ['Structured fields', '<span class="mono">' + countKeys(lead) + '</span> captured, none left to a phone call']
+    ];
+    var h = '<div class="h">Lead received · Quote ref ' + esc(refCode()) + '</div><dl>';
+    rows.forEach(function (r) { h += '<dt>' + r[0] + '</dt><dd>' + r[1] + '</dd>'; });
+    $('leadTbl').innerHTML = h + '</dl>';
+    $('leadJson').textContent = JSON.stringify(lead, null, 2);
+    $('leadForm').hidden = true; $('leadOut').hidden = false;
+    dlg.scrollTop = 0;
+  });
+  $('btnCopy').addEventListener('click', function () {
+    var btn = this, txt = $('leadJson').textContent;
+    function done(ok) { btn.textContent = ok ? 'Copied' : 'Copy failed'; setTimeout(function () { btn.textContent = 'Copy lead JSON'; }, 1500); }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(function () { done(true); }, function () { done(false); });
+    else done(false);
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
