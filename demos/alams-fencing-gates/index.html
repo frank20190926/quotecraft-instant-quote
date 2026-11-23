@@ -1,0 +1,855 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Interactive Quote Preview — Alam's Fencing and Gates</title>
+<style>
+:root{
+  --bg:#F7F6F2; --card:#FFFFFF; --line:#E2E0D8; --ink:#141615; --muted:#5C5F58; --step:#F1F0EA;
+  --brand:#141615; --a:#B92B20; --a-dark:#8F2018; --b:#141615; --tint:#FAF1EF;
+  --sans:'Plus Jakarta Sans','IBM Plex Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+  --mono:'JetBrains Mono','IBM Plex Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.5}
+button,input,output{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--a);outline-offset:2px}
+.num,output,.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+.concept{border-bottom:1px solid var(--line);background:var(--bg);padding:7px 20px;font-family:var(--mono);font-size:11.5px;color:var(--muted);text-align:center;letter-spacing:.01em}
+.mast{max-width:1240px;margin:0 auto;padding:28px 20px 22px;display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap}
+.brand{font-weight:700;font-size:22px;letter-spacing:-.025em;color:var(--brand);line-height:1.1}
+.addr{margin-top:6px;font-size:12.5px;color:var(--muted)}
+.mast h1{margin:0;font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink)}
+
+.wrap{max-width:1240px;margin:0 auto;padding:0 20px 56px;display:grid;grid-template-columns:minmax(0,1fr) 392px;gap:20px;align-items:start}
+.card{background:var(--card);border:1px solid var(--line);border-radius:2px}
+.card+.card{margin-top:20px}
+.card>header{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:14px 20px;border-bottom:1px solid var(--line)}
+.card>header h2{margin:0;font-size:13px;font-weight:700;letter-spacing:.07em;text-transform:uppercase}
+.card>header .hint{font-size:12px;color:var(--muted)}
+.body{padding:18px 20px}
+
+.draw{padding:8px 12px 0}
+.draw .cap{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:10px 8px 0}
+.draw svg{display:block;width:100%;height:auto}
+svg text{font-family:var(--mono)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line);margin-top:8px}
+.stats>div{padding:12px 20px}
+.stats>div+div{border-left:1px solid var(--line)}
+.stats .k{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.stats .v{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:18px;font-weight:600;letter-spacing:-.02em}
+.legend{display:flex;flex-wrap:wrap;gap:6px 20px;padding:10px 20px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:8px}
+.legend svg{width:26px;height:10px}
+.warn{margin:0;padding:10px 20px;border-top:1px solid var(--line);background:var(--step);font-size:12.5px;color:var(--ink)}
+
+.grp+.grp{margin-top:26px;padding-top:22px;border-top:1px solid var(--line)}
+.lab{font-size:12px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin:0 0 12px}
+.sublab{font-size:12.5px;font-weight:600;margin:0 0 8px}
+.sel+.sel{margin-top:16px}
+.series{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.sc{display:flex;flex-direction:column;gap:2px;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:2px;padding:14px 16px;min-height:112px}
+.sc:hover{border-color:#B9B7AC}
+.sc[aria-pressed="true"]{border-color:var(--a);outline:1px solid var(--a);background:var(--tint)}
+.sc .nm{font-weight:700;font-size:15px;letter-spacing:-.015em}
+.sc .ds{font-size:12.5px;color:var(--muted)}
+.sc .pr{margin-top:auto;padding-top:10px;font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:13px;font-weight:600}
+.sc .pr small{font-family:var(--sans);font-weight:400;color:var(--muted);font-size:12px;margin-right:6px}
+
+.slr{display:grid;grid-template-columns:1fr auto;gap:0 16px;align-items:center;margin-bottom:16px}
+.slr:last-child{margin-bottom:0}
+.slr .t{font-weight:600;font-size:13.5px}
+.slr .t span{font-weight:400;color:var(--muted);font-size:12px;margin-left:8px}
+.slr output{font-size:16px;font-weight:600;letter-spacing:-.02em;text-align:right;min-width:72px}
+.slr .rg{grid-column:1/-1}
+.rng{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:-2px}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:26px;margin:0;background:transparent;--pct:0%}
+input[type=range]::-webkit-slider-runnable-track{height:2px;background:linear-gradient(to right,var(--a) var(--pct),#CBC9BE var(--pct))}
+input[type=range]::-moz-range-track{height:2px;background:#CBC9BE}
+input[type=range]::-moz-range-progress{height:2px;background:var(--a)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;margin-top:-7px;border-radius:2px;background:var(--a);border:2px solid #fff;outline:1px solid var(--a)}
+input[type=range]::-moz-range-thumb{width:12px;height:12px;border-radius:2px;background:var(--a);border:2px solid #fff;outline:1px solid var(--a)}
+
+.cols2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.opt{display:flex;flex-direction:column;align-items:flex-start;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:2px;padding:11px 14px}
+.opt[aria-pressed="true"]{border-color:var(--a);outline:1px solid var(--a);background:var(--tint)}
+.opt .a{font-weight:600;font-size:13.5px}
+.opt .b{font-size:12px;color:var(--muted)}
+.note{font-size:12px;color:var(--muted);margin:10px 0 0}
+.swatches{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.sw{background:var(--card);border:1px solid var(--line);border-radius:2px;padding:8px;text-align:left}
+.sw i{display:block;height:34px;border:1px solid rgba(20,22,21,.28);border-radius:1px;margin-bottom:8px}
+.sw .a{font-weight:600;font-size:13px;display:block}
+.sw .b{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.sw[aria-pressed="true"]{border-color:var(--a);outline:1px solid var(--a)}
+
+.row{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:12px 0;border-bottom:1px solid var(--line)}
+.row:first-of-type{padding-top:0}
+.row:last-of-type{border-bottom:0;padding-bottom:0}
+.row .rl{font-weight:600;font-size:13.5px}
+.row .rs{font-size:12px;color:var(--muted)}
+.chk{display:flex;align-items:center;gap:10px;cursor:pointer}
+.chk input{width:16px;height:16px;accent-color:var(--a);margin:0}
+.chk input:disabled{cursor:not-allowed}
+.row.off .rl,.row.off .rs,.row.off .price{color:#6B6D67}
+.price{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:13px;font-weight:500;white-space:nowrap}
+
+aside{position:sticky;top:16px;max-height:calc(100vh - 32px);overflow:auto}
+.qhead{display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:14px 20px;border-bottom:1px solid var(--line)}
+.qhead h2{margin:0;font-size:13px;font-weight:700;letter-spacing:.07em;text-transform:uppercase}
+.qhead .mono{font-size:11px;color:var(--muted)}
+.spec{margin:0;padding:12px 20px;background:var(--step);border-bottom:1px solid var(--line);display:grid;grid-template-columns:auto 1fr;gap:3px 14px;font-size:12.5px}
+.spec dt{color:var(--muted)}
+.spec dd{margin:0;text-align:right;font-weight:500}
+.spec dd.mono{font-size:12px}
+.ql{display:grid;grid-template-columns:1fr auto;column-gap:14px;padding:9px 20px;border-bottom:1px solid var(--line)}
+.ql .n{font-weight:500;font-size:13px}
+.ql .a{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:13px;white-space:nowrap}
+.ql .a.inc{font-family:var(--sans);color:var(--muted);font-size:12.5px}
+.ql .s{grid-column:1;font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+.ql.sub{background:var(--step)}
+.ql.sub .n,.ql.sub .a{font-weight:700}
+.ql.off .n,.ql.off .a{color:var(--muted)}
+.tot{padding:16px 20px;border-bottom:1px solid var(--line)}
+.tot .k{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.tot .v{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:24px;font-weight:600;letter-spacing:-.03em;color:var(--brand);margin-top:2px;line-height:1.2}
+.disc{padding:12px 20px 0;font-size:12px;color:var(--muted);margin:0}
+.acts{padding:16px 20px 20px;display:grid;gap:10px}
+.btn{display:block;width:100%;text-align:center;border-radius:2px;padding:12px 14px;font-weight:600;font-size:13.5px;border:1px solid var(--ink);background:var(--card);color:var(--ink)}
+.btn:hover{background:var(--step)}
+.btn.pri{background:var(--a);border-color:var(--a);color:#fff}
+.btn.pri:hover{background:var(--a-dark)}
+.foot{max-width:1240px;margin:0 auto;padding:0 20px 40px;font-size:12px;color:var(--muted)}
+.mbar{display:none}
+
+dialog{width:min(640px,calc(100vw - 24px));max-height:calc(100vh - 32px);padding:0;border:1px solid var(--ink);border-radius:2px;background:var(--card);color:var(--ink);overflow:auto}
+dialog::backdrop{background:rgba(20,22,21,.55)}
+.dh{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;border-bottom:1px solid var(--line)}
+.dh h3{margin:0;font-size:14px;letter-spacing:-.01em}
+.x{border:1px solid var(--line);background:var(--card);width:30px;height:30px;border-radius:2px;font-size:16px;line-height:1}
+.db{padding:18px 20px 20px}
+.f{display:grid;gap:14px}
+.f label{display:grid;gap:5px;font-size:12.5px;font-weight:600}
+.f input{border:1px solid #B9B7AC;border-radius:2px;padding:10px 12px;font-size:14px;background:var(--card);font-weight:400}
+.f input:focus{outline:2px solid var(--a);outline-offset:0;border-color:var(--a)}
+.f .err{color:#9B1C1C;font-weight:500;font-size:12px}
+.f .two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mini{font-size:12.5px;color:var(--muted);margin:0 0 14px}
+.lead{border:1px solid var(--line);margin:0 0 14px}
+.lead .h{padding:8px 12px;background:var(--step);border-bottom:1px solid var(--line);font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase}
+.lead dl{margin:0;display:grid;grid-template-columns:150px 1fr}
+.lead dt,.lead dd{margin:0;padding:7px 12px;border-bottom:1px solid var(--line);font-size:12.5px}
+.lead dt{color:var(--muted)}
+.lead dd{font-weight:500}
+.lead dl>:nth-last-child(-n+2){border-bottom:0}
+pre{margin:0 0 14px;padding:12px;background:var(--ink);color:#E9E8E1;font-family:var(--mono);font-size:11.5px;line-height:1.55;overflow:auto;max-height:240px;border-radius:2px}
+.dact{display:flex;gap:10px;flex-wrap:wrap}
+.dact .btn{width:auto;flex:1;min-width:140px}
+[hidden]{display:none!important}
+
+@media (max-width:980px){
+  .wrap{grid-template-columns:1fr}
+  aside{position:static;max-height:none;overflow:visible}
+  body{padding-bottom:64px}
+  .mbar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:5;background:var(--card);border-top:1px solid var(--ink);padding:10px 16px;justify-content:space-between;align-items:center;gap:12px}
+  .mbar .k{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  .mbar .v{font-family:var(--mono);font-variant-numeric:tabular-nums;font-weight:600;font-size:15px;color:var(--brand)}
+  .mbar a{color:#fff;background:var(--a);padding:9px 14px;border-radius:2px;font-weight:600;font-size:13px;text-decoration:none}
+}
+@media (max-width:600px){
+  .series,.cols2{grid-template-columns:1fr}
+  .swatches{grid-template-columns:1fr 1fr}
+  .stats{grid-template-columns:1fr 1fr}
+  .stats>div:nth-child(3){border-left:0}
+  .stats>div:nth-child(n+3){border-top:1px solid var(--line)}
+  .f .two{grid-template-columns:1fr}
+  .lead dl{grid-template-columns:110px 1fr}
+  .mast{padding-top:20px}
+}
+
+#printSheet{display:none}
+@page{size:A4;margin:14mm}
+@media print{
+  html,body{background:#fff!important}
+  body{padding:0!important;font-size:10pt}
+  body>*:not(#printSheet){display:none!important}
+  #printSheet{display:block;color:#141615;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  #printSheet .ph{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:1.5pt solid var(--brand);padding-bottom:8pt;margin-bottom:12pt}
+  #printSheet .pb{font-size:18pt;font-weight:700;letter-spacing:-.02em;color:var(--brand)}
+  #printSheet .pa{font-size:8.5pt;color:#4A4D47;margin-top:3pt}
+  #printSheet .pt{text-align:right;font-size:9pt}
+  #printSheet .pt b{display:block;font-size:12pt;letter-spacing:.06em;text-transform:uppercase}
+  #printSheet h4{margin:14pt 0 5pt;font-size:8.5pt;letter-spacing:.08em;text-transform:uppercase}
+  #printSheet table{width:100%;border-collapse:collapse;font-size:9.5pt;break-inside:avoid}
+  #printSheet td,#printSheet th{padding:4pt 6pt;border-bottom:.5pt solid #C9C7BC;text-align:left;vertical-align:top}
+  #printSheet th{font-size:8pt;letter-spacing:.06em;text-transform:uppercase;color:#4A4D47;border-bottom:1pt solid #141615}
+  #printSheet td.r,#printSheet th.r{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+  #printSheet td .s{display:block;font-family:var(--mono);font-size:8pt;color:#4A4D47}
+  #printSheet tr.sub td{font-weight:700;background:#F1F0EA}
+  #printSheet tr.grand td{font-weight:700;font-size:11pt;color:var(--brand);border-bottom:1.5pt solid var(--brand)}
+  #printSheet .spc td:first-child{width:34%;color:#4A4D47}
+  #printSheet .pd{font-size:8pt;color:#4A4D47;margin-top:12pt;border-top:.5pt solid #C9C7BC;padding-top:6pt}
+  #printSheet .pg{break-before:page}
+  #printSheet .pg svg{display:block;width:100%;height:auto;max-height:100mm;margin-bottom:6mm}
+}
+
+</style>
+</head>
+<body>
+
+<div class="concept">Interactive Quote Preview for Alam's Fencing and Gates — Embeds directly into your website quote page</div>
+
+<div class="mast">
+  <div>
+    <div class="brand">Alam's Fencing and Gates</div>
+    <div class="addr">Ingleburn, Sydney NSW · Aluminium fencing, pool fencing and automatic gates</div>
+  </div>
+  <h1>Fence &amp; Gate Quote Preview</h1>
+</div>
+
+<div class="wrap">
+  <main>
+    <section class="card" aria-label="Live drawing">
+      <header><h2>Live Drawing</h2><span class="hint" id="drawHint">Drawn to scale from your inputs</span></header>
+      <div class="draw" id="views"></div>
+      <div class="stats" id="stats"></div>
+      <p class="warn" id="warn" hidden></p>
+      <div class="legend" id="legend" aria-label="Legend"></div>
+    </section>
+
+    <section class="card" aria-label="Configuration">
+      <header><h2>Configuration</h2><span class="hint">All prices AUD, incl. GST</span></header>
+      <div class="body">
+        <div class="grp"><h3 class="lab">1 · Product</h3><div class="series" id="prodList"></div></div>
+        <div class="grp"><h3 class="lab">2 · Dimensions (metres)</h3><div id="dimList"></div></div>
+        <div class="grp"><h3 class="lab">3 · <span id="colLab">Colour</span></h3><div class="swatches" id="swList"></div><p class="note" id="colNote"></p></div>
+        <div class="grp" id="selGrp"><h3 class="lab">4 · Style</h3><div id="selList"></div></div>
+        <div class="grp"><h3 class="lab">5 · Motor, Accessories &amp; Installation</h3><div id="tgList"></div><p class="note" id="tgNote"></p></div>
+      </div>
+    </section>
+  </main>
+
+  <aside id="quote" aria-label="Itemised Indicative Quote">
+    <div class="card">
+      <div class="qhead"><h2>Itemised Indicative Quote</h2><span class="mono" id="qRef">—</span></div>
+      <dl class="spec" id="qSpec"></dl>
+      <div id="qLines"></div>
+      <div class="tot"><div class="k" id="totK">Total indicative range</div><div class="v" id="totV">—</div></div>
+      <p class="disc">Indicative only. Product prices include GST; installation quoted separately. Final price confirmed after site measure.</p>
+      <div class="acts">
+        <button type="button" class="btn pri" id="btnLead">Request Measure &amp; Quote</button>
+        <button type="button" class="btn" id="btnPrint">Print / Save A4 Quote</button>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<div class="foot">Pricing note: product names, ranges and colour families follow Alam's Fencing and Gates&rsquo;s public website. Prices, area and length rates, motor and installation estimates in this preview are placeholder pricing logic, to be replaced by the company&rsquo;s own price matrix when embedded.</div>
+
+<div class="mbar"><div><div class="k">Indicative total</div><div class="v" id="mbTotal">—</div></div><a href="#quote">View quote</a></div>
+
+<dialog id="dlg" aria-labelledby="dlgT">
+  <div class="dh"><h3 id="dlgT">Request Measure &amp; Quote</h3><button type="button" class="x" id="dlgX" aria-label="Close">&times;</button></div>
+  <div class="db">
+    <form id="leadForm" class="f" novalidate>
+      <p class="mini" style="margin:0">Your configuration below is attached to the request automatically.</p>
+      <label>Full name<input id="fName" autocomplete="name" required><span class="err" id="eName"></span></label>
+      <div class="two">
+        <label>Sydney postcode<input id="fPost" inputmode="numeric" maxlength="4" autocomplete="postal-code" placeholder="e.g. 2560" required><span class="err" id="ePost"></span></label>
+        <label>Email<input id="fMail" type="email" autocomplete="email" required><span class="err" id="eMail"></span></label>
+      </div>
+      <label>Phone (optional)<input id="fPhone" type="tel" autocomplete="tel"></label>
+      <button type="submit" class="btn pri">Send request</button>
+    </form>
+    <div id="leadOut" hidden>
+      <p class="mini">Preview of the structured lead that reaches the Alam's Fencing and Gates sales team. Demo only — nothing is sent from this page.</p>
+      <div class="lead" id="leadTbl"></div>
+      <pre id="leadJson"></pre>
+      <div class="dact">
+        <button type="button" class="btn" id="btnCopy">Copy lead JSON</button>
+        <button type="button" class="btn" id="btnBack">Back to edit</button>
+        <button type="button" class="btn pri" id="btnDone">Close</button>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<div id="printSheet" aria-hidden="true"></div>
+
+<script>
+(function () {
+'use strict';
+/* ---------- helpers ---------- */
+var $ = function (id) { return document.getElementById(id); };
+var nf = new Intl.NumberFormat('en-AU', { style: 'currency', currency: 'AUD', maximumFractionDigits: 0 });
+function money(n) { return nf.format(n); }
+function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+function m1(n) { return n.toFixed(1); }
+function m2(n) { return n.toFixed(2); }
+function r10(n) { return Math.round(n / 10) * 10; }
+function lum(hex) { var r = parseInt(hex.substr(1, 2), 16), g = parseInt(hex.substr(3, 2), 16), b = parseInt(hex.substr(5, 2), 16); return (0.299 * r + 0.587 * g + 0.114 * b) / 255; }
+function mix(a, b, t) {
+  var i, o = '#', x, y;
+  for (i = 1; i < 7; i += 2) { x = parseInt(a.substr(i, 2), 16); y = parseInt(b.substr(i, 2), 16); o += ('0' + Math.round(x + (y - x) * t).toString(16)).slice(-2); }
+  return o;
+}
+function svgOpen(w, h, label) { return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + w + ' ' + h + '" role="img" aria-label="' + esc(label) + '">'; }
+function T(x, y, str, o) {
+  o = o || {};
+  return '<text x="' + x + '" y="' + y + '" font-size="' + (o.size || 11) + '" text-anchor="' + (o.anchor || 'start') + '" fill="' + (o.fill || '#141615') + '"' +
+    (o.weight ? ' font-weight="' + o.weight + '"' : '') + (o.ls ? ' letter-spacing="' + o.ls + '"' : '') + (o.halo ? ' stroke="#FFFFFF" stroke-width="3.6" paint-order="stroke" stroke-linejoin="round"' : '') + (o.rot ? ' transform="rotate(' + o.rot + ' ' + x + ' ' + y + ')"' : '') + '>' + str + '</text>';
+}
+function hatchDef(id) { return '<pattern id="' + id + '" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#9A988E" stroke-width="1"/></pattern>'; }
+function dimH(x1, x2, y, label, up) {
+  return '<g stroke="#141615" stroke-width="1" fill="none"><line x1="' + x1 + '" y1="' + y + '" x2="' + x2 + '" y2="' + y + '"/><line x1="' + x1 + '" y1="' + (y - 6) + '" x2="' + x1 + '" y2="' + (y + 6) + '"/><line x1="' + x2 + '" y1="' + (y - 6) + '" x2="' + x2 + '" y2="' + (y + 6) + '"/></g>' +
+    T((x1 + x2) / 2, up ? y - 8 : y + 19, label, { anchor: 'middle', size: 12, weight: 600, halo: 1 });
+}
+function dimV(x, y1, y2, label, off) {
+  var cy = (y1 + y2) / 2, tx = x + (off === undefined ? 19 : off);
+  return '<g stroke="#141615" stroke-width="1" fill="none"><line x1="' + x + '" y1="' + y1 + '" x2="' + x + '" y2="' + y2 + '"/><line x1="' + (x - 6) + '" y1="' + y1 + '" x2="' + (x + 6) + '" y2="' + y1 + '"/><line x1="' + (x - 6) + '" y1="' + y2 + '" x2="' + (x + 6) + '" y2="' + y2 + '"/></g>' +
+    T(tx, cy, label, { anchor: 'middle', size: 12, weight: 600, rot: -90 });
+}
+/* Leader-line callouts: thin line + small terminal dot + text, laid out in rows so labels do not overlap. */
+function callouts(items, rows, W, below) {
+  var ends = rows.map(function () { return 0; }), out = [];
+  items.sort(function (a, b) { return a.x - b.x; });
+  items.forEach(function (it) {
+    var w = it.t.length * 6.7 + 4, best = null;
+    rows.forEach(function (ry, i) {
+      var lx = Math.max(it.x, ends[i] + 12);
+      if (lx + w <= W - 6 && (best === null || lx - it.x < best.d - 0.01)) best = { i: i, lx: lx, d: lx - it.x };
+    });
+    if (!best) best = { i: rows.length - 1, lx: Math.max(6, W - 6 - w), d: 0 };
+    ends[best.i] = best.lx + w;
+    var ry = rows[best.i], ly = below ? ry - 12 : ry + 5;
+    out.push('<g stroke="#141615" stroke-width=".8" fill="none"><polyline points="' + it.x + ',' + it.y + ' ' + it.x + ',' + ly + ' ' + (best.lx - 3) + ',' + ly + '"/></g><circle cx="' + it.x + '" cy="' + it.y + '" r="2.2" fill="#141615"/>' + T(best.lx, ry, esc(it.t), { size: 11, halo: 1 }));
+  });
+  return out.join('');
+}
+/* Slat texture: single light source, top-left. o: h horizontal, v vertical, l louvre blades, p pool pickets */
+function slatDef(id, o, col, s) {
+  var hi = mix(col, '#FFFFFF', 0.38), lo = mix(col, '#000000', 0.38), p, w;
+  if (o === 'v') {
+    p = Math.max(3.4, 0.075 * s);
+    return '<pattern id="' + id + '" width="' + p + '" height="12" patternUnits="userSpaceOnUse"><rect width="' + p + '" height="12" fill="' + col + '"/><rect width="' + (p * 0.2) + '" height="12" fill="' + hi + '"/><rect x="' + (p * 0.8) + '" width="' + (p * 0.2) + '" height="12" fill="' + lo + '"/></pattern>';
+  }
+  if (o === 'p') {
+    p = Math.max(4.4, 0.11 * s); w = Math.max(1.7, 0.026 * s);
+    return '<pattern id="' + id + '" width="' + p + '" height="12" patternUnits="userSpaceOnUse"><rect x="' + ((p - w) / 2) + '" width="' + w + '" height="12" fill="' + col + '"/></pattern>';
+  }
+  p = Math.max(3.6, (o === 'l' ? 0.1 : 0.075) * s);
+  return '<pattern id="' + id + '" width="12" height="' + p + '" patternUnits="userSpaceOnUse"><rect width="12" height="' + p + '" fill="' + col + '"/><rect width="12" height="' + (p * 0.2) + '" fill="' + hi + '"/>' +
+    (o === 'l' ? '<rect y="' + (p * 0.5) + '" width="12" height="' + (p * 0.3) + '" fill="' + mix(col, '#000000', 0.2) + '"/>' : '') +
+    '<rect y="' + (p * 0.8) + '" width="12" height="' + (p * 0.2) + '" fill="' + lo + '"/></pattern>';
+}
+
+/* ---------- fence + gate drawings (elevation + plan) and quote engine ---------- */
+var ORIENT_LABEL = { h: 'Horizontal slat infill', v: 'Vertical slat infill', l: 'Louvre privacy blades', p: 'Vertical pickets, 100 mm max gap' };
+var KIND_LABEL = { slide: 'Sliding gate', cant: 'Cantilever gate', swing1: 'Single swing gate', swing2: 'Double swing gate' };
+
+function gLay(P) {
+  var ped = P.ped ? 1 : 0, G = P.G || 0, run = P.run;
+  var Lv = run <= 8 ? run : Math.max(6.5, G + 0.5);
+  var Tv = ped + G + Lv, W = 720, ml = 52, mr = 64;
+  var s = Math.min((W - ml - mr) / Tv, 56);
+  var x0 = ml + ((W - ml - mr) - Tv * s) / 2;
+  var nb = Math.max(1, Math.ceil(run / 2.4));
+  return { W: W, s: s, x0: x0, Lv: Lv, Tv: Tv, xg0: x0 + ped * s, xg1: x0 + (ped + G) * s, xr1: x0 + Tv * s, nb: nb, bay: run / nb, ped: ped, broken: run > 8 };
+}
+function gateMotorX(P, L) { return P.kind === 'swing1' || P.kind === 'swing2' ? L.xg0 : L.xg1; }
+
+function gateElev(P, pfx) {
+  var L = gLay(P), s = L.s, H = P.H, yg = 238, yt = yg - H * s, col = P.col, dark = mix(col, '#000000', 0.35), acc = P.acc;
+  var o = [], co = [], i, px, kind = P.kind, G = P.G || 0;
+  var slide = kind === 'slide' || kind === 'cant', swing = kind === 'swing1' || kind === 'swing2';
+  var pw = Math.max(4, 0.065 * s), gw = Math.max(6, 0.1 * s), rail = Math.max(3, 0.045 * s);
+  o.push(svgOpen(720, 320, P.label));
+  o.push('<defs>' + hatchDef(pfx + 'g') + slatDef(pfx + 's', P.orient, col, s) + '</defs>');
+  o.push('<rect x="20" y="' + yg + '" width="680" height="8" fill="url(#' + pfx + 'g)"/><line x1="20" y1="' + yg + '" x2="700" y2="' + yg + '" stroke="#141615" stroke-width="1.6"/>');
+  function panel(xa, xb) {
+    if (xb - xa < 2) return;
+    o.push('<rect x="' + xa + '" y="' + yt + '" width="' + (xb - xa) + '" height="' + (H * s - 0.07 * s) + '" fill="url(#' + pfx + 's)" stroke="#141615" stroke-width=".9"/>');
+    o.push('<rect x="' + xa + '" y="' + yt + '" width="' + (xb - xa) + '" height="' + rail + '" fill="' + dark + '"/><rect x="' + xa + '" y="' + (yg - 0.07 * s - rail) + '" width="' + (xb - xa) + '" height="' + rail + '" fill="' + dark + '"/>');
+  }
+  function post(x, w, extra) {
+    o.push('<rect x="' + (x - w / 2) + '" y="' + (yt - extra) + '" width="' + w + '" height="' + (yg - yt + extra) + '" fill="' + dark + '" stroke="#141615" stroke-width=".8"/><rect x="' + (x - w / 2) + '" y="' + (yt - extra) + '" width="' + Math.max(1.2, w * 0.2) + '" height="' + (yg - yt + extra) + '" fill="' + mix(col, '#FFFFFF', 0.3) + '"/>');
+  }
+  /* run panels and posts, measured from the gate side */
+  var xs = [], k;
+  for (k = 0; k <= L.nb; k++) { px = L.xg1 + k * L.bay * s; if (px <= L.xr1 + 0.5) xs.push(px); }
+  for (k = 0; k < xs.length; k++) panel(xs[k] + (k === 0 && G ? gw / 2 : pw / 2), (k + 1 < xs.length ? xs[k + 1] - pw / 2 : L.xr1));
+  /* leaf drawing */
+  function leaf(xa, xb) {
+    o.push('<rect x="' + xa + '" y="' + yt + '" width="' + (xb - xa) + '" height="' + (H * s - 0.07 * s) + '" fill="url(#' + pfx + 's)" stroke="#141615" stroke-width="1.3"/>');
+    o.push('<rect x="' + xa + '" y="' + yt + '" width="' + (xb - xa) + '" height="' + rail + '" fill="' + dark + '"/><rect x="' + xa + '" y="' + (yg - 0.07 * s - rail) + '" width="' + (xb - xa) + '" height="' + rail + '" fill="' + dark + '"/>');
+    o.push('<rect x="' + xa + '" y="' + yt + '" width="' + rail + '" height="' + (H * s - 0.07 * s) + '" fill="' + dark + '"/><rect x="' + (xb - rail) + '" y="' + yt + '" width="' + rail + '" height="' + (H * s - 0.07 * s) + '" fill="' + dark + '"/>');
+  }
+  if (P.ped) { leaf(L.x0 + 0.05 * s, L.xg0 - 0.05 * s); }
+  if (G > 0) {
+    if (kind === 'swing2') {
+      var xm = (L.xg0 + L.xg1) / 2;
+      leaf(L.xg0 + 0.05 * s, xm - 0.02 * s); leaf(xm + 0.02 * s, L.xg1 - 0.05 * s);
+      [0.2, 0.8].forEach(function (f) { o.push('<rect x="' + (L.xg0 + 0.02 * s) + '" y="' + (yt + H * s * f) + '" width="5" height="7" fill="#141615"/><rect x="' + (L.xg1 - 0.02 * s - 5) + '" y="' + (yt + H * s * f) + '" width="5" height="7" fill="#141615"/>'); });
+    } else {
+      leaf(L.xg0 + 0.05 * s, L.xg1 - 0.05 * s);
+      if (kind === 'swing1') [0.2, 0.8].forEach(function (f) { o.push('<rect x="' + (L.xg0 + 0.02 * s) + '" y="' + (yt + H * s * f) + '" width="5" height="7" fill="#141615"/>'); });
+    }
+    if (kind === 'slide') o.push('<line x1="' + L.xg0 + '" y1="' + (yg - 1) + '" x2="' + (L.xg1 + G * s) + '" y2="' + (yg - 1) + '" stroke="#141615" stroke-width="2" stroke-dasharray="2 3"/>');
+    if (slide) o.push('<rect x="' + (L.xg1 + 0.05 * s) + '" y="' + yt + '" width="' + (G * s - 0.1 * s) + '" height="' + (H * s - 0.07 * s) + '" fill="none" stroke="' + acc + '" stroke-width="1.5" stroke-dasharray="7 5"/>');
+  }
+  /* posts on top */
+  if (G > 0 || P.ped) {
+    if (P.ped) post(L.x0, gw, 0.08 * s);
+    post(L.xg0, gw, 0.08 * s);
+    if (G > 0) post(L.xg1, gw, 0.08 * s);
+  }
+  for (k = (G > 0 || P.ped ? 1 : 0); k < xs.length; k++) post(xs[k], pw, 0.03 * s);
+  /* ped hardware */
+  if (P.ped) o.push('<rect x="' + (L.xg0 - 0.05 * s - 0.1 * s) + '" y="' + (yg - 1.0 * s) + '" width="' + (0.07 * s) + '" height="' + (0.13 * s) + '" fill="#141615"/>');
+  /* sensors + beam */
+  var sy = yg - 0.45 * s;
+  if (P.motor && G > 0) {
+    o.push('<line x1="' + L.xg0 + '" y1="' + sy + '" x2="' + L.xg1 + '" y2="' + sy + '" stroke="' + acc + '" stroke-width="1.4" stroke-dasharray="3 4"/>');
+    [L.xg0 + gw / 2 + 2, L.xg1 - gw / 2 - 2].forEach(function (x) { o.push('<circle cx="' + x + '" cy="' + sy + '" r="' + Math.max(3, 0.04 * s) + '" fill="' + acc + '" stroke="#FFFFFF" stroke-width="1"/>'); });
+  }
+  /* motor */
+  var mx = gateMotorX(P, L), my, mw = Math.max(14, 0.42 * s), mh = Math.max(10, 0.3 * s);
+  if (P.motor && G > 0) {
+    if (slide) { my = yg - mh - 0.08 * s; o.push('<rect x="' + (mx + gw / 2 + 2) + '" y="' + my + '" width="' + mw + '" height="' + mh + '" fill="' + acc + '" stroke="#141615" stroke-width="1"/>'); mx = mx + gw / 2 + 2 + mw / 2; }
+    else {
+      my = yt + H * s * 0.55;
+      o.push('<rect x="' + (L.xg0 + gw / 2 + 2) + '" y="' + my + '" width="' + mw + '" height="' + (mh * 0.7) + '" fill="' + acc + '" stroke="#141615" stroke-width="1"/>');
+      if (kind === 'swing2') o.push('<rect x="' + (L.xg1 - gw / 2 - 2 - mw) + '" y="' + my + '" width="' + mw + '" height="' + (mh * 0.7) + '" fill="' + acc + '" stroke="#141615" stroke-width="1"/>');
+      mx = L.xg0 + gw / 2 + 2 + mw / 2;
+    }
+  }
+  /* solar panel on motor post */
+  var solarX = gateMotorX(P, L), base = yt - 0.08 * s - 3;
+  if (P.motor && P.solar && G > 0) {
+    var hw = 0.3 * s;
+    o.push('<polygon points="' + (solarX - hw) + ',' + base + ' ' + (solarX + hw) + ',' + (base - 0.14 * s) + ' ' + (solarX + hw) + ',' + (base - 0.14 * s - 5) + ' ' + (solarX - hw) + ',' + (base - 5) + '" fill="#26324A" stroke="#141615" stroke-width="1"/>');
+  }
+  /* keypad on the left gate post */
+  var kx = (P.ped ? L.x0 : L.xg0);
+  if (P.keypad && G > 0) o.push('<rect x="' + (kx - gw / 2 - 0.15 * s) + '" y="' + (yg - 1.2 * s) + '" width="' + (0.13 * s) + '" height="' + (0.22 * s) + '" fill="#141615" stroke="#FFFFFF" stroke-width="1"/><rect x="' + (kx - gw / 2 - 0.13 * s) + '" y="' + (yg - 1.17 * s) + '" width="' + (0.09 * s) + '" height="' + (0.06 * s) + '" fill="' + acc + '"/>');
+  /* break marks */
+  if (L.broken) {
+    var bx = L.xr1, pts = bx + ',' + (yt - 6) + ' ' + (bx + 6) + ',' + (yt + H * s * 0.3) + ' ' + (bx - 6) + ',' + (yt + H * s * 0.6) + ' ' + bx + ',' + (yg + 2);
+    o.push('<polyline points="' + pts + '" fill="none" stroke="#F7F6F2" stroke-width="7"/><polyline points="' + pts + '" fill="none" stroke="#141615" stroke-width="1.2"/>');
+  }
+  /* dimensions */
+  if (G > 0) o.push(dimH(L.xg0, L.xg1, yg + 32, m1(G) + ' m clear opening'));
+  var total = (P.ped ? 1 : 0) + G + P.run;
+  o.push(dimH(L.x0, L.xr1, yg + 60, m1(total) + ' m total frontage' + (L.broken ? ' (run shortened on drawing)' : '')));
+  o.push(dimV(L.x0 - 22, yt, yg, m1(H) + ' m', -9));
+  if (xs.length > 1) o.push(dimH(xs[0], xs[1], yt - 16, m2(L.bay) + ' m centres', true));
+  /* callouts */
+  co.push({ x: Math.round(L.xg1 + L.bay * s * 0.5), y: Math.round(yt + H * s * 0.5), t: ORIENT_LABEL[P.orient] });
+  if (G > 0) co.push({ x: Math.round((L.xg0 + L.xg1) / 2), y: Math.round(yt + H * s * 0.3), t: KIND_LABEL[kind] + ' · ' + m1(G) + ' m' });
+  if (G > 0 && slide) co.push({ x: Math.round(L.xg1 + G * s * 0.5), y: Math.round(yt + 2), t: 'Open position' });
+  if (P.ped) co.push({ x: Math.round((L.x0 + L.xg0) / 2), y: Math.round(yt + H * s * 0.3), t: P.pedLabel });
+  if (P.motor && G > 0) co.push({ x: Math.round(mx), y: Math.round(slide ? my : my), t: slide ? 'Heavy-Duty 24V motor + rack' : '24V swing actuator' + (kind === 'swing2' ? 's' : '') });
+  if (P.motor && G > 0) co.push({ x: Math.round(L.xg0 + gw / 2 + 2), y: Math.round(sy), t: 'Photo-eye pair, beam at 0.45 m' });
+  if (P.motor && P.solar && G > 0) co.push({ x: Math.round(solarX), y: Math.round(base - 3), t: 'Solar panel kit' });
+  if (P.keypad && G > 0) co.push({ x: Math.round(kx - gw / 2 - 0.08 * s), y: Math.round(yg - 1.1 * s), t: 'Intercom keypad' });
+  o.push(callouts(co, [22, 42, 62], 720));
+  o.push('</svg>');
+  return o.join('');
+}
+
+function gatePlan(P, pfx) {
+  var G = P.G || 0;
+  if (!G && !P.ped) return '';
+  var L = gLay(P), s = L.s, yf = 104, col = P.col, dark = mix(col, '#000000', 0.35), acc = P.acc, kind = P.kind, o = [], co = [];
+  var slide = kind === 'slide' || kind === 'cant';
+  var r = kind === 'swing2' ? G / 2 : kind === 'swing1' ? G : 0;
+  var H = Math.round(yf + Math.max(r * s, P.ped ? s : 0, 44) + 44);
+  o.push(svgOpen(720, H, P.label + ', plan'));
+  o.push('<line x1="12" y1="' + yf + '" x2="708" y2="' + yf + '" stroke="#CBC9BE" stroke-width="1" stroke-dasharray="1 4"/>');
+  o.push(T(712, yf - 10, 'STREET', { anchor: 'end', size: 10, fill: '#5C5F58', ls: 1 }) + T(712, yf + 18, 'PROPERTY', { anchor: 'end', size: 10, fill: '#5C5F58', ls: 1 }));
+  /* fence run band */
+  o.push('<rect x="' + L.xg1 + '" y="' + (yf - 3) + '" width="' + (L.xr1 - L.xg1) + '" height="6" fill="' + col + '" stroke="#141615" stroke-width=".9"/>');
+  var sq = 8, k, px, posts = [];
+  if (P.ped) posts.push(L.x0);
+  if (P.ped || G) posts.push(L.xg0);
+  if (G) posts.push(L.xg1);
+  for (k = (G ? 1 : 0); k <= L.nb; k++) { px = L.xg1 + k * L.bay * s; if (px <= L.xr1 + 0.5) posts.push(px); }
+  posts.forEach(function (x) { o.push('<rect x="' + (x - sq / 2) + '" y="' + (yf - sq / 2) + '" width="' + sq + '" height="' + sq + '" fill="#141615"/>'); });
+  /* ped gate */
+  if (P.ped) {
+    o.push('<line x1="' + L.x0 + '" y1="' + yf + '" x2="' + L.xg0 + '" y2="' + yf + '" stroke="#141615" stroke-width="4"/>');
+    o.push('<path d="M ' + L.xg0 + ',' + yf + ' A ' + s + ' ' + s + ' 0 0 1 ' + L.x0 + ',' + (yf + s) + '" fill="none" stroke="#5C5F58" stroke-width="1" stroke-dasharray="4 3"/><line x1="' + L.x0 + '" y1="' + yf + '" x2="' + L.x0 + '" y2="' + (yf + s) + '" stroke="#5C5F58" stroke-width="1.6"/>');
+    co.push({ x: Math.round((L.x0 + L.xg0) / 2), y: yf, t: P.pedLabel });
+  }
+  if (G) {
+    if (slide) {
+      o.push('<rect x="' + L.xg0 + '" y="' + (yf + 9) + '" width="' + (G * s) + '" height="5" fill="' + col + '" stroke="#141615" stroke-width="1"/>');
+      o.push('<rect x="' + L.xg1 + '" y="' + (yf + 9) + '" width="' + (G * s) + '" height="5" fill="none" stroke="' + acc + '" stroke-width="1.4" stroke-dasharray="6 4"/>');
+      if (kind === 'slide') o.push('<line x1="' + L.xg0 + '" y1="' + (yf + 11.5) + '" x2="' + (L.xg1 + G * s) + '" y2="' + (yf + 11.5) + '" stroke="#8A8C86" stroke-width="1" stroke-dasharray="2 3"/>');
+      co.push({ x: Math.round(L.xg0 + G * s * 0.5), y: yf + 9, t: KIND_LABEL[kind] + ' leaf, ' + m1(G) + ' m' });
+      co.push({ x: Math.round(L.xg1 + G * s * 0.5), y: yf + 9, t: 'Open position, inside the boundary' });
+    } else {
+      var xm = (L.xg0 + L.xg1) / 2;
+      o.push('<line x1="' + L.xg0 + '" y1="' + yf + '" x2="' + (kind === 'swing2' ? xm - 1 : L.xg1) + '" y2="' + yf + '" stroke="#141615" stroke-width="4"/>');
+      o.push('<path d="M ' + (L.xg0 + r * s) + ',' + yf + ' A ' + (r * s) + ' ' + (r * s) + ' 0 0 1 ' + L.xg0 + ',' + (yf + r * s) + '" fill="none" stroke="#5C5F58" stroke-width="1" stroke-dasharray="4 3"/><line x1="' + L.xg0 + '" y1="' + yf + '" x2="' + L.xg0 + '" y2="' + (yf + r * s) + '" stroke="#5C5F58" stroke-width="1.6"/>');
+      if (kind === 'swing2') {
+        o.push('<line x1="' + (xm + 1) + '" y1="' + yf + '" x2="' + L.xg1 + '" y2="' + yf + '" stroke="#141615" stroke-width="4"/>');
+        o.push('<path d="M ' + (L.xg1 - r * s) + ',' + yf + ' A ' + (r * s) + ' ' + (r * s) + ' 0 0 0 ' + L.xg1 + ',' + (yf + r * s) + '" fill="none" stroke="#5C5F58" stroke-width="1" stroke-dasharray="4 3"/><line x1="' + L.xg1 + '" y1="' + yf + '" x2="' + L.xg1 + '" y2="' + (yf + r * s) + '" stroke="#5C5F58" stroke-width="1.6"/>');
+      }
+      co.push({ x: Math.round(L.xg0 + r * s * 0.7), y: Math.round(yf + r * s * 0.7), t: 'Swing arc, ' + m1(r) + ' m clear inside' });
+    }
+    if (P.motor) {
+      var mw = Math.max(12, 0.45 * s);
+      if (slide) o.push('<rect x="' + (L.xg1 + 5) + '" y="' + (yf + 17) + '" width="' + mw + '" height="10" fill="' + acc + '" stroke="#141615" stroke-width="1"/>');
+      else { o.push('<rect x="' + (L.xg0 + 5) + '" y="' + (yf + 8) + '" width="12" height="9" fill="' + acc + '" stroke="#141615" stroke-width="1"/>'); if (kind === 'swing2') o.push('<rect x="' + (L.xg1 - 17) + '" y="' + (yf + 8) + '" width="12" height="9" fill="' + acc + '" stroke="#141615" stroke-width="1"/>'); }
+      co.push({ x: Math.round(slide ? L.xg1 + 5 + mw / 2 : L.xg0 + 11), y: yf + (slide ? 17 : 8), t: 'Motor' });
+      o.push('<line x1="' + L.xg0 + '" y1="' + (yf - 5) + '" x2="' + L.xg1 + '" y2="' + (yf - 5) + '" stroke="' + acc + '" stroke-width="1.4" stroke-dasharray="3 4"/>');
+      [L.xg0 + 5, L.xg1 - 11].forEach(function (x) { o.push('<rect x="' + x + '" y="' + (yf - 9) + '" width="6" height="8" fill="' + acc + '" stroke="#141615" stroke-width=".8"/>'); });
+      co.push({ x: Math.round(L.xg0 + 8), y: yf - 9, t: 'Photo-eye pair' });
+    }
+    if (P.keypad) { var kx = P.ped ? L.x0 : L.xg0; o.push('<rect x="' + (kx - 14) + '" y="' + (yf - 18) + '" width="8" height="13" fill="#141615"/>'); co.push({ x: Math.round(kx - 10), y: yf - 18, t: 'Intercom keypad' }); }
+    o.push(dimH(L.xg0, L.xg1, 80, m1(G) + ' m', true));
+  }
+  if (P.ped) o.push(dimH(L.x0, L.xg0, 80, '1.0 m', true));
+  o.push(dimH(L.xg1, L.xr1, 80, m1(P.run) + ' m run' + (L.broken ? ' (shortened)' : ''), true));
+  o.push(callouts(co, [20, 38, 56], 720));
+  o.push('</svg>');
+  return o.join('');
+}
+
+/* Shared quote builder for fence + gate products. R holds the rate table. */
+function gateQuote(S, P, R) {
+  var lines = [], sub = 0, Hf = P.H / 1.8, G = P.G || 0, n, amt;
+  function add(label, note, a, inc) { lines.push({ label: label, note: note, amt: a, inc: !!inc }); sub += a; }
+  var rate = R.fence[P.orient] * Hf;
+  add(R.fenceName[P.orient], m1(P.run) + ' m × ' + money(Math.round(rate)) + '/m at ' + m1(P.H) + ' m high', r10(P.run * rate));
+  n = Math.max(1, Math.ceil(P.run / 2.4)) + 1 + (G > 0 ? 1 : 0) + (P.ped ? 1 : 0);
+  add('Posts and fixings', n + ' × ' + money(R.post), n * R.post);
+  if (G > 0) {
+    var g = R.gate[P.kind];
+    add(KIND_LABEL[P.kind], m1(G) + ' m clear × ' + m1(P.H) + ' m high', r10((g[0] + g[1] * G) * Hf));
+    if (P.motor) { amt = R.motor[P.kind]; add('Heavy-Duty 24V Motor', 'Motor, control board, remote' + (P.kind === 'swing2' ? ' · 2 actuators' : ''), amt); lines.push({ label: 'Photo-eye safety sensors', note: 'Pair, fitted with the motor', amt: 0, inc: true }); }
+    else lines.push({ label: 'Hand-operated gate', note: 'No motor selected', amt: 0, inc: true });
+    if (P.motor && P.solar) add('Solar Kit', 'Panel, battery and charge controller', R.solar);
+    if (P.keypad) add('Intercom Keypad', 'Keypad and wiring to the motor board', R.keypad);
+  }
+  if (P.ped) add(P.pedLabel, '1.0 m leaf, same infill and colour', R.ped);
+  var iLow = 0, iHigh = 0;
+  if (S.inst) { iLow = r10(R.inst[0] + P.run * R.inst[1] + (G > 0 ? R.inst[2] : 0) + (G > 0 && P.motor ? R.inst[3] : 0) + (P.ped ? R.inst[4] : 0)); iHigh = r10(iLow * 1.4); }
+  return { lines: lines, sub: sub, iLow: iLow, iHigh: iHigh, tLow: sub + iLow, tHigh: sub + iHigh };
+}
+
+/* ---------- Alam's Fencing and Gates (Ingleburn, Sydney) ---------- */
+var ACC = '#B92B20';
+var RATE = {
+  fence: { h: 285, v: 305, l: 410, p: 265 }, fenceName: { h: 'Aluminium horizontal slat fencing', v: 'Aluminium vertical slat fencing', l: 'Louvre privacy screen', p: 'Pool fencing' }, post: 95,
+  gate: { slide: [2350, 520], cant: [3100, 600], swing1: [1650, 460], swing2: [2150, 420] },
+  motor: { slide: 1490, cant: 1790, swing1: 1290, swing2: 2280 }, solar: 690, keypad: 420, ped: 890,
+  inst: [650, 65, 950, 420, 280]
+};
+function hexOf(S) { return CFG.colours.filter(function (c) { return c.id === S.colour; })[0].hex; }
+function isGateProd(S) { return S.product === 'slide' || S.product === 'swing'; }
+function gP(S) {
+  var g = isGateProd(S), kind = S.product === 'slide' ? 'slide' : (S.G > 3.5 ? 'swing2' : 'swing1'), pool = S.product === 'pool';
+  return { kind: g ? kind : 'none', run: S.run, G: g ? S.G : 0, H: S.H, orient: S.product === 'louvre' ? 'l' : pool ? 'p' : S.infill, col: hexOf(S), acc: ACC, ped: S.ped,
+    pedLabel: pool ? 'Self-closing pool gate' : 'Matching pedestrian gate', motor: g && S.motor, solar: g && S.solar, keypad: g && S.keypad,
+    label: (g ? KIND_LABEL[kind] : CFG.products.filter(function (p) { return p.id === S.product; })[0].name) + ', front elevation, ' + m1(S.H) + ' metres high' };
+}
+function postsN(P) { return Math.max(1, Math.ceil(P.run / 2.4)) + 1 + (P.G > 0 ? 1 : 0) + (P.ped ? 1 : 0); }
+function colName(S) { return CFG.colours.filter(function (c) { return c.id === S.colour; })[0].name; }
+var CFG = {
+  name: "Alam's Fencing and Gates", ref: 'AFG', phone: '02 9618 7633', email: 'sales@alamsfencingandgates.com.au', addr: 'Ingleburn, Sydney NSW · Aluminium fencing, pool fencing and automatic gates, buy direct',
+  quotePath: '/pages/contact-us', installLabel: 'Sydney Installation Estimate',
+  zone: function (pc) { var n = parseInt(pc, 10); return n >= 2000 && n <= 2234 ? 'Sydney Metro range (2000–2234)' : n >= 2235 && n <= 2999 ? 'NSW, outside Sydney Metro range — confirm delivery' : 'Outside NSW — confirm delivery'; },
+  products: [
+    { id: 'slat', name: 'Aluminium Slat Fencing', desc: 'Horizontal or vertical slat fencing, no gate', min: { run: 2, H: 1.2 } },
+    { id: 'slide', name: 'Slat Fence + Sliding Gate', desc: 'Aluminium slat fencing with an automatic sliding gate', min: { G: 3, run: 3.5, H: 1.2, motor: false } },
+    { id: 'swing', name: 'Slat Fence + Swing Gate', desc: 'Aluminium slat fencing with an automatic swing gate', min: { G: 2.5, run: 2, H: 1.2, motor: false } },
+    { id: 'louvre', name: 'Louvre Privacy Screen', desc: 'Fixed-blade screen for boundaries and courtyards', min: { run: 2, H: 1.5 } },
+    { id: 'pool', name: 'Pool Fencing', desc: 'Vertical picket fencing, 1.2 m minimum height', min: { run: 2, H: 1.2 } }
+  ],
+  defaults: { product: 'slide', run: 6, G: 4.5, H: 1.8, colour: 'monument', infill: 'h', motor: true, solar: false, keypad: false, ped: false, inst: true },
+  dims: [
+    { k: 'G', label: function () { return 'Gate clear opening'; }, range: function (S) { return !isGateProd(S) ? null : S.product === 'slide' ? [3, 6.5, 0.5] : [2.5, 6.5, 0.5]; } },
+    { k: 'run', label: function (S) { return isGateProd(S) ? 'Fence run beside the gate' : 'Fence length'; }, range: function (S) { return S.product === 'slide' ? [Math.ceil((S.G + 0.3) * 2) / 2, 20, 0.5] : [2, 20, 0.5]; } },
+    { k: 'H', label: function () { return 'Height'; }, range: function (S) { return S.product === 'pool' ? [1.2, 1.8, 0.1] : S.product === 'louvre' ? [1.5, 2.1, 0.1] : [1.2, 2.1, 0.1]; } }
+  ],
+  colourLabel: 'Powder-coat colour', colourNote: 'On-screen colours are approximate. Powder-coat samples are confirmed at the site measure.',
+  colours: [
+    { id: 'monument', name: 'Monument', hex: '#323233' }, { id: 'surfmist', name: 'Surfmist', hex: '#E4E2D5' }, { id: 'basalt', name: 'Basalt', hex: '#6D6C6E' },
+    { id: 'woodland', name: 'Woodland Grey', hex: '#4B4C46' }, { id: 'nightsky', name: 'Night Sky', hex: '#1C1C1C' }, { id: 'dune', name: 'Dune', hex: '#B1ADA3' }
+  ],
+  selects: [{ k: 'infill', label: 'Slat direction', show: function (S) { return isGateProd(S) || S.product === 'slat'; }, opts: [{ v: 'h', name: 'Horizontal slat', sub: 'Privacy, modern look' }, { v: 'v', name: 'Vertical slat', sub: 'Adds about ' + money(20) + ' per metre' }] }],
+  toggles: [
+    { k: 'motor', label: 'Heavy-Duty 24V Motor', sub: 'Motor, control board and remotes; photo-eye safety sensors included', show: isGateProd, hint: function (S) { return '+' + money(RATE.motor[gP(S).kind]); } },
+    { k: 'solar', label: 'Solar Kit', sub: 'Panel, battery and charge controller', show: isGateProd, off: function (S) { return S.motor ? '' : 'Needs a motor'; }, hint: function () { return '+' + money(RATE.solar); } },
+    { k: 'keypad', label: 'Intercom Keypad', sub: 'Keypad on the entry post, wired to the motor board', show: isGateProd, hint: function () { return '+' + money(RATE.keypad); } },
+    { k: 'ped', label: function (S) { return S.product === 'pool' ? 'Self-closing pool gate' : 'Matching Pedestrian Gate'; }, sub: '1.0 m leaf, same infill and colour', hint: function () { return '+' + money(RATE.ped); } },
+    { k: 'inst', label: 'Sydney Installation Estimate', sub: 'Listed separately from the product price', hint: function () { return ''; } }
+  ],
+  legend: [
+    ['<rect x="2" y="1" width="22" height="8" fill="none" stroke="' + ACC + '" stroke-width="1.5" stroke-dasharray="5 3"/>', 'Gate open position'],
+    ['<rect x="8" y="1" width="10" height="8" fill="' + ACC + '"/>', 'Motor'],
+    ['<circle cx="6" cy="5" r="3" fill="' + ACC + '"/><line x1="9" y1="5" x2="22" y2="5" stroke="' + ACC + '" stroke-dasharray="3 3"/>', 'Photo-eye beam'],
+    ['<rect x="9" y="0" width="8" height="10" fill="#141615"/>', 'Post']
+  ],
+  views: function (S, pfx) { var P = gP(S); return [{ cap: 'Front elevation', svg: gateElev(P, pfx + 'e') }, { cap: 'Plan', svg: gatePlan(P, pfx + 'p') }]; },
+  stats: function (S) { var P = gP(S); return [['Total frontage', m1((S.ped ? 1 : 0) + P.G + S.run) + ' m'], [P.G ? 'Gate opening' : 'Gates', P.G ? m1(P.G) + ' m' : (S.ped ? '1.0 m leaf' : 'None')], ['Posts', postsN(P)], ['Height', m1(S.H) + ' m']]; },
+  warn: function (S) {
+    var P = gP(S);
+    if (S.product === 'pool') return 'Pool barriers: 1.2 m minimum height, 100 mm maximum gap between pickets, self-closing and self-latching gate. Final compliance is confirmed at the site measure.';
+    if (S.product === 'louvre') return '';
+    if (P.kind === 'swing1' || P.kind === 'swing2') return 'Swing leaves open inwards: keep ' + m1(P.kind === 'swing2' ? S.G / 2 : S.G) + ' m clear inside the boundary. Openings above 3.5 m use two leaves.';
+    return 'The leaf parks along the fence run, so the run is held at no less than the opening plus 0.3 m (' + m1(Math.ceil((S.G + 0.3) * 2) / 2) + ' m here).';
+  },
+  price: function (S) { return gateQuote(S, gP(S), RATE); },
+  spec: function (S) { var P = gP(S); return [
+    ['Product', CFG.products.filter(function (p) { return p.id === S.product; })[0].name], ['Fence length', m1(S.run) + ' m', 1], ['Gate opening × Height', (P.G ? m1(P.G) : '—') + ' × ' + m1(S.H) + ' m', 1],
+    ['Infill', ORIENT_LABEL[P.orient]], ['Colour', colName(S)], ['Drive', P.G ? (P.motor ? 'Heavy-Duty 24V Motor' + (P.solar ? ' + Solar Kit' : '') : 'Hand operated') : 'No gate drive'],
+    ['Post bays', postsN(P) + ' posts · ' + m2(S.run / Math.max(1, Math.ceil(S.run / 2.4))) + ' m centres']]; },
+  leadConfig: function (S) { var P = gP(S); return { product_type: CFG.products.filter(function (p) { return p.id === S.product; })[0].name, fence_length_m: S.run, gate_clear_opening_m: P.G || null, height_m: S.H, total_frontage_m: (S.ped ? 1 : 0) + P.G + S.run, posts: postsN(P), infill: ORIENT_LABEL[P.orient], colour: colName(S),
+    accessories: { motor_24v: !!P.motor, solar_kit: !!(P.motor && P.solar), intercom_keypad: !!P.keypad, pedestrian_or_pool_gate: S.ped, install_estimate_requested: S.inst } }; },
+  leadRows: function (S) { var P = gP(S); return [
+    ['Size', '<span class="mono">' + m1(S.run) + ' m fence' + (P.G ? ' · ' + m1(P.G) + ' m gate opening' : '') + ' · ' + m1(S.H) + ' m high</span>'],
+    ['Infill / colour', esc(ORIENT_LABEL[P.orient]) + ' · ' + esc(colName(S))],
+    ['Motor and accessories', esc([P.G ? (P.motor ? 'Heavy-Duty 24V Motor' : 'Hand operated') : '', P.motor && P.solar ? 'Solar Kit' : '', P.keypad ? 'Intercom Keypad' : '', S.ped ? P.pedLabel : ''].filter(Boolean).join(', ') || 'None')]]; }
+};
+
+/* ---------- engine: renders UI from CFG ---------- */
+var S = JSON.parse(JSON.stringify(CFG.defaults));
+var lastLead = null;
+
+function prod() { return CFG.products.filter(function (p) { return p.id === S.product; })[0]; }
+function colour() { return CFG.colours.filter(function (c) { return c.id === S.colour; })[0]; }
+function pressed(el, on) { el.setAttribute('aria-pressed', on ? 'true' : 'false'); }
+function each(sel, fn) { Array.prototype.forEach.call(document.querySelectorAll(sel), fn); }
+
+function refCode() {
+  var str = JSON.stringify(S), h = 5381, i;
+  for (i = 0; i < str.length; i++) h = ((h << 5) + h + str.charCodeAt(i)) >>> 0;
+  var d = new Date(), p = function (n) { return (n < 10 ? '0' : '') + n; };
+  return CFG.ref + '-' + d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate()) + '-' + ('0000' + (h % 10000)).slice(-4);
+}
+function totalText(q) { return S.inst ? money(q.tLow) + ' – ' + money(q.tHigh) : money(q.sub); }
+
+/* ---------- build controls once ---------- */
+(function build() {
+  var h = '';
+  CFG.products.forEach(function (p) {
+    var st = JSON.parse(JSON.stringify(CFG.defaults)), kk;
+    for (kk in p.min) st[kk] = p.min[kk];
+    st.product = p.id; st.inst = false;
+    p.from = CFG.price(st).sub;
+    h += '<button type="button" class="sc" data-act="product" data-v="' + p.id + '" aria-pressed="false"><span class="nm">' + esc(p.name) + '</span><span class="ds">' + esc(p.desc) + '</span><span class="pr"><small>From</small>' + money(p.from) + '</span></button>';
+  });
+  $('prodList').innerHTML = h; h = '';
+  CFG.dims.forEach(function (d) {
+    h += '<div class="slr" id="s_' + d.k + '"><div class="t"><span style="margin:0;color:inherit;font-size:inherit;font-weight:inherit" id="l_' + d.k + '"></span><span id="n_' + d.k + '"></span></div><output id="o_' + d.k + '"></output>' +
+      '<div class="rg"><input type="range" id="r_' + d.k + '"><div class="rng"><span id="a_' + d.k + '"></span><span id="b_' + d.k + '"></span></div></div></div>';
+  });
+  $('dimList').innerHTML = h; h = '';
+  CFG.colours.forEach(function (c) { h += '<button type="button" class="sw" data-act="colour" data-v="' + c.id + '" aria-pressed="false"><i style="background:' + c.hex + '"></i><span class="a">' + esc(c.name) + '</span><span class="b">' + c.hex + '</span></button>'; });
+  $('swList').innerHTML = h; $('colLab').textContent = CFG.colourLabel; $('colNote').textContent = CFG.colourNote;
+  h = '';
+  CFG.selects.forEach(function (s) {
+    h += '<div class="sel" id="sel_' + s.k + '"><h4 class="sublab">' + esc(s.label) + '</h4><div class="cols2">';
+    s.opts.forEach(function (op) { h += '<button type="button" class="opt" data-act="sel" data-k="' + s.k + '" data-v="' + op.v + '" aria-pressed="false"><span class="a">' + esc(op.name) + '</span><span class="b">' + esc(op.sub) + '</span></button>'; });
+    h += '</div></div>';
+  });
+  $('selList').innerHTML = h; h = '';
+  CFG.toggles.forEach(function (t) {
+    h += '<div class="row" id="t_' + t.k + '"><label class="chk"><input type="checkbox" id="c_' + t.k + '"><span><span class="rl" id="tl_' + t.k + '"></span><br><span class="rs" id="ts_' + t.k + '"></span></span></label><span class="price" id="tp_' + t.k + '"></span></div>';
+  });
+  $('tgList').innerHTML = h;
+  h = '';
+  CFG.legend.forEach(function (l) { h += '<span><svg viewBox="0 0 26 10">' + l[0] + '</svg>' + esc(l[1]) + '</span>'; });
+  $('legend').innerHTML = h;
+})();
+
+/* ---------- state normalisation ---------- */
+function ranges() {
+  var out = {};
+  CFG.dims.forEach(function (d) { out[d.k] = d.range(S); });
+  return out;
+}
+function normalise() {
+  var pass, R;
+  for (pass = 0; pass < 2; pass++) {
+    R = ranges();
+    CFG.dims.forEach(function (d) {
+      var r = R[d.k];
+      if (!r) return;
+      var v = Math.min(r[1], Math.max(r[0], S[d.k]));
+      v = r[0] + Math.round((v - r[0]) / r[2]) * r[2];
+      S[d.k] = Math.round(Math.min(r[1], v) * 100) / 100;
+    });
+  }
+  CFG.toggles.forEach(function (t) { if (t.off && t.off(S)) S[t.k] = false; });
+  if (CFG.fix) CFG.fix(S);
+  return R;
+}
+
+/* ---------- render ---------- */
+function render() {
+  var R = normalise(), p = prod(), q = CFG.price(S), vis, warn;
+  each('[data-act="product"]', function (b) { pressed(b, b.dataset.v === S.product); });
+  each('[data-act="colour"]', function (b) { pressed(b, b.dataset.v === S.colour); });
+  each('[data-act="sel"]', function (b) { pressed(b, S[b.dataset.k] === b.dataset.v); });
+
+  CFG.dims.forEach(function (d) {
+    var r = R[d.k], row = $('s_' + d.k);
+    row.hidden = !r;
+    if (!r) return;
+    var inp = $('r_' + d.k);
+    inp.setAttribute('min', r[0]); inp.setAttribute('max', r[1]); inp.setAttribute('step', r[2]); inp.value = S[d.k];
+    inp.setAttribute('aria-label', d.label(S) + ' in metres');
+    inp.style.setProperty('--pct', ((S[d.k] - r[0]) / (r[1] - r[0]) * 100) + '%');
+    $('l_' + d.k).textContent = d.label(S);
+    $('n_' + d.k).textContent = m1(r[0]) + ' – ' + m1(r[1]) + ' m, ' + r[2] + ' m steps';
+    $('o_' + d.k).textContent = m1(S[d.k]) + ' m';
+    $('a_' + d.k).textContent = m1(r[0]); $('b_' + d.k).textContent = m1(r[1]);
+  });
+  var anySel = false;
+  CFG.selects.forEach(function (s) { var on = !s.show || s.show(S); $('sel_' + s.k).hidden = !on; if (on) anySel = true; });
+  $('selGrp').hidden = !anySel;
+  CFG.toggles.forEach(function (t) {
+    var on = !t.show || t.show(S), reason = t.off ? t.off(S) : '';
+    $('t_' + t.k).hidden = !on;
+    $('c_' + t.k).checked = !!S[t.k]; $('c_' + t.k).disabled = !!reason;
+    $('t_' + t.k).classList.toggle('off', !!reason);
+    $('tl_' + t.k).textContent = typeof t.label === 'function' ? t.label(S) : t.label;
+    $('ts_' + t.k).textContent = reason || (typeof t.sub === 'function' ? t.sub(S) : t.sub);
+    $('tp_' + t.k).textContent = t.hint ? t.hint(S, q) : '';
+  });
+  $('tgNote').textContent = CFG.tgNote ? CFG.tgNote(S) : '';
+
+  var views = CFG.views(S, 'a');
+  var h = '';
+  views.forEach(function (v) { if (v.svg) h += '<div class="cap">' + esc(v.cap) + '</div>' + v.svg; });
+  $('views').innerHTML = h;
+  h = '';
+  CFG.stats(S, q).forEach(function (a) { h += '<div><div class="k">' + esc(a[0]) + '</div><div class="v">' + esc(a[1]) + '</div></div>'; });
+  $('stats').innerHTML = h;
+  warn = CFG.warn ? CFG.warn(S) : '';
+  $('warn').hidden = !warn; $('warn').textContent = warn;
+
+  $('qRef').textContent = refCode();
+  h = '';
+  CFG.spec(S, q).forEach(function (a) { h += '<dt>' + esc(a[0]) + '</dt><dd' + (a[2] ? ' class="mono"' : '') + '>' + esc(a[1]) + '</dd>'; });
+  $('qSpec').innerHTML = h;
+  h = '';
+  q.lines.forEach(function (l) { h += '<div class="ql"><div class="n">' + esc(l.label) + '</div><div class="a' + (l.inc ? ' inc' : '') + '">' + (l.inc ? 'Included' : money(l.amt)) + '</div><div class="s">' + esc(l.note) + '</div></div>'; });
+  h += '<div class="ql sub"><div class="n">Product Estimate (incl. GST)</div><div class="a">' + money(q.sub) + '</div></div>';
+  if (S.inst) h += '<div class="ql"><div class="n">' + esc(CFG.installLabel) + '</div><div class="a">' + money(q.iLow) + ' – ' + money(q.iHigh) + '</div><div class="s">Quoted separately</div></div>';
+  else h += '<div class="ql off"><div class="n">Installation</div><div class="a inc">Not included</div><div class="s">Quoted separately</div></div>';
+  $('qLines').innerHTML = h;
+  $('totK').textContent = S.inst ? 'Total indicative range' : 'Total (product only)';
+  $('totV').textContent = totalText(q); $('mbTotal').textContent = totalText(q);
+  $('printSheet').innerHTML = printHTML(q);
+}
+
+function printHTML(q) {
+  var d = new Date().toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric' }), rows = '', spec = '';
+  CFG.spec(S, q).forEach(function (a) { spec += '<tr><td>' + esc(a[0]) + '</td><td>' + esc(a[1]) + '</td></tr>'; });
+  q.lines.forEach(function (l) { rows += '<tr><td>' + esc(l.label) + '<span class="s">' + esc(l.note) + '</span></td><td class="r">' + (l.inc ? 'Included' : money(l.amt)) + '</td></tr>'; });
+  rows += '<tr class="sub"><td>Product Estimate (incl. GST)</td><td class="r">' + money(q.sub) + '</td></tr>';
+  rows += S.inst ? '<tr><td>' + esc(CFG.installLabel) + '<span class="s">Quoted separately</span></td><td class="r">' + money(q.iLow) + ' – ' + money(q.iHigh) + '</td></tr>' : '<tr><td>Installation<span class="s">Quoted separately, not included</span></td><td class="r">—</td></tr>';
+  rows += '<tr class="grand"><td>' + (S.inst ? 'Total indicative range' : 'Total (product only)') + '</td><td class="r">' + totalText(q) + '</td></tr>';
+  var dr = '';
+  CFG.views(S, 'p').forEach(function (v) { if (v.svg) dr += '<h4>' + esc(v.cap) + '</h4>' + v.svg; });
+  return '<div class="ph"><div><div class="pb">' + esc(CFG.name) + '</div><div class="pa">' + esc(CFG.addr) + '<br>' + esc(CFG.phone) + ' · ' + esc(CFG.email) + '</div></div>' +
+    '<div class="pt"><b>Indicative Quote</b><span class="mono">' + refCode() + '</span><br>' + d + '</div></div>' +
+    '<h4>Configuration</h4><table class="spc"><tbody>' + spec + '</tbody></table>' +
+    '<h4>Itemised estimate (AUD)</h4><table><thead><tr><th>Item</th><th class="r">Amount</th></tr></thead><tbody>' + rows + '</tbody></table>' +
+    '<div class="pd">Indicative only. Product prices include GST; installation quoted separately. Final price confirmed after site measure. This document is not a tax invoice or a contract.</div>' +
+    '<div class="pg">' + dr + '</div>';
+}
+
+/* ---------- events ---------- */
+document.addEventListener('click', function (e) {
+  var t = e.target.closest ? e.target.closest('[data-act]') : null;
+  if (!t || t.disabled) return;
+  var a = t.dataset.act;
+  if (a === 'product') { S.product = t.dataset.v; if (CFG.onProduct) CFG.onProduct(S); }
+  else if (a === 'colour') S.colour = t.dataset.v;
+  else if (a === 'sel') S[t.dataset.k] = t.dataset.v;
+  render();
+});
+CFG.dims.forEach(function (d) {
+  $('r_' + d.k).addEventListener('input', function () { S[d.k] = parseFloat(this.value); render(); });
+});
+CFG.toggles.forEach(function (t) {
+  $('c_' + t.k).addEventListener('change', function () { S[t.k] = this.checked; render(); });
+});
+$('btnPrint').addEventListener('click', function () { render(); window.print(); });
+
+/* ---------- lead dialog ---------- */
+var dlg = $('dlg');
+function openDlg() { if (typeof dlg.showModal === 'function') dlg.showModal(); else dlg.setAttribute('open', ''); }
+function closeDlg() { if (typeof dlg.close === 'function') dlg.close(); else dlg.removeAttribute('open'); }
+$('btnLead').addEventListener('click', function () { $('leadForm').hidden = false; $('leadOut').hidden = true; openDlg(); });
+$('dlgX').addEventListener('click', closeDlg);
+$('btnDone').addEventListener('click', closeDlg);
+$('btnBack').addEventListener('click', function () { $('leadOut').hidden = true; $('leadForm').hidden = false; });
+dlg.addEventListener('click', function (e) { if (e.target === dlg) closeDlg(); });
+function countKeys(o) { var n = 0; Object.keys(o).forEach(function (k) { n += (o[k] && typeof o[k] === 'object') ? countKeys(o[k]) : 1; }); return n; }
+
+$('leadForm').addEventListener('submit', function (e) {
+  e.preventDefault();
+  var name = $('fName').value.trim(), pc = $('fPost').value.trim(), mail = $('fMail').value.trim(), phone = $('fPhone').value.trim(), ok = true;
+  $('eName').textContent = name ? '' : 'Please enter your name.'; if (!name) ok = false;
+  $('ePost').textContent = /^\d{4}$/.test(pc) ? '' : 'Enter a 4-digit postcode.'; if (!/^\d{4}$/.test(pc)) ok = false;
+  var mailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail);
+  $('eMail').textContent = mailOk ? '' : 'Enter a valid email address.'; if (!mailOk) ok = false;
+  if (!ok) return;
+  var q = CFG.price(S), zone = CFG.zone(pc);
+  var lead = {
+    lead: { name: name, email: mail, phone: phone || null, postcode: pc, postcode_zone: zone },
+    product: prod().name,
+    configuration: CFG.leadConfig(S, q),
+    budget_aud_inc_gst: { product_estimate: q.sub, install_low: q.iLow, install_high: q.iHigh, total_low: q.tLow, total_high: q.tHigh },
+    meta: { quote_ref: refCode(), source: CFG.quotePath, created: new Date().toISOString() }
+  };
+  lastLead = lead;
+  var rows = [['Contact', esc(name) + ' · ' + esc(mail) + (phone ? ' · ' + esc(phone) : '')], ['Postcode', '<span class="mono">' + esc(pc) + '</span> — ' + esc(zone)], ['Product', esc(prod().name)]]
+    .concat(CFG.leadRows(S, q)).concat([
+      ['Product estimate', '<span class="mono">' + money(q.sub) + '</span> incl. GST'],
+      ['Install estimate', S.inst ? '<span class="mono">' + money(q.iLow) + ' – ' + money(q.iHigh) + '</span> (separate)' : 'Not requested'],
+      ['Budget band', '<span class="mono">' + totalText(q) + '</span>'],
+      ['Structured fields', '<span class="mono">' + countKeys(lead) + '</span> captured, none left to a phone call']]);
+  var h = '<div class="h">Lead received · Quote ref ' + esc(refCode()) + '</div><dl>';
+  rows.forEach(function (r) { h += '<dt>' + r[0] + '</dt><dd>' + r[1] + '</dd>'; });
+  $('leadTbl').innerHTML = h + '</dl>';
+  $('leadJson').textContent = JSON.stringify(lead, null, 2);
+  $('leadForm').hidden = true; $('leadOut').hidden = false;
+  dlg.scrollTop = 0;
+});
+$('btnCopy').addEventListener('click', function () {
+  var btn = this, txt = $('leadJson').textContent;
+  function done(ok) { btn.textContent = ok ? 'Copied' : 'Copy failed'; setTimeout(function () { btn.textContent = 'Copy lead JSON'; }, 1500); }
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(function () { done(true); }, function () { done(false); });
+  else done(false);
+});
+
+/* deep link: #product=sliding&G=5 pre-fills the configurator */
+(function () {
+  var hash = location.hash.replace(/^#/, '');
+  if (!hash) return;
+  var pairs = hash.split('&').sort(function (a, b) { return (b.indexOf('product=') === 0) - (a.indexOf('product=') === 0); }), applied = false;
+  pairs.forEach(function (kv) {
+    var a = kv.split('='), k = a[0], v = decodeURIComponent(a[1] || '');
+    if (!(k in S)) return;
+    if (k === 'product' && CFG.onProduct && !applied) { S.product = v; CFG.onProduct(S); applied = true; return; }
+    S[k] = typeof S[k] === 'number' ? parseFloat(v) : typeof S[k] === 'boolean' ? (v === 'true' || v === '1') : v;
+  });
+})();
+render();
+
+})();
+</script>
+</body>
+</html>

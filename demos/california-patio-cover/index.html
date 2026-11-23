@@ -1,0 +1,777 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Interactive Quote Preview — California Patio Cover</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F4F6F2;--card:#FFFFFF;--line:#DCE2D8;--step:#EBEFE7;--ink:#121712;--muted:#525B50;--rule:#C2CABE;--hatch:#909A8C;--grid:#E6EBE2;--brand:#166534;--brandInk:#166534;--onBrand:#FFFFFF;--brandDark:#12512A;--tint:#EFF4F1;--accent:#f75a08;--accentInk:#C04606;
+  --disp:'Space Grotesk',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+  --sans:'IBM Plex Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.5}
+button,input,output{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--brandInk);outline-offset:2px}
+.mono,output{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+.concept{border-bottom:1px solid var(--line);background:var(--bg);padding:7px 20px;font-family:var(--mono);font-size:11.5px;color:var(--muted);text-align:center;letter-spacing:.01em}
+
+.mast{max-width:1240px;margin:0 auto;padding:28px 20px 22px;display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap}
+.brand{font-family:var(--disp);font-weight:700;font-size:28px;letter-spacing:-.02em;color:var(--brandInk);line-height:1.05}
+.addr{margin-top:6px;font-size:12.5px;color:var(--muted);max-width:640px}
+.mast h1{margin:0;font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+
+.wrap{max-width:1240px;margin:0 auto;padding:0 20px 56px;display:grid;grid-template-columns:minmax(0,1fr) 392px;gap:20px;align-items:start}
+.card{background:var(--card);border:1px solid var(--line);border-radius:2px}
+.card+.card{margin-top:20px}
+.card>header{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:14px 20px;border-bottom:1px solid var(--line)}
+.card>header h2{margin:0;font-size:13px;font-weight:700;letter-spacing:.07em;text-transform:uppercase}
+.card>header .hint{font-size:12px;color:var(--muted)}
+.body{padding:18px 20px}
+
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:2px;overflow:hidden}
+.seg button{border:0;background:var(--card);padding:6px 12px;font-size:12.5px;font-weight:500;color:var(--muted)}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed="true"]{background:var(--brand);color:var(--onBrand)}
+.draw{padding:8px 12px 0}
+.draw .cap{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:8px 8px 0}
+.draw svg{display:block;width:100%;height:auto}
+svg text{font-family:var(--mono)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line);margin-top:8px}
+.stats>div{padding:12px 20px}
+.stats>div+div{border-left:1px solid var(--line)}
+.stats .k{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.stats .v{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:18px;font-weight:600;letter-spacing:-.02em}
+.legend{display:flex;flex-wrap:wrap;gap:6px 20px;padding:10px 20px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:8px}
+.legend svg{width:26px;height:12px}
+
+.grp+.grp{margin-top:26px;padding-top:22px;border-top:1px solid var(--line)}
+.lab{font-size:12px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin:0 0 12px}
+.series{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.sc{display:flex;flex-direction:column;gap:2px;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:2px;padding:14px 16px;min-height:122px}
+.sc:hover{border-color:var(--rule)}
+.sc[aria-pressed="true"]{border-color:var(--brand);outline:1px solid var(--brand);background:var(--tint)}
+.sc .nm{font-weight:700;font-size:15px;letter-spacing:-.015em}
+.sc .ds{font-size:12.5px;color:var(--muted)}
+.sc .op{font-size:12px;color:var(--muted);margin-top:2px}
+.sc .pr{margin-top:auto;padding-top:10px;font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:13px;font-weight:600}
+.sc .pr small{font-family:var(--sans);font-weight:400;color:var(--muted);font-size:12px;margin-right:6px}
+
+.slr{display:grid;grid-template-columns:1fr auto;gap:0 16px;align-items:center;margin-bottom:16px}
+.slr:last-child{margin-bottom:0}
+.slr .t{font-weight:600;font-size:13.5px}
+.slr .t span{font-weight:400;color:var(--muted);font-size:12px;margin-left:8px}
+.slr output{font-size:16px;font-weight:600;letter-spacing:-.02em;text-align:right;min-width:72px}
+.slr .rg{grid-column:1/-1}
+.rng{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:-2px}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:26px;margin:0;background:transparent;--pct:0%}
+input[type=range]::-webkit-slider-runnable-track{height:2px;background:linear-gradient(to right,var(--brand) var(--pct),var(--rule) var(--pct))}
+input[type=range]::-moz-range-track{height:2px;background:var(--rule)}
+input[type=range]::-moz-range-progress{height:2px;background:var(--brand)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;margin-top:-7px;border-radius:2px;background:var(--brand);border:2px solid #fff;outline:1px solid var(--brand)}
+input[type=range]::-moz-range-thumb{width:12px;height:12px;border-radius:2px;background:var(--brand);border:2px solid #fff;outline:1px solid var(--brand)}
+
+.cols2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.opt{display:flex;flex-direction:column;align-items:flex-start;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:2px;padding:11px 14px}
+.opt[aria-pressed="true"]{border-color:var(--brand);outline:1px solid var(--brand);background:var(--tint)}
+.opt:disabled{cursor:not-allowed;color:var(--muted);background:var(--step)}
+.opt .a{font-weight:600;font-size:13.5px}
+.opt .b{font-size:12px;color:var(--muted)}
+.note{font-size:12px;color:var(--muted);margin:10px 0 0}
+.swatches{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.sw{background:var(--card);border:1px solid var(--line);border-radius:2px;padding:8px;text-align:left}
+.sw i{display:block;height:34px;border:1px solid rgba(20,22,21,.28);border-radius:1px;margin-bottom:8px}
+.sw .a{font-weight:600;font-size:13px;display:block}
+.sw .b{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.sw[aria-pressed="true"]{border-color:var(--brand);outline:1px solid var(--brand)}
+
+.row{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:12px 0;border-bottom:1px solid var(--line)}
+.row:first-of-type{padding-top:0}
+.row:last-child{border-bottom:0;padding-bottom:0}
+.row .rl{font-weight:600;font-size:13.5px}
+.row .rs{font-size:12px;color:var(--muted)}
+.step{display:inline-flex;align-items:stretch;border:1px solid var(--line);border-radius:2px;flex:none}
+.step button{width:34px;height:34px;border:0;background:var(--card);font-size:17px;line-height:1}
+.step button:disabled{color:var(--rule);cursor:not-allowed;background:var(--step)}
+.step button:not(:disabled):hover{background:var(--step)}
+.step output{min-width:36px;display:flex;align-items:center;justify-content:center;font-weight:600;border-left:1px solid var(--line);border-right:1px solid var(--line)}
+.chk{display:flex;align-items:center;gap:10px;cursor:pointer}
+.chk input{width:16px;height:16px;accent-color:var(--brand);margin:0}
+.price{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:13px;font-weight:500;white-space:nowrap}
+
+aside{position:sticky;top:16px;max-height:calc(100vh - 32px);overflow:auto}
+.qhead{display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:14px 20px;border-bottom:1px solid var(--line)}
+.qhead h2{margin:0;font-size:13px;font-weight:700;letter-spacing:.07em;text-transform:uppercase}
+.qhead .mono{font-size:11px;color:var(--muted)}
+.spec{margin:0;padding:12px 20px;background:var(--step);border-bottom:1px solid var(--line);display:grid;grid-template-columns:auto 1fr;gap:3px 14px;font-size:12.5px}
+.spec dt{color:var(--muted)}
+.spec dd{margin:0;text-align:right;font-weight:500}
+.spec dd.mono{font-size:12px}
+.ql{display:grid;grid-template-columns:1fr auto;column-gap:14px;padding:9px 20px;border-bottom:1px solid var(--line)}
+.ql .n{font-weight:500;font-size:13px}
+.ql .a{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:13px;white-space:nowrap}
+.ql .a.inc{font-family:var(--sans);color:var(--muted);font-size:12.5px}
+.ql .s{grid-column:1;font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+.ql.sub{background:var(--step)}
+.ql.sub .n,.ql.sub .a{font-weight:700}
+.ql.off .n,.ql.off .a{color:var(--muted)}
+.tot{padding:16px 20px;border-bottom:1px solid var(--line)}
+.tot .k{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.tot .v{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:24px;font-weight:600;letter-spacing:-.03em;color:var(--brandInk);margin-top:2px;line-height:1.2}
+.tot .fin{font-size:12px;color:var(--muted);margin-top:6px}
+.disc{padding:12px 20px 0;font-size:12px;color:var(--muted);margin:0}
+.acts{padding:16px 20px 20px;display:grid;gap:10px}
+.btn{display:block;width:100%;text-align:center;border-radius:2px;padding:12px 14px;font-weight:600;font-size:13.5px;border:1px solid var(--ink);background:var(--card);color:var(--ink)}
+.btn:hover{background:var(--step)}
+.btn.pri{background:var(--brand);border-color:var(--brand);color:var(--onBrand)}
+.btn.pri:hover{background:var(--brandDark);border-color:var(--brandDark)}
+.foot{max-width:1240px;margin:0 auto;padding:0 20px 40px;font-size:12px;color:var(--muted)}
+.mbar{display:none}
+
+dialog{width:min(640px,calc(100vw - 24px));max-height:calc(100vh - 32px);padding:0;border:1px solid var(--ink);border-radius:2px;background:var(--card);color:var(--ink);overflow:auto}
+dialog::backdrop{background:rgba(20,22,21,.55)}
+.dh{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;border-bottom:1px solid var(--line)}
+.dh h3{margin:0;font-size:14px;letter-spacing:-.01em}
+.x{border:1px solid var(--line);background:var(--card);width:30px;height:30px;border-radius:2px;font-size:16px;line-height:1}
+.db{padding:18px 20px 20px}
+.f{display:grid;gap:14px}
+.f label{display:grid;gap:5px;font-size:12.5px;font-weight:600}
+.f input{border:1px solid var(--rule);border-radius:2px;padding:10px 12px;font-size:14px;background:var(--card);font-weight:400}
+.f input:focus{outline:2px solid var(--brandInk);outline-offset:0;border-color:var(--brandInk)}
+.f .err{color:#9B1C1C;font-weight:500;font-size:12px}
+.f .two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mini{font-size:12.5px;color:var(--muted);margin:0 0 14px}
+.lead{border:1px solid var(--line);margin:0 0 14px}
+.lead .h{padding:8px 12px;background:var(--step);border-bottom:1px solid var(--line);font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase}
+.lead dl{margin:0;display:grid;grid-template-columns:150px 1fr}
+.lead dt,.lead dd{margin:0;padding:7px 12px;border-bottom:1px solid var(--line);font-size:12.5px}
+.lead dt{color:var(--muted)}
+.lead dd{font-weight:500}
+.lead dd.mono,.lead .mono{font-size:12px}
+.lead dl>:nth-last-child(-n+2){border-bottom:0}
+pre{margin:0 0 14px;padding:12px;background:var(--ink);color:#EDEBE5;font-family:var(--mono);font-size:11.5px;line-height:1.55;overflow:auto;max-height:240px;border-radius:2px}
+.dact{display:flex;gap:10px;flex-wrap:wrap}
+.dact .btn{width:auto;flex:1;min-width:140px}
+[hidden]{display:none!important}
+
+@media (max-width:980px){
+  .wrap{grid-template-columns:1fr}
+  aside{position:static;max-height:none;overflow:visible}
+  body{padding-bottom:64px}
+  .mbar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:5;background:var(--card);border-top:1px solid var(--ink);padding:10px 16px;justify-content:space-between;align-items:center;gap:12px}
+  .mbar .k{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  .mbar .v{font-family:var(--mono);font-variant-numeric:tabular-nums;font-weight:600;font-size:15px;color:var(--brandInk)}
+  .mbar a{color:var(--onBrand);background:var(--brand);padding:9px 14px;border-radius:2px;font-weight:600;font-size:13px;text-decoration:none}
+}
+@media (max-width:600px){
+  .series,.cols2{grid-template-columns:1fr}
+  .swatches{grid-template-columns:1fr 1fr}
+  .stats{grid-template-columns:1fr 1fr}
+  .stats>div:nth-child(3){border-left:0}
+  .stats>div:nth-child(n+3){border-top:1px solid var(--line)}
+  .f .two{grid-template-columns:1fr}
+  .lead dl{grid-template-columns:110px 1fr}
+  .mast{padding-top:20px}
+}
+
+#printSheet{display:none}
+@page{size:A4;margin:14mm}
+@media print{
+  html,body{background:#fff!important}
+  body{padding:0!important;font-size:10pt}
+  body>*:not(#printSheet){display:none!important}
+  #printSheet{display:block;color:#141615;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  #printSheet .ph{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:1.5pt solid var(--brand);padding-bottom:8pt;margin-bottom:12pt}
+  #printSheet .pb{font-family:var(--disp);font-size:20pt;font-weight:700;letter-spacing:-.02em;color:var(--brandInk)}
+  #printSheet .pa{font-size:8.5pt;color:#4A4D47;margin-top:3pt}
+  #printSheet .pt{text-align:right;font-size:9pt}
+  #printSheet .pt b{display:block;font-size:12pt;letter-spacing:.06em;text-transform:uppercase}
+  #printSheet h4{margin:14pt 0 5pt;font-size:8.5pt;letter-spacing:.08em;text-transform:uppercase}
+  #printSheet table{width:100%;border-collapse:collapse;font-size:9.5pt;break-inside:avoid}
+  #printSheet td,#printSheet th{padding:4pt 6pt;border-bottom:.5pt solid #C9C7BC;text-align:left;vertical-align:top}
+  #printSheet th{font-size:8pt;letter-spacing:.06em;text-transform:uppercase;color:#4A4D47;border-bottom:1pt solid #141615}
+  #printSheet td.r,#printSheet th.r{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+  #printSheet td .s{display:block;font-family:var(--mono);font-size:8pt;color:#4A4D47}
+  #printSheet tr.sub td{font-weight:700;background:var(--step)}
+  #printSheet tr.grand td{font-weight:700;font-size:11pt;color:var(--brandInk);border-bottom:1.5pt solid var(--brand)}
+  #printSheet .spc td:first-child{width:34%;color:#4A4D47}
+  #printSheet .pd{font-size:8pt;color:#4A4D47;margin-top:12pt;border-top:.5pt solid #C9C7BC;padding-top:6pt}
+  #printSheet .pg{break-before:page}
+  #printSheet .pg svg{display:block;width:100%;height:auto;max-height:100mm;margin-bottom:6mm}
+}
+</style>
+</head>
+<body>
+
+<div class="concept">Interactive Quote Preview for California Patio Cover — Embeds directly into your website quote page</div>
+
+<div class="mast">
+  <div>
+    <div class="brand">California Patio Cover</div>
+    <div class="addr">Orange County, CA · License # 1141430 · Open 7 days a week, 8 AM–8 PM · +1 (213) 851-1178</div>
+  </div>
+  <h1>Aluminum Pergola &amp; Patio Cover Quote Preview</h1>
+</div>
+
+<div class="wrap">
+  <main>
+    <section class="card" aria-label="Live drawing">
+      <header>
+        <h2>Live Drawing</h2>
+        <div class="seg" role="group" aria-label="Drawing view">
+          <button type="button" data-act="view" data-v="both" aria-pressed="true">Plan + Elevation</button>
+          <button type="button" data-act="view" data-v="plan" aria-pressed="false">Plan</button>
+          <button type="button" data-act="view" data-v="elev" aria-pressed="false">Elevation</button>
+        </div>
+      </header>
+      <div class="draw">
+        <div id="vPlan"><div class="cap">Top Plan View</div><div id="svgPlan"></div></div>
+        <div id="vElev"><div class="cap">Front Elevation</div><div id="svgElev"></div></div>
+      </div>
+      <div class="stats">
+        <div><div class="k">Footprint</div><div class="v" id="stArea">—</div></div>
+        <div><div class="k">Posts</div><div class="v" id="stPosts">—</div></div>
+        <div><div class="k">Clearance</div><div class="v" id="stH">—</div></div>
+        <div><div class="k">Open sides used</div><div class="v" id="stOpen">—</div></div>
+      </div>
+      <div class="legend" id="legend" aria-label="Legend"></div>
+    </section>
+
+    <section class="card" aria-label="Configuration">
+      <header><h2>Configuration</h2><span class="hint">All prices USD, before sales tax</span></header>
+      <div class="body">
+        <div class="grp"><h3 class="lab">1 · Series</h3><div class="series" id="seriesList"></div></div>
+        <div class="grp"><h3 class="lab">2 · Dimensions</h3><div id="sliders"></div></div>
+        <div class="grp"><h3 class="lab" id="labColour">3 · Colour</h3><div class="swatches" id="swList"></div></div>
+        <div class="grp">
+          <h3 class="lab">4 · Installation Structure</h3>
+          <div class="cols2" id="structBtns"></div>
+          <p class="note" id="structNote"></p>
+        </div>
+        <div class="grp"><h3 class="lab" id="labChoice">5 · Option</h3><div class="cols2" id="choiceList"></div></div>
+        <div class="grp"><h3 class="lab">6 · Accessories</h3><div id="accList"></div><p class="note" id="sideNote"></p></div>
+      </div>
+    </section>
+  </main>
+
+  <aside id="quote" aria-label="Itemised Indicative Quote">
+    <div class="card">
+      <div class="qhead"><h2>Itemised Indicative Quote</h2><span class="mono" id="qRef">—</span></div>
+      <dl class="spec" id="qSpec"></dl>
+      <div id="qLines"></div>
+      <div class="tot"><div class="k" id="totK">Total indicative range</div><div class="v" id="totV">—</div><div class="fin" id="totFin" hidden></div></div>
+      <p class="disc" id="disc"></p>
+      <div class="acts">
+        <button type="button" class="btn pri" id="btnLead">Request Itemised Quote</button>
+        <button type="button" class="btn" id="btnPrint">Print / Save PDF Quote</button>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<div class="foot" id="foot"></div>
+
+<div class="mbar"><div><div class="k">Indicative total</div><div class="v" id="mbTotal">—</div></div><a href="#quote">View quote</a></div>
+
+<dialog id="dlg" aria-labelledby="dlgT">
+  <div class="dh"><h3 id="dlgT">Request Itemised Quote</h3><button type="button" class="x" id="dlgX" aria-label="Close">&times;</button></div>
+  <div class="db">
+    <form id="leadForm" class="f" novalidate>
+      <p class="mini" style="margin:0">Your configuration below is attached to the request automatically.</p>
+      <label>Full name<input id="fName" autocomplete="name" required><span class="err" id="eName"></span></label>
+      <div class="two">
+        <label><span id="postLab">Postcode</span><input id="fPost" inputmode="numeric" maxlength="5" autocomplete="postal-code" required><span class="err" id="ePost"></span></label>
+        <label>Email<input id="fMail" type="email" autocomplete="email" required><span class="err" id="eMail"></span></label>
+      </div>
+      <label>Phone (optional)<input id="fPhone" type="tel" autocomplete="tel"></label>
+      <button type="submit" class="btn pri">Send request</button>
+    </form>
+    <div id="leadOut" hidden>
+      <p class="mini" id="leadMini"></p>
+      <div class="lead" id="leadTbl"></div>
+      <pre id="leadJson"></pre>
+      <div class="dact">
+        <button type="button" class="btn" id="btnCopy">Copy lead JSON</button>
+        <button type="button" class="btn" id="btnBack">Back to edit</button>
+        <button type="button" class="btn pri" id="btnDone">Close</button>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<div id="printSheet" aria-hidden="true"></div>
+
+<script>
+(function () {
+  'use strict';
+  var C = {"short": "CPC", "locale": "en-US", "currency": "USD", "budgetKey": "budget_usd_before_tax", "u": {"metric": false, "len": "ft", "area": "sq ft", "word": "feet", "key": "ft", "pitch": 1.0, "postW": 0.4, "roofT": 0.8, "deckH": 0.8, "boardW": 0.5, "grid": 5, "capRise": 5, "kitchenD": 2.2}, "dims": {"L": {"min": 10, "max": 32, "step": 1, "val": 16}, "P": {"min": 8, "max": 24, "step": 1, "val": 12}, "H": {"min": 8, "max": 14, "step": 0.5, "val": 9}}, "spanMax": 14, "heightRate": 50, "lead": {"postLabel": "ZIP code", "postPattern": "^\\d{5}$", "postErr": "Enter a 5-digit ZIP code.", "postPh": "92660", "zones": [[92602, 92899, "Orange County ZIP range"], [90001, 93599, "Los Angeles area — confirm service area"]], "fallback": "Outside the service area — confirm"}, "text": {"priceNote": "All prices USD, before sales tax", "subLabel": "Supply Estimate (USD, before tax)", "disc": "Indicative only. Prices are in USD and exclude sales tax; installation is shown as a range. Final price confirmed after a site visit.", "printDisc": "Indicative only. Prices are in USD and exclude sales tax. Final price confirmed after a site visit. This document is not an invoice or a contract.", "itemised": "Itemised estimate (USD, before tax)"}, "series": [{"id": "standard", "name": "Standard-Size Aluminum Pergola", "desc": "Pre-sized pergola sets with quick lead times", "ops": "Open slat roof · standard sizes", "from": 4900, "base": 100, "rate": 44, "roof": "flat", "cover": "rafters", "pitchDeg": 0}, {"id": "custom", "name": "Custom Aluminum Pergola", "desc": "Made-to-order size, height and layout", "ops": "Open slat roof · made to order", "from": 6200, "base": 144, "rate": 58, "roof": "flat", "cover": "louvre", "pitchDeg": 0}, {"id": "solid", "name": "Solid Patio Cover", "desc": "Insulated solid roof for full shade", "ops": "Solid roof · attached or freestanding", "from": 5600, "base": 144, "rate": 50, "roof": "flat", "cover": "solid", "pitchDeg": 0}, {"id": "lattice", "name": "Lattice Patio Cover", "desc": "Lattice roof for dappled light and airflow", "ops": "Lattice roof · attached or freestanding", "from": 5200, "base": 144, "rate": 46, "roof": "flat", "cover": "lattice", "pitchDeg": 0}], "colourLabel": "Aluminum Finish", "colours": [{"id": "white", "name": "White", "hex": "#F3F3EF"}, {"id": "sand", "name": "Sand", "hex": "#D3C3A5"}, {"id": "bronze", "name": "Bronze", "hex": "#54463A"}, {"id": "black", "name": "Black Satin", "hex": "#1E1F1E"}], "choice": {"label": "Wind Rating", "options": [{"id": "std", "name": "Standard Footings", "sub": "Standard"}, {"id": "eng", "name": "Engineered Footings", "sub": "+$1,350 allowance", "flat": 1350}]}, "sideAcc": [{"label": "Sun & Privacy Screen Panels", "price": 1250, "side": "side", "legend": "Screen Panel"}, {"label": "Side Wall Panels", "price": 2600, "side": "side", "legend": "Side Wall"}], "count": {"label": "Ceiling Fans", "price": 520, "max": 3, "symbol": "fan", "legend": "Ceiling fan"}, "toggles": [{"id": "led", "label": "LED Lighting Kit", "price": 780}, {"id": "gutter", "label": "Gutter & Downspout Kit", "price": 620}], "permit": {"label": "Permit & Engineering Drawings", "sub": "Optional, listed separately", "price": 950}, "install": {"label": "Installation Estimate", "sub": "Orange County, listed separately", "baseLow": 1300, "baseHigh": 2100, "perLow": 12, "perHigh": 21}, "source": "/contact-us", "modelNote": "Series names and licence number follow the company's public website; prices, sizes, and the area, height and installation logic are placeholder pricing, to be replaced by the company's own price matrix when embedded.", "name": "California Patio Cover", "location": "Orange County, CA", "finance": null};
+  var U = C.u, D = C.dims, SER = C.series, SM = {}, A0 = C.sideAcc[0], A1 = C.sideAcc[1], CNT = C.count;
+  SER.forEach(function (s) { SM[s.id] = s; });
+
+  var state = { series: SER[0].id, L: D.L.val, P: D.P.val, H: D.H.val, structure: 'free', choice: C.choice.options[0].id,
+                colour: C.colours[0].id, a0: 0, a1: 0, cnt: 0, tg: {}, inst: true, permit: false, view: 'both' };
+  C.toggles.forEach(function (t) { state.tg[t.id] = false; });
+  var lastLead = null;
+
+  function $(id) { return document.getElementById(id); }
+  var nf = new Intl.NumberFormat(C.locale, { style: 'currency', currency: C.currency, maximumFractionDigits: 0 });
+  function money(n) { return nf.format(n); }
+  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function ln(n) { return U.metric ? n.toFixed(1) : (Math.abs(n - Math.round(n)) < 1e-9 ? String(Math.round(n)) : n.toFixed(1)); }
+  function lu(n) { return ln(n) + ' ' + U.len; }
+  function an(n) { return U.metric ? n.toFixed(1) : Math.round(n).toLocaleString('en-US'); }
+  function au(n) { return an(n) + ' ' + U.area; }
+  function ser() { return SM[state.series]; }
+  function struct() { return ser().lock || state.structure; }
+  function colour() { return C.colours.filter(function (c) { return c.id === state.colour; })[0]; }
+  function choiceOpt() { return C.choice.options.filter(function (c) { return c.id === state.choice; })[0]; }
+  function lum(hex) { var r = parseInt(hex.substr(1, 2), 16), g = parseInt(hex.substr(3, 2), 16), b = parseInt(hex.substr(5, 2), 16); return (0.299 * r + 0.587 * g + 0.114 * b) / 255; }
+  function css(n) { return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+
+  function postsLine() { return ser().cantilever ? 2 : Math.max(2, Math.ceil(state.L / C.spanMax - 1e-9) + 1); }
+  function postsTotal() { return struct() === 'free' ? postsLine() * 2 : postsLine(); }
+  function openCount() { return struct() === 'wall' ? 3 : 4; }
+  function maxA0() { return openCount() - state.a1; }
+  function maxA1() { return Math.min(2, openCount() - state.a0); }
+  function clamp() {
+    if (state.a0 > openCount() - state.a1) state.a0 = openCount() - state.a1;
+    if (state.a1 > Math.min(2, openCount())) state.a1 = Math.min(2, openCount());
+    if (state.a0 < 0) state.a0 = 0;
+  }
+  function sides() {
+    var s = { front: 'none', back: struct() === 'wall' ? 'wall' : 'none', left: 'none', right: 'none' };
+    ['left', 'right'].slice(0, state.a1).forEach(function (k) { s[k] = 'double'; });
+    var n = state.a0;
+    ['front', 'left', 'right', 'back'].forEach(function (k) { if (n > 0 && s[k] === 'none') { s[k] = 'dash'; n--; } });
+    return s;
+  }
+
+  function installRange(area) {
+    var I = C.install;
+    return [Math.round((I.baseLow + area * I.perLow) / 10) * 10, Math.round((I.baseHigh + area * I.perHigh) / 10) * 10];
+  }
+
+  /* ---------- pricing ---------- */
+  function compute() {
+    var s = ser(), area = state.L * state.P, extra = Math.max(0, area - s.base), lines = [], sub = 0, posts = postsTotal();
+    function add(label, note, amt, inc) { lines.push({ label: label, note: note, amt: amt, inc: !!inc }); sub += amt; }
+    add(s.name, 'Indicative from price · covers up to ' + au(s.base), s.from);
+    if (extra > 0) add('Additional area', au(extra) + ' × ' + money(s.rate), Math.round(extra * s.rate));
+    var o = choiceOpt();
+    if (o.rate || o.flat) add(C.choice.label + ': ' + o.name, o.rate ? au(area) + ' × ' + money(o.rate) : 'Flat allowance', Math.round((o.rate || 0) * area + (o.flat || 0)));
+    else add(C.choice.label + ': ' + o.name, 'Standard', 0, true);
+    var steps = Math.round((state.H - D.H.val) / D.H.step);
+    if (steps > 0) add('Clearance height adjustment', '+' + lu(steps * D.H.step) + ' × ' + posts + ' posts', steps * posts * C.heightRate);
+    if (state.a0) add(A0.label, state.a0 + ' × ' + money(A0.price) + ' (from)', state.a0 * A0.price);
+    if (state.a1) add(A1.label, state.a1 + ' × ' + money(A1.price) + ' (from)', state.a1 * A1.price);
+    if (state.cnt) add(CNT.label, state.cnt + ' × ' + money(CNT.price), state.cnt * CNT.price);
+    C.toggles.forEach(function (t) { if (state.tg[t.id]) add(t.label, '1 × ' + money(t.price), t.price); });
+    if (state.permit) add(C.permit.label, '1 × ' + money(C.permit.price), C.permit.price);
+    var r = installRange(area), iLow = state.inst ? r[0] : 0, iHigh = state.inst ? r[1] : 0;
+    return { lines: lines, sub: sub, area: area, posts: posts, iLow: iLow, iHigh: iHigh, rLow: r[0], rHigh: r[1], tLow: sub + iLow, tHigh: sub + iHigh };
+  }
+  function totalText(q) { return state.inst ? money(q.tLow) + ' – ' + money(q.tHigh) : money(q.sub); }
+
+  function refCode() {
+    var str = [state.series, state.L, state.P, state.H, struct(), state.choice, state.colour, state.a0, state.a1, state.cnt, JSON.stringify(state.tg), state.permit].join('|'), h = 5381, i;
+    for (i = 0; i < str.length; i++) h = ((h << 5) + h + str.charCodeAt(i)) >>> 0;
+    var d = new Date(), p = function (n) { return (n < 10 ? '0' : '') + n; };
+    return C.short + '-' + d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate()) + '-' + ('0000' + (h % 10000)).slice(-4);
+  }
+  function structLabel() { return struct() === 'free' ? 'Freestanding · ' + postsTotal() + ' posts' : 'Attached to house · ' + postsTotal() + ' front posts'; }
+
+  /* ---------- drawing ---------- */
+  function hatchDef(p) { return '<defs><pattern id="' + p + 'h" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="' + css('--hatch') + '" stroke-width="1"/></pattern></defs>'; }
+  function dimH(x1, x2, y, label) {
+    return '<g stroke="#141615" stroke-width="1" fill="none"><line x1="' + x1 + '" y1="' + y + '" x2="' + x2 + '" y2="' + y + '"/><line x1="' + x1 + '" y1="' + (y - 6) + '" x2="' + x1 + '" y2="' + (y + 6) + '"/><line x1="' + x2 + '" y1="' + (y - 6) + '" x2="' + x2 + '" y2="' + (y + 6) + '"/></g>' +
+      '<text x="' + ((x1 + x2) / 2) + '" y="' + (y + 19) + '" text-anchor="middle" font-size="13" font-weight="600" fill="#141615">' + label + '</text>';
+  }
+  function dimV(x, y1, y2, label) {
+    var cy = (y1 + y2) / 2;
+    return '<g stroke="#141615" stroke-width="1" fill="none"><line x1="' + x + '" y1="' + y1 + '" x2="' + x + '" y2="' + y2 + '"/><line x1="' + (x - 6) + '" y1="' + y1 + '" x2="' + (x + 6) + '" y2="' + y1 + '"/><line x1="' + (x - 6) + '" y1="' + y2 + '" x2="' + (x + 6) + '" y2="' + y2 + '"/></g>' +
+      '<text transform="translate(' + (x + 19) + ',' + cy + ') rotate(-90)" text-anchor="middle" font-size="13" font-weight="600" fill="#141615">' + label + '</text>';
+  }
+  function ln2(x1, y1, x2, y2, extra) { return '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" ' + extra + '/>'; }
+  function symbol(kind, cx, cy, stroke) {
+    if (kind === 'fan') {
+      return '<g stroke="' + stroke + '" stroke-width="1.4" fill="none"><circle cx="' + cx + '" cy="' + cy + '" r="10"/><line x1="' + (cx - 10) + '" y1="' + cy + '" x2="' + (cx + 10) + '" y2="' + cy + '"/><line x1="' + cx + '" y1="' + (cy - 10) + '" x2="' + cx + '" y2="' + (cy + 10) + '"/></g>';
+    }
+    return '<g stroke="' + stroke + '" stroke-width="1.4" fill="none"><circle cx="' + cx + '" cy="' + cy + '" r="5"/><circle cx="' + cx + '" cy="' + cy + '" r="1.6" fill="' + stroke + '"/></g>';
+  }
+  function legendSvg(kind) {
+    var ac = css('--accent');
+    if (kind === 'dash') return '<svg viewBox="0 0 26 12"><line x1="0" y1="6" x2="26" y2="6" stroke="' + ac + '" stroke-width="2.6" stroke-dasharray="6 4"/></svg>';
+    if (kind === 'double') return '<svg viewBox="0 0 26 12"><line x1="0" y1="4" x2="26" y2="4" stroke="#5B8FB0" stroke-width="1.6"/><line x1="0" y1="8" x2="26" y2="8" stroke="#5B8FB0" stroke-width="1.6"/></svg>';
+    if (kind === 'post') return '<svg viewBox="0 0 26 12"><rect x="9" y="1" width="9" height="9" fill="#141615"/></svg>';
+    if (kind === 'fan' || kind === 'light') return '<svg viewBox="-3 -3 32 18">' + symbol(kind, 13, 6, '#141615').replace(/r="10"/, 'r="6"').replace('x1="3"', 'x1="7"') + '</svg>';
+    return '';
+  }
+
+  function roofLines(o, sr, x0, y0, w, h, s, bl, rl) {
+    var n = Math.min(80, Math.floor(state.L / U.pitch)), i, cv = sr.cover;
+    function vline(x, st) { o.push(ln2(x, y0 + 3, x, y0 + h - 3, st)); }
+    function hline(y, st) { o.push(ln2(x0 + 3, y, x0 + w - 3, y, st)); }
+    var thin = 'stroke="' + bl + '" stroke-width="1"', mid = 'stroke="' + rl + '" stroke-width="1.5"';
+    if (cv === 'lattice') {
+      for (i = 1; i < n / 2; i++) vline(x0 + i * 2 * U.pitch * s, thin);
+      for (i = 1; i * 2 * U.pitch < state.P; i++) hline(y0 + i * 2 * U.pitch * s, thin);
+    } else if (cv === 'solid') {
+      for (i = 1; i < n / 1.5; i++) vline(x0 + i * 1.5 * U.pitch * s, thin);
+    } else if (cv === 'hybrid') {
+      for (i = 1; i < n; i++) vline(x0 + i * U.pitch * s, thin);
+      o.push('<rect x="' + (x0 + 3) + '" y="' + (y0 + 3) + '" width="' + (w - 6) + '" height="' + (h / 2 - 3) + '" fill="' + (lum(colour().hex) < 0.5 ? 'rgba(255,255,255,.16)' : 'rgba(20,22,21,.14)') + '" stroke="' + bl + '" stroke-width="1"/>');
+    } else if (cv === 'louvre') {
+      for (i = 1; i < n * 1.5; i++) vline(x0 + i * U.pitch * s / 1.5, thin);
+    } else {
+      for (i = 1; i < n; i++) vline(x0 + i * U.pitch * s, sr.deck ? mid : thin);
+    }
+  }
+
+  function planSVG(p) {
+    var L = state.L, P = state.P, W = 720, H = 400, ml = 60, mr = 84, mt = 44, mb = 76, sr = ser(), st = struct();
+    var s = Math.min((W - ml - mr) / L, (H - mt - mb) / P), w = L * s, h = P * s;
+    var x0 = ml + ((W - ml - mr) - w) / 2, y0 = mt + ((H - mt - mb) - h) / 2;
+    var col = colour().hex, dark = lum(col) < 0.5, bl = dark ? 'rgba(255,255,255,.28)' : 'rgba(20,22,21,.26)', rl = dark ? 'rgba(255,255,255,.55)' : 'rgba(20,22,21,.5)', tx = dark ? '#FFFFFF' : '#141615';
+    var sd = sides(), o = [], k, x, y, gs = s * U.grid, ac = css('--accent');
+    o.push('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Top plan view, ' + ln(L) + ' by ' + ln(P) + ' ' + U.word + '">' + hatchDef(p));
+    for (k = -Math.ceil(x0 / gs); (x = x0 + k * gs) <= W; k++) if (x >= 0) o.push(ln2(x, 0, x, H, 'stroke="' + css('--grid') + '" stroke-width="1"'));
+    for (k = -Math.ceil(y0 / gs); (y = y0 + k * gs) <= H; k++) if (y >= 0) o.push(ln2(0, y, W, y, 'stroke="' + css('--grid') + '" stroke-width="1"'));
+    if (st === 'wall') {
+      o.push('<rect x="' + (x0 - 16) + '" y="' + (y0 - 14) + '" width="' + (w + 32) + '" height="14" fill="url(#' + p + 'h)" stroke="#141615" stroke-width="1.2"/>');
+      o.push('<text x="' + (x0 - 16) + '" y="' + (y0 - 20) + '" font-size="10" letter-spacing="1" fill="' + css('--muted') + '">EXISTING WALL</text>');
+    }
+    o.push('<rect x="' + x0 + '" y="' + y0 + '" width="' + w + '" height="' + h + '" fill="' + col + '" stroke="#141615" stroke-width="1.6"/>');
+    if (sr.deck) for (y = y0 + U.boardW * s; y < y0 + h - 1; y += U.boardW * s) o.push(ln2(x0 + 1, y, x0 + w - 1, y, 'stroke="' + bl + '" stroke-width=".8"'));
+    roofLines(o, sr, x0, y0, w, h, s, bl, rl);
+    o.push('<rect x="' + (x0 + 3) + '" y="' + (y0 + 3) + '" width="' + (w - 6) + '" height="' + (h - 6) + '" fill="none" stroke="' + bl + '" stroke-width="1"/>');
+    if (sr.roof === 'gable') {
+      o.push(ln2(x0 + w / 2, y0 - 6, x0 + w / 2, y0 + h + 6, 'stroke="#141615" stroke-width="1.2" stroke-dasharray="10 4 2 4"'));
+      o.push('<text x="' + (x0 + w / 2 + 6) + '" y="' + (y0 + 16) + '" font-size="10" letter-spacing="1" fill="' + tx + '" stroke="' + col + '" stroke-width="4" paint-order="stroke">RIDGE</text>');
+    }
+    var gl = 'stroke="#5B8FB0" stroke-width="1.6"';
+    if (sd.left === 'double') o.push(ln2(x0 - 4, y0, x0 - 4, y0 + h, gl) + ln2(x0 - 8, y0, x0 - 8, y0 + h, gl));
+    if (sd.right === 'double') o.push(ln2(x0 + w + 4, y0, x0 + w + 4, y0 + h, gl) + ln2(x0 + w + 8, y0, x0 + w + 8, y0 + h, gl));
+    var bd = 'stroke="' + ac + '" stroke-width="2.8" stroke-dasharray="7 5"';
+    if (sd.front === 'dash') o.push(ln2(x0, y0 + h - 7, x0 + w, y0 + h - 7, bd));
+    if (sd.back === 'dash') o.push(ln2(x0, y0 + 7, x0 + w, y0 + 7, bd));
+    if (sd.left === 'dash') o.push(ln2(x0 + 7, y0, x0 + 7, y0 + h, bd));
+    if (sd.right === 'dash') o.push(ln2(x0 + w - 7, y0, x0 + w - 7, y0 + h, bd));
+    var kd = 0;
+    if (sr.kitchen) {
+      kd = U.kitchenD * s;
+      o.push('<rect x="' + (x0 + w * 0.2) + '" y="' + (y0 + 4) + '" width="' + (w * 0.6) + '" height="' + kd + '" fill="url(#' + p + 'h)" stroke="#141615" stroke-width="1.2"/>');
+      o.push('<text x="' + (x0 + w / 2) + '" y="' + (y0 + 4 + kd + 12) + '" text-anchor="middle" font-size="9" letter-spacing="1" fill="' + tx + '" stroke="' + col + '" stroke-width="4" paint-order="stroke">OUTDOOR KITCHEN</text>');
+    }
+    // count symbols (fans / lights)
+    var n = state.cnt, rows = n > 6 ? 2 : 1, perRow = [Math.ceil(n / rows), Math.floor(n / rows)], r, i, yy;
+    for (r = 0; r < rows; r++) for (i = 0; i < perRow[r]; i++) {
+      yy = y0 + h * (rows === 1 ? 0.5 : (r + 1) / 3) + (sr.kitchen ? kd / 2 : 0) + (rows === 1 ? 26 : 0);
+      o.push(symbol(CNT.symbol, x0 + w * (i + 1) / (perRow[r] + 1), yy, tx));
+    }
+    // posts
+    var ps = Math.max(8, U.postW * s), nl = postsLine(), xs = [], ys = st === 'free' ? [0, P] : [P];
+    for (i = 0; i < nl; i++) xs.push(L * i / (nl - 1));
+    ys.forEach(function (yv) { xs.forEach(function (xv) {
+      o.push('<rect x="' + (x0 + xv * s - ps / 2) + '" y="' + (y0 + yv * s - ps / 2) + '" width="' + ps + '" height="' + ps + '" fill="#141615" stroke="#FFFFFF" stroke-width="1"/>');
+    }); });
+    o.push('<text x="' + (x0 + w / 2) + '" y="' + (y0 + h / 2 - (n ? 12 : -7) + (sr.kitchen ? kd / 2 : 0)) + '" text-anchor="middle" font-size="22" font-weight="600" fill="' + tx + '" stroke="' + col + '" stroke-width="7" paint-order="stroke" stroke-linejoin="round">' + au(L * P) + '</text>');
+    o.push(dimH(x0, x0 + w, y0 + h + 28, lu(L)));
+    o.push(dimV(x0 + w + 30, y0, y0 + h, lu(P)));
+    o.push('</svg>');
+    return o.join('');
+  }
+
+  function elevSVG(p) {
+    var L = state.L, Hc = state.H, sr = ser(), st = struct(), rt = U.roofT, W = 720, H = 340, ml = 76, mr = 40, mt = 30, mb = 62;
+    var rise = sr.roof === 'gable' ? Math.min(L / 2 * Math.tan(sr.pitchDeg * Math.PI / 180), U.capRise) : 0, dk = sr.deck ? U.deckH : 0;
+    var s = Math.min((W - ml - mr) / L, (H - mt - mb) / (Hc + dk + rt + rise)), w = L * s, x0 = ml + ((W - ml - mr) - w) / 2;
+    var yg = H - mb, yd = yg - dk * s, yu = yd - Hc * s, yt = yu - rt * s, ya = yt - rise * s;
+    var col = colour().hex, dark = lum(col) < 0.5, bl = dark ? 'rgba(255,255,255,.28)' : 'rgba(20,22,21,.26)', ac = css('--accent');
+    var sd = sides(), o = [], i;
+    o.push('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Front elevation, ' + ln(L) + ' ' + U.word + ' long, ' + ln(Hc) + ' ' + U.word + ' clearance">' + hatchDef(p));
+    if (st === 'wall') {
+      var wt = Math.max(6, ya - 28);
+      o.push('<rect x="' + (x0 - 24) + '" y="' + wt + '" width="' + (w + 48) + '" height="' + (yg - wt) + '" fill="url(#' + p + 'h)" stroke="#141615" stroke-width="1.2"/>');
+      o.push('<rect x="' + (x0 - 24) + '" y="' + wt + '" width="' + (w + 48) + '" height="' + (yg - wt) + '" fill="' + css('--bg') + '" fill-opacity=".55"/>');
+      o.push('<text x="' + (x0 - 18) + '" y="' + (wt + 12) + '" font-size="10" letter-spacing="1" fill="' + css('--muted') + '">EXISTING WALL</text>');
+    }
+    o.push('<rect x="20" y="' + yg + '" width="' + (W - 40) + '" height="8" fill="url(#' + p + 'h)"/>');
+    o.push(ln2(20, yg, W - 20, yg, 'stroke="#141615" stroke-width="1.6"'));
+    if (dk) o.push('<rect x="' + (x0 - 6) + '" y="' + yd + '" width="' + (w + 12) + '" height="' + (dk * s) + '" fill="' + col + '" stroke="#141615" stroke-width="1.4"/>');
+    var bd = 'stroke="' + ac + '" stroke-width="2.4" stroke-dasharray="7 5"';
+    if (sd.back === 'dash' && sd.front !== 'dash') o.push('<rect x="' + (x0 + 4) + '" y="' + (yu + 3) + '" width="' + (w - 8) + '" height="' + (yd - yu - 6) + '" fill="none" ' + bd + ' opacity=".5"/>');
+    if (sd.front === 'dash') o.push('<rect x="' + (x0 + 4) + '" y="' + (yu + 3) + '" width="' + (w - 8) + '" height="' + (yd - yu - 6) + '" fill="' + ac + '" fill-opacity=".08" ' + bd + '/>');
+    var pw = Math.max(6, U.postW * s), nl = postsLine();
+    for (i = 0; i < nl; i++) {
+      var px = x0 + (L * i / (nl - 1)) * s;
+      o.push('<rect x="' + (px - pw / 2) + '" y="' + yu + '" width="' + pw + '" height="' + (yd - yu) + '" fill="#141615"/>');
+    }
+    o.push('<rect x="' + x0 + '" y="' + yt + '" width="' + w + '" height="' + (rt * s) + '" fill="' + col + '" stroke="#141615" stroke-width="1.5"/>');
+    if (rise > 0) o.push('<polygon points="' + x0 + ',' + yt + ' ' + (x0 + w) + ',' + yt + ' ' + (x0 + w / 2) + ',' + ya + '" fill="' + col + '" stroke="#141615" stroke-width="1.5" stroke-linejoin="round"/>');
+    var n = Math.min(80, Math.floor(L / U.pitch));
+    for (i = 1; i < n; i++) o.push(ln2(x0 + i * U.pitch * s, yt + 2, x0 + i * U.pitch * s, yu - 2, 'stroke="' + bl + '" stroke-width="1"'));
+    var gl = 'stroke="#5B8FB0" stroke-width="1.6"';
+    if (sd.left === 'double') o.push(ln2(x0 - 6, yu, x0 - 6, yd, gl) + ln2(x0 - 10, yu, x0 - 10, yd, gl));
+    if (sd.right === 'double') o.push(ln2(x0 + w + 6, yu, x0 + w + 6, yd, gl) + ln2(x0 + w + 10, yu, x0 + w + 10, yd, gl));
+    if (sd.left === 'dash') o.push(ln2(x0 - 8, yu, x0 - 8, yd, bd));
+    if (sd.right === 'dash') o.push(ln2(x0 + w + 8, yu, x0 + w + 8, yd, bd));
+    o.push(dimH(x0, x0 + w, yg + 26, lu(L)));
+    o.push(dimV(x0 - 34, yu, yd, lu(Hc)));
+    o.push('</svg>');
+    return o.join('');
+  }
+
+  /* ---------- static UI ---------- */
+  function pressed(el, on) { el.setAttribute('aria-pressed', on ? 'true' : 'false'); }
+  (function build() {
+    var h = '', i;
+    SER.forEach(function (s) {
+      h += '<button type="button" class="sc" data-act="series" data-v="' + s.id + '" aria-pressed="false"><span class="nm">' + esc(s.name) + '</span><span class="ds">' + esc(s.desc) + '</span><span class="op">' + esc(s.ops) + '</span><span class="pr"><small>Indicative from</small>' + money(s.from) + '</span></button>';
+    });
+    $('seriesList').innerHTML = h;
+    h = '';
+    [['L', 'Length', 'rL'], ['P', 'Projection / Width', 'rP'], ['H', 'Clearance Height', 'rH']].forEach(function (a) {
+      var d = D[a[0]], st = U.metric ? d.step.toFixed(1) : ln(d.step);
+      h += '<div class="slr"><div class="t">' + a[1] + '<span>' + ln(d.min) + ' – ' + lu(d.max) + ', ' + lu(d.step) + ' steps</span></div><output id="o' + a[0] + '"></output>' +
+        '<div class="rg"><input type="range" id="' + a[2] + '" min="' + d.min + '" max="' + d.max + '" step="' + d.step + '" value="' + d.val + '" aria-label="' + a[1] + ' in ' + U.word + '"><div class="rng"><span>' + ln(d.min) + '</span><span>' + ln(d.max) + '</span></div></div></div>';
+    });
+    $('sliders').innerHTML = h;
+    $('labColour').textContent = '3 · ' + C.colourLabel;
+    h = '';
+    C.colours.forEach(function (c) { h += '<button type="button" class="sw" data-act="colour" data-v="' + c.id + '" aria-pressed="false"><i style="background:' + c.hex + '"></i><span class="a">' + esc(c.name) + '</span><span class="b">' + c.hex + '</span></button>'; });
+    $('swList').innerHTML = h;
+    $('structBtns').innerHTML =
+      '<button type="button" class="opt" data-act="structure" data-v="free" aria-pressed="true"><span class="a">Freestanding</span><span class="b" id="bFree"></span></button>' +
+      '<button type="button" class="opt" data-act="structure" data-v="wall" aria-pressed="false"><span class="a">Attached to House</span><span class="b" id="bWall"></span></button>';
+    $('structNote').textContent = 'Extra posts are added automatically for every ' + lu(C.spanMax) + ' of length.';
+    $('labChoice').textContent = '5 · ' + C.choice.label;
+    h = '';
+    C.choice.options.forEach(function (c) { h += '<button type="button" class="opt" data-act="choice" data-v="' + c.id + '" aria-pressed="false"><span class="a">' + esc(c.name) + '</span><span class="b">' + esc(c.sub) + '</span></button>'; });
+    $('choiceList').innerHTML = h;
+
+    function stepRow(k, label, sub) {
+      return '<div class="row"><div><div class="rl">' + esc(label) + '</div><div class="rs">' + sub + '</div></div><div class="step"><button type="button" data-act="dec" data-k="' + k + '" aria-label="Fewer ' + esc(label) + '">&minus;</button><output id="v_' + k + '">0</output><button type="button" data-act="inc" data-k="' + k + '" aria-label="More ' + esc(label) + '">+</button></div></div>';
+    }
+    function togRow(id, label, sub, price, checked) {
+      return '<div class="row"><label class="chk"><input type="checkbox" id="t_' + id + '" data-tg="' + id + '"' + (checked ? ' checked' : '') + '><span><span class="rl">' + esc(label) + '</span>' + (sub ? '<br><span class="rs">' + esc(sub) + '</span>' : '') + '</span></label><span class="price" id="p_' + id + '">' + price + '</span></div>';
+    }
+    h = stepRow('a0', A0.label, 'From ' + money(A0.price) + ' / side') + stepRow('a1', A1.label, 'From ' + money(A1.price) + ' / side · 0–2 sides') +
+      stepRow('cnt', CNT.label, money(CNT.price) + ' each · 0–' + CNT.max);
+    C.toggles.forEach(function (t) { h += togRow(t.id, t.label, '', '+' + money(t.price), false); });
+    h += togRow('inst', C.install.label, C.install.sub, '—', true) + togRow('permit', C.permit.label, C.permit.sub, '+' + money(C.permit.price), false);
+    $('accList').innerHTML = h;
+    h = '';
+    [['dash', A0.legend], ['double', A1.legend], ['post', 'Post'], [CNT.symbol, CNT.legend]].forEach(function (a) { h += '<span>' + legendSvg(a[0]) + esc(a[1]) + '</span>'; });
+    $('legend').innerHTML = h;
+    $('disc').textContent = C.text.disc;
+    $('foot').textContent = 'Model note: ' + C.modelNote;
+    $('postLab').textContent = C.lead.postLabel.charAt(0).toUpperCase() + C.lead.postLabel.slice(1);
+    $('fPost').placeholder = 'e.g. ' + C.lead.postPh;
+    $('fPost').maxLength = /\{5\}|\\d\{5\}/.test(C.lead.postPattern) ? 5 : 4;
+    $('leadMini').textContent = 'Preview of the structured lead that reaches the ' + C.name + ' sales team. Demo only — nothing is sent from this page.';
+  })();
+
+  /* ---------- render ---------- */
+  function render() {
+    var s = ser(), q, lock = !!s.lock;
+    if (lock) state.structure = s.lock;
+    clamp();
+    q = compute();
+    Array.prototype.forEach.call(document.querySelectorAll('[data-act="series"]'), function (b) { pressed(b, b.dataset.v === state.series); });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-act="colour"]'), function (b) { pressed(b, b.dataset.v === state.colour); });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-act="choice"]'), function (b) { pressed(b, b.dataset.v === state.choice); });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-act="view"]'), function (b) { pressed(b, b.dataset.v === state.view); });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-act="structure"]'), function (b) { pressed(b, b.dataset.v === struct()); b.disabled = lock && b.dataset.v !== s.lock; });
+    var pl = postsLine();
+    $('bFree').textContent = (s.lock === 'wall' ? 'Not available for this series' : pl * 2 + ' posts');
+    $('bWall').textContent = (s.lock === 'free' ? 'Not available for this series' : pl + ' front posts' + (s.cantilever ? ' (cantilever)' : ''));
+    [['rL', 'L', 'oL'], ['rP', 'P', 'oP'], ['rH', 'H', 'oH']].forEach(function (a) {
+      var d = D[a[1]], el = $(a[0]);
+      el.value = state[a[1]];
+      el.style.setProperty('--pct', ((state[a[1]] - d.min) / (d.max - d.min) * 100) + '%');
+      $(a[2]).textContent = lu(state[a[1]]);
+    });
+    ['a0', 'a1', 'cnt'].forEach(function (k) { $('v_' + k).textContent = state[k]; });
+    document.querySelector('[data-act="dec"][data-k="a0"]').disabled = state.a0 <= 0;
+    document.querySelector('[data-act="inc"][data-k="a0"]').disabled = state.a0 >= maxA0();
+    document.querySelector('[data-act="dec"][data-k="a1"]').disabled = state.a1 <= 0;
+    document.querySelector('[data-act="inc"][data-k="a1"]').disabled = state.a1 >= maxA1();
+    document.querySelector('[data-act="dec"][data-k="cnt"]').disabled = state.cnt <= 0;
+    document.querySelector('[data-act="inc"][data-k="cnt"]').disabled = state.cnt >= CNT.max;
+    $('sideNote').textContent = (struct() === 'wall' ? 'Attached to the house: the back is the house wall, so side accessories share 3 open sides. ' : 'Side accessories share the 4 open sides. ') + A1.label + ' go on the left and right sides first.';
+    C.toggles.forEach(function (t) { $('t_' + t.id).checked = !!state.tg[t.id]; });
+    $('t_inst').checked = state.inst; $('t_permit').checked = state.permit;
+    $('p_inst').textContent = money(q.rLow) + ' – ' + money(q.rHigh);
+
+    $('svgPlan').innerHTML = planSVG('a'); $('svgElev').innerHTML = elevSVG('b');
+    $('vPlan').hidden = state.view === 'elev'; $('vElev').hidden = state.view === 'plan';
+    var sd = sides(), used = ['front', 'back', 'left', 'right'].filter(function (k) { return sd[k] === 'dash' || sd[k] === 'double'; }).length;
+    $('stArea').textContent = au(q.area); $('stPosts').textContent = q.posts; $('stH').textContent = lu(state.H); $('stOpen').textContent = used + ' / ' + openCount();
+
+    $('qRef').textContent = refCode();
+    $('qSpec').innerHTML =
+      '<dt>Series</dt><dd>' + esc(s.name) + '</dd>' +
+      '<dt>Size (L × W × H)</dt><dd class="mono">' + ln(state.L) + ' × ' + ln(state.P) + ' × ' + ln(state.H) + ' ' + U.len + '</dd>' +
+      '<dt>Footprint</dt><dd class="mono">' + au(q.area) + '</dd>' +
+      '<dt>Structure</dt><dd>' + esc(structLabel()) + '</dd>' +
+      '<dt>' + esc(C.colourLabel) + '</dt><dd>' + esc(colour().name) + '</dd>' +
+      '<dt>' + esc(C.choice.label) + '</dt><dd>' + esc(choiceOpt().name) + '</dd>';
+    var h = '';
+    q.lines.forEach(function (l) {
+      h += '<div class="ql"><div class="n">' + esc(l.label) + '</div><div class="a' + (l.inc ? ' inc' : '') + '">' + (l.inc ? 'Included' : money(l.amt)) + '</div><div class="s">' + esc(l.note) + '</div></div>';
+    });
+    h += '<div class="ql sub"><div class="n">' + esc(C.text.subLabel) + '</div><div class="a">' + money(q.sub) + '</div></div>';
+    if (state.inst) h += '<div class="ql"><div class="n">' + esc(C.install.label) + '</div><div class="a">' + money(q.iLow) + ' – ' + money(q.iHigh) + '</div><div class="s">' + esc(C.install.sub) + ' · ' + au(q.area) + '</div></div>';
+    else h += '<div class="ql off"><div class="n">Installation</div><div class="a inc">Not included</div><div class="s">Quoted separately</div></div>';
+    $('qLines').innerHTML = h;
+    $('totK').textContent = state.inst ? 'Total indicative range' : 'Total (supply only)';
+    $('totV').textContent = totalText(q); $('mbTotal').textContent = totalText(q);
+    var fin = C.finance;
+    $('totFin').hidden = !fin;
+    if (fin) $('totFin').textContent = fin.text + ': ' + money(Math.round((state.inst ? q.tLow : q.sub) / fin.months)) + (state.inst ? ' – ' + money(Math.round(q.tHigh / fin.months)) : '') + ' / month.';
+    $('printSheet').innerHTML = printHTML(q);
+  }
+
+  function printHTML(q) {
+    var s = ser(), d = new Date().toLocaleDateString(C.locale, { day: '2-digit', month: 'short', year: 'numeric' }), sd = sides();
+    function fin(k) { return sd[k] === 'dash' ? A0.legend : sd[k] === 'double' ? A1.legend : sd[k] === 'wall' ? 'House wall' : 'Open'; }
+    var rows = '';
+    q.lines.forEach(function (l) { rows += '<tr><td>' + esc(l.label) + '<span class="s">' + esc(l.note) + '</span></td><td class="r">' + (l.inc ? 'Included' : money(l.amt)) + '</td></tr>'; });
+    rows += '<tr class="sub"><td>' + esc(C.text.subLabel) + '</td><td class="r">' + money(q.sub) + '</td></tr>';
+    if (state.inst) rows += '<tr><td>' + esc(C.install.label) + '<span class="s">' + esc(C.install.sub) + '</span></td><td class="r">' + money(q.iLow) + ' – ' + money(q.iHigh) + '</td></tr>';
+    else rows += '<tr><td>Installation<span class="s">Quoted separately — not included</span></td><td class="r">—</td></tr>';
+    rows += '<tr class="grand"><td>' + (state.inst ? 'Total indicative range' : 'Total (supply only)') + '</td><td class="r">' + totalText(q) + '</td></tr>';
+    return '<div class="ph"><div><div class="pb">' + esc(C.name) + '</div><div class="pa">' + esc(C.location) + '</div></div>' +
+      '<div class="pt"><b>Indicative Quote</b><span class="mono">' + refCode() + '</span><br>' + d + '</div></div>' +
+      '<h4>Configuration</h4><table class="spc"><tbody>' +
+      '<tr><td>Series</td><td>' + esc(s.name) + '</td></tr>' +
+      '<tr><td>Length × Projection × Clearance</td><td class="mono">' + ln(state.L) + ' × ' + ln(state.P) + ' × ' + ln(state.H) + ' ' + U.len + ' (' + au(q.area) + ')</td></tr>' +
+      '<tr><td>Structure</td><td>' + esc(structLabel()) + '</td></tr>' +
+      '<tr><td>' + esc(C.colourLabel) + '</td><td>' + esc(colour().name) + ' (' + colour().hex + ')</td></tr>' +
+      '<tr><td>' + esc(C.choice.label) + '</td><td>' + esc(choiceOpt().name) + '</td></tr>' +
+      '<tr><td>Sides (front / left / right / back)</td><td>' + fin('front') + ' / ' + fin('left') + ' / ' + fin('right') + ' / ' + fin('back') + '</td></tr>' +
+      '</tbody></table>' +
+      '<h4>' + esc(C.text.itemised) + '</h4><table><thead><tr><th>Item</th><th class="r">Amount</th></tr></thead><tbody>' + rows + '</tbody></table>' +
+      '<div class="pd">' + esc(C.text.printDisc) + '</div>' +
+      '<div class="pg"><h4>Top Plan View</h4>' + planSVG('c') + '<h4>Front Elevation</h4>' + elevSVG('d') + '</div>';
+  }
+
+  /* ---------- events ---------- */
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest ? e.target.closest('[data-act]') : null;
+    if (!t || t.disabled) return;
+    var a = t.dataset.act, k = t.dataset.k, v = t.dataset.v;
+    if (a === 'series') state.series = v;
+    else if (a === 'colour') state.colour = v;
+    else if (a === 'choice') state.choice = v;
+    else if (a === 'structure') state.structure = v;
+    else if (a === 'view') state.view = v;
+    else if (a === 'inc') { var mx = k === 'a0' ? maxA0() : k === 'a1' ? maxA1() : CNT.max; if (state[k] < mx) state[k]++; }
+    else if (a === 'dec') { if (state[k] > 0) state[k]--; }
+    render();
+  });
+  [['rL', 'L'], ['rP', 'P'], ['rH', 'H']].forEach(function (a) {
+    $(a[0]).addEventListener('input', function () { state[a[1]] = Math.round(parseFloat(this.value) * 10) / 10; render(); });
+  });
+  C.toggles.forEach(function (t) { $('t_' + t.id).addEventListener('change', function () { state.tg[t.id] = this.checked; render(); }); });
+  $('t_inst').addEventListener('change', function () { state.inst = this.checked; render(); });
+  $('t_permit').addEventListener('change', function () { state.permit = this.checked; render(); });
+  $('btnPrint').addEventListener('click', function () { render(); window.print(); });
+
+  /* ---------- lead dialog ---------- */
+  var dlg = $('dlg');
+  function openDlg() { if (typeof dlg.showModal === 'function') dlg.showModal(); else dlg.setAttribute('open', ''); }
+  function closeDlg() { if (typeof dlg.close === 'function') dlg.close(); else dlg.removeAttribute('open'); }
+  $('btnLead').addEventListener('click', function () { $('leadForm').hidden = false; $('leadOut').hidden = true; openDlg(); });
+  $('dlgX').addEventListener('click', closeDlg);
+  $('btnDone').addEventListener('click', closeDlg);
+  $('btnBack').addEventListener('click', function () { $('leadOut').hidden = true; $('leadForm').hidden = false; });
+  dlg.addEventListener('click', function (e) { if (e.target === dlg) closeDlg(); });
+
+  function zone(pc) {
+    var n = parseInt(pc, 10), z = C.lead.zones, i;
+    for (i = 0; i < z.length; i++) if (n >= z[i][0] && n <= z[i][1]) return z[i][2];
+    return C.lead.fallback;
+  }
+  function accList() {
+    var a = [];
+    if (state.a0) a.push(A0.label + ' × ' + state.a0);
+    if (state.a1) a.push(A1.label + ' × ' + state.a1);
+    if (state.cnt) a.push(CNT.label + ' × ' + state.cnt);
+    C.toggles.forEach(function (t) { if (state.tg[t.id]) a.push(t.label); });
+    if (state.permit) a.push(C.permit.label);
+    return a;
+  }
+  function buildLead(name, pc, mail, phone) {
+    var s = ser(), q = compute(), sd = sides(), conf = { series: s.name };
+    conf['length_' + U.key] = state.L; conf['projection_' + U.key] = state.P; conf['clearance_' + U.key] = state.H;
+    conf[U.metric ? 'footprint_m2' : 'footprint_sqft'] = q.area;
+    conf.structure = struct() === 'free' ? 'Freestanding' : 'Attached to house'; conf.posts = q.posts;
+    conf.finish = colour().name + ' ' + colour().hex; conf.option = C.choice.label + ': ' + choiceOpt().name;
+    conf.sides = { front: sd.front, left: sd.left, right: sd.right, back: sd.back };
+    var bud = { supply_estimate: q.sub, install_low: q.iLow, install_high: q.iHigh, total_low: q.tLow, total_high: q.tHigh };
+    var out = {
+      lead: { name: name, email: mail, phone: phone || null, postal_code: pc, service_zone: zone(pc) },
+      configuration: conf,
+      accessories: { side_a: state.a0, side_b: state.a1, count_item: state.cnt, extras: C.toggles.filter(function (t) { return state.tg[t.id]; }).map(function (t) { return t.label; }), install_estimate_requested: state.inst, permit_support_requested: state.permit },
+      meta: { quote_ref: refCode(), source: C.source, generated: new Date().toISOString() }
+    };
+    out[C.budgetKey] = bud;
+    return out;
+  }
+  function countKeys(o) { var n = 0; Object.keys(o).forEach(function (k) { n += (o[k] && typeof o[k] === 'object' && !Array.isArray(o[k])) ? countKeys(o[k]) : 1; }); return n; }
+
+  $('leadForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var name = $('fName').value.trim(), pc = $('fPost').value.trim(), mail = $('fMail').value.trim(), phone = $('fPhone').value.trim(), ok = true;
+    $('eName').textContent = name ? '' : 'Please enter your name.'; if (!name) ok = false;
+    var pOk = new RegExp(C.lead.postPattern).test(pc);
+    $('ePost').textContent = pOk ? '' : C.lead.postErr; if (!pOk) ok = false;
+    var mOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail);
+    $('eMail').textContent = mOk ? '' : 'Enter a valid email address.'; if (!mOk) ok = false;
+    if (!ok) return;
+    var lead = buildLead(name, pc, mail, phone), q = compute(), c = lead.configuration;
+    lastLead = lead;
+    var acc = accList();
+    var rows = [
+      ['Contact', esc(name) + ' · ' + esc(mail) + (phone ? ' · ' + esc(phone) : '')],
+      [C.lead.postLabel.charAt(0).toUpperCase() + C.lead.postLabel.slice(1), '<span class="mono">' + esc(pc) + '</span> — ' + esc(lead.lead.service_zone)],
+      ['Series', esc(c.series)],
+      ['Size', '<span class="mono">' + ln(state.L) + ' × ' + ln(state.P) + ' × ' + ln(state.H) + ' ' + U.len + ' · ' + au(q.area) + '</span>'],
+      ['Structure', esc(structLabel())],
+      [C.colourLabel, esc(c.finish)],
+      [C.choice.label, esc(choiceOpt().name)],
+      ['Accessories', acc.length ? esc(acc.join(', ')) : 'None'],
+      ['Supply estimate', '<span class="mono">' + money(q.sub) + '</span>'],
+      ['Install estimate', state.inst ? '<span class="mono">' + money(q.iLow) + ' – ' + money(q.iHigh) + '</span> (separate)' : 'Not requested'],
+      ['Budget band', '<span class="mono">' + totalText(q) + '</span>'],
+      ['Structured fields', '<span class="mono">' + countKeys(lead) + '</span> captured, none left to a phone call']
+    ];
+    var h = '<div class="h">Lead received · Quote ref ' + esc(refCode()) + '</div><dl>';
+    rows.forEach(function (r) { h += '<dt>' + r[0] + '</dt><dd>' + r[1] + '</dd>'; });
+    $('leadTbl').innerHTML = h + '</dl>';
+    $('leadJson').textContent = JSON.stringify(lead, null, 2);
+    $('leadForm').hidden = true; $('leadOut').hidden = false;
+    dlg.scrollTop = 0;
+  });
+  $('btnCopy').addEventListener('click', function () {
+    var btn = this, txt = $('leadJson').textContent;
+    function done(ok) { btn.textContent = ok ? 'Copied' : 'Copy failed'; setTimeout(function () { btn.textContent = 'Copy lead JSON'; }, 1500); }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(function () { done(true); }, function () { done(false); });
+    else done(false);
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
