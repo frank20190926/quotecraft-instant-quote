@@ -1,0 +1,940 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Golden Touch Joinery | Cabinetry &amp; Joinery Estimator</title>
+<script defer src="https://cloud.umami.is/script.js" data-website-id="8c5bff8f-b019-4099-b883-ada9404f56fa"></script>
+<style>
+:root{
+  --brand:#1F2933;--accent:#9A6B2F;--accentInk:#8E622B;--bg:#F4F5F6;--card:#FFFFFF;--step:#EBEDEE;--tint:#F7F3EE;--ink:#212B35;--muted:#505D69;--line:#CFD5DB;--rule:#778491;--brandDark:#192129;
+  --display:"Space Grotesk","Avenir Next","Century Gothic",sans-serif;
+  --body:"IBM Plex Sans","Segoe UI",Arial,sans-serif;
+  --mono:"IBM Plex Mono","SF Mono",Consolas,monospace;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%;scroll-padding-bottom:90px}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 var(--body)}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:var(--brand);text-underline-offset:.18em}
+:focus-visible{outline:2px solid var(--accentInk);outline-offset:2px}
+.mono,output,svg text{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.concept{border-bottom:1px solid var(--line);padding:7px 16px;text-align:center;color:var(--muted);font-size:11px;letter-spacing:.045em}
+.mast,.wrap,.foot{width:min(100%,1280px);margin-inline:auto;padding-inline:24px}
+.mast{display:flex;align-items:end;justify-content:space-between;gap:16px;padding-block:26px 20px}
+.brand{font:700 clamp(25px,4vw,34px)/1.12 var(--display);color:var(--brand);letter-spacing:-.028em}
+.identity{margin:6px 0 0;color:var(--muted);font-size:12.5px}
+h1,h2,h3,p{margin:0}
+.mast h1,.card h2,.card h3{font-size:12px;font-weight:700;letter-spacing:.075em;text-transform:uppercase}
+.mast h1{text-align:right;max-width:210px}
+.wrap{display:grid;grid-template-columns:minmax(0,1fr) 364px;align-items:start;gap:20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:2px;min-width:0}
+.card+.card{margin-top:18px}
+.card>header,.sheethead{display:flex;justify-content:space-between;align-items:center;gap:8px 16px;padding:12px 16px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.tools{display:flex;align-items:center;gap:10px 14px;flex-wrap:wrap}
+.tools>a{font-size:12px;font-weight:600}
+.seg,.stepper{display:inline-flex;border:1px solid var(--rule);border-radius:2px}
+.seg button,.stepper button{border:0;background:var(--card);padding:7px 10px}
+.seg button{font-size:12px;white-space:nowrap}
+.seg button+button,.stepper>*+*{border-left:1px solid var(--line)}
+.seg button[aria-pressed=true]{background:var(--brand);color:white}
+.draw{margin:0;padding:0 10px 2px;background:var(--card)}
+.draw+.draw{border-top:1px solid var(--line)}
+.draw figcaption{padding:9px 8px 2px;display:flex;gap:10px;justify-content:space-between;align-items:baseline;color:var(--muted);font-size:11px}
+.draw figcaption b{color:var(--ink);letter-spacing:.06em;text-transform:uppercase}
+.draw svg{display:block;width:100%;height:auto}
+svg line,svg rect,svg path,svg polyline{vector-effect:non-scaling-stroke}
+svg text{fill:var(--ink);font-size:10px}
+svg text.detail{fill:var(--muted);font-size:9px}
+svg .outline{stroke:var(--brand);stroke-width:1.15;fill:none}
+svg .wall-section{stroke:var(--brand);stroke-width:.85}
+svg .fine{stroke:var(--rule);stroke-width:.75;fill:none}
+svg .gridline{stroke:var(--line);stroke-width:.55;opacity:.48;fill:none}
+svg .dim{stroke:var(--rule);stroke-width:.8;fill:none}
+svg .swing{stroke:var(--accentInk);stroke-width:1;stroke-dasharray:4 3;fill:none}
+svg .track{stroke:var(--accentInk);stroke-width:1;fill:none}
+svg .worktop{stroke:var(--brand);stroke-width:1;fill:var(--brand)}
+svg .void{fill:var(--step);stroke:var(--brand);stroke-width:.8}
+svg .edge{stroke:var(--brand);stroke-width:1}
+svg .splash{stroke:var(--line);stroke-width:.8}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);margin:0;border-top:1px solid var(--line);background:var(--step)}
+.stats>div{padding:9px 12px;text-align:right}
+.stats>div+div{border-left:1px solid var(--line)}
+.stats dt{color:var(--muted);font-size:10px;letter-spacing:.06em;text-transform:uppercase}
+.stats dd{margin:1px 0 0;font-weight:700;font-size:15px}
+.legend{display:flex;justify-content:flex-end;gap:4px 13px;flex-wrap:wrap;padding:7px 12px;border-top:1px solid var(--line);font-size:11px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.legend i{display:inline-block;width:17px;border-top:1px solid var(--brand)}
+.legend .dash{border-top:1px dashed var(--accentInk)}
+.legend .wall{height:7px;border:1px solid var(--rule);background:repeating-linear-gradient(135deg,var(--card) 0 3px,var(--rule) 3px 4px)}
+.legend .track{border-block:1px solid var(--accentInk);height:4px}
+.body{padding:16px}
+.grp+.grp{border-top:1px solid var(--line);margin-top:18px;padding-top:16px}
+.grp h3{margin-bottom:10px}
+.series,.fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.choice{background:var(--card);border:1px solid var(--rule);border-radius:2px;padding:10px 12px;text-align:left}
+.choice[aria-pressed=true]{outline:1px solid var(--accentInk);border-color:var(--accentInk);background:var(--tint)}
+.choice b,.choice span{display:block}
+.choice span,.hint{font-size:12px;color:var(--muted)}
+.fields label,.form label{display:grid;gap:5px;font-weight:600}
+.fields select,.form input{min-height:38px;width:100%;border:1px solid var(--rule);background:var(--card);border-radius:2px;padding:6px 8px;font-weight:400}
+.dimension{display:grid;grid-template-columns:1fr auto;align-items:center;gap:1px 12px;margin-top:9px}
+.dimension label{font-weight:600}
+.dimension output{text-align:right;font-weight:600}
+.dimension input{grid-column:1/-1;width:100%;margin:2px 0;min-height:26px;accent-color:var(--brand)}
+.range{grid-column:1/-1;display:flex;justify-content:space-between;color:var(--muted);font-size:11px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--line)}
+.row:last-child{border:0}
+.row label{display:flex;align-items:center;gap:8px;min-height:28px}
+.row input{accent-color:var(--brand);width:16px;height:16px;margin:0;flex-shrink:0}
+.stepper button{min-width:36px;min-height:36px;padding:0;font-size:17px}
+.stepper button:disabled{background:var(--step);color:var(--muted);cursor:default}
+.stepper output{display:grid;place-items:center;min-width:36px}
+aside{position:sticky;top:14px;max-height:calc(100dvh - 28px);overflow:auto;scrollbar-width:thin}
+.sheethead .mono{color:var(--muted);font-size:11px}
+.spec{margin:0;padding:10px 16px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,auto);gap:4px 12px;font-size:12px;background:var(--step);border-bottom:1px solid var(--line)}
+.spec dt{color:var(--muted)}
+.spec dd{margin:0;text-align:right;font-variant-numeric:tabular-nums;min-width:0}
+.spec dd:first-of-type{max-width:205px}
+table{width:100%;border-collapse:collapse}
+.quote-line th,.quote-line td{padding:6px 16px;border-bottom:1px solid var(--line);font-size:12px;vertical-align:top}
+.quote-line th{text-align:left;font-weight:500}
+.amount{text-align:right;white-space:nowrap}
+.quote-line span{display:block;color:var(--muted);font-size:11px}
+.tot{display:grid;gap:1px;padding:11px 16px;border-bottom:1px solid var(--line);text-align:right}
+.tot b{font-size:11px;letter-spacing:.04em;text-transform:uppercase}
+.tot output{font-weight:700;font-size:clamp(19px,2vw,24px);color:var(--brand);letter-spacing:-.05em;white-space:nowrap}
+.disc{padding:9px 16px 0}
+.acts{padding:11px 16px 15px;display:grid;gap:7px}
+.btn{padding:8px 12px;border:1px solid var(--brand);border-radius:2px;background:var(--card);color:var(--brand);text-align:center;font-weight:600;text-decoration:none}
+.btn:hover{background:var(--step)}
+.primary{background:var(--brand);color:white}
+.primary:hover{background:var(--brandDark)}
+.foot{padding-block:14px 28px;color:var(--muted);font-size:12px}
+.mobile,.print{display:none}
+dialog{width:min(560px,calc(100vw - 24px));max-height:calc(100dvh - 32px);padding:0;border:1px solid var(--ink);border-radius:2px;background:var(--card);color:var(--ink);overflow:auto}
+dialog:modal{overscroll-behavior:contain}
+dialog::backdrop{background:rgb(20 29 39 / 55%);overflow:hidden;overscroll-behavior:contain}
+dialog h1{font-size:16px}
+.close{padding:4px 10px}
+.form{display:grid;gap:12px;margin-top:12px}
+#lead-result{margin-top:12px}
+pre{margin:8px 0 12px;padding:10px;border:1px solid var(--line);background:var(--step);overflow:auto;max-height:265px;font-size:11px}
+@media(max-width:960px){
+  .wrap{grid-template-columns:minmax(0,1fr)}
+  aside{position:static;max-height:none;overflow:visible}
+  body{padding-bottom:calc(76px + env(safe-area-inset-bottom))}
+  .mobile{position:fixed;inset:auto 0 0;z-index:2;display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 12px calc(8px + env(safe-area-inset-bottom));background:var(--card);border-top:1px solid var(--rule)}
+  .mobile output{display:block;color:var(--brand);font-size:13px;font-weight:700;white-space:nowrap}
+}
+@media(max-width:550px){
+  .mast,.wrap,.foot{padding-inline:10px}
+  .mast{display:block;padding-block:15px 12px}
+  .mast h1{text-align:left;margin-top:7px;max-width:none}
+  .draw{padding-inline:2px}
+  .draw figcaption{flex-wrap:wrap;gap:2px 8px}
+  .series,.fields{grid-template-columns:1fr}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .stats>div:nth-child(3){border-left:0}
+  .stats>div:nth-child(n+3){border-top:1px solid var(--line)}
+}
+@page{size:A4;margin:13mm}
+@media print{
+  body{padding:0;background:white;font-size:10pt}
+  body>*{display:none!important}
+  body>.print{display:block!important;print-color-adjust:exact}
+  .print .sheethead{padding:0 0 8pt;border-color:var(--brand);margin-bottom:8pt}
+  .print h2{font:700 19pt/1.15 var(--display);color:var(--brand)}
+  .print h3{font-size:10pt;margin:11pt 0 3pt;text-transform:uppercase;letter-spacing:.05em}
+  .print .quote-line td,.print .quote-line th{padding:4pt 5pt;font-size:9pt}
+  .print .spec{font-size:9pt;padding:6pt;margin:0}
+  .print .spec dd:first-of-type{max-width:none}
+  .print .tot{padding:6pt}
+  .print .tot output{font-size:15pt}
+  .print .disc{padding:6pt 0 0}
+  .print .drawing-sheet{break-before:page}
+  .print figure{break-inside:avoid}
+  .print figure svg{display:block;width:100%;height:auto;max-height:94mm}
+}
+</style>
+</head>
+<body>
+<div class="concept mono">Concept preview · Placeholder demo rates · AUD incl. GST</div>
+<header class="mast">
+  <div>
+    <div class="brand">Golden Touch Joinery</div>
+    <p class="identity" id="identity"></p>
+    <p class="identity" id="credentials"></p>
+  </div>
+  <h1>Cabinetry &amp; Joinery Estimator</h1>
+</header>
+
+<div class="wrap">
+  <main>
+    <section class="card" aria-labelledby="drawing-title">
+      <header>
+        <h2 id="drawing-title">Joinery drawings</h2>
+        <div class="tools">
+          <div class="seg" role="group" aria-label="Drawing view">
+            <button type="button" data-view="both" aria-pressed="true">Elevation + Plan</button>
+            <button type="button" data-view="elev" aria-pressed="false">Elevation</button>
+            <button type="button" data-view="plan" aria-pressed="false">Plan</button>
+          </div>
+          <a href="#configuration">Configure</a>
+        </div>
+      </header>
+      <figure class="draw" id="elevation">
+        <figcaption><b>Front cabinet elevation</b><span class="mono" id="elevation-note"></span></figcaption>
+        <div id="elevation-svg"></div>
+      </figure>
+      <figure class="draw" id="plan">
+        <figcaption><b>Floor plan</b><span class="mono" id="plan-note"></span></figcaption>
+        <div id="plan-svg"></div>
+      </figure>
+      <dl class="stats">
+        <div><dt>Linear run</dt><dd class="mono" id="stat-run"></dd></div>
+        <div><dt>Height</dt><dd class="mono" id="stat-height"></dd></div>
+        <div><dt>Modules / bays</dt><dd class="mono" id="stat-bays"></dd></div>
+        <div><dt>Door panels</dt><dd class="mono" id="stat-panels"></dd></div>
+      </dl>
+      <div class="legend" aria-label="Drawing legend">
+        <span><i></i>Cabinet edge</span><span><i class="dash"></i>Door swing</span>
+        <span><i class="track"></i>Sliding track</span><span><i class="wall"></i>Wall section</span>
+      </div>
+    </section>
+
+    <section class="card" id="configuration" aria-labelledby="configuration-title">
+      <header><h2 id="configuration-title">Configuration</h2><span class="hint">Dimensions in metres</span></header>
+      <div class="body">
+        <div class="grp"><h3>Series</h3><div class="series" id="series"></div></div>
+        <div class="grp">
+          <h3>Layout &amp; dimensions</h3>
+          <div class="fields" id="layout-field"></div>
+          <div id="dimensions"></div>
+          <p class="hint" id="depth"></p>
+        </div>
+        <div class="grp">
+          <h3>Fronts &amp; materials</h3>
+          <div class="fields" id="materials"></div>
+          <p class="hint" id="material-note" hidden></p>
+        </div>
+        <div class="grp">
+          <h3>Drawers &amp; options</h3>
+          <div class="row">
+            <div><b id="drawer-label"></b><p class="hint" id="drawer-note"></p></div>
+            <div class="stepper" role="group" aria-labelledby="drawer-label">
+              <button type="button" id="drawer-minus" aria-label="Remove a drawer group">−</button>
+              <output id="drawer-count" aria-label="Drawer groups"></output>
+              <button type="button" id="drawer-plus" aria-label="Add a drawer group">+</button>
+            </div>
+          </div>
+          <div id="extras"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <aside id="estimate" aria-labelledby="quote-title">
+    <section class="card">
+      <header><h2 id="quote-title">Itemised estimate</h2><span class="mono hint" id="ref"></span></header>
+      <dl class="spec" id="quote-spec"></dl>
+      <table aria-label="Estimate line items"><tbody id="quote-lines"></tbody></table>
+      <div class="tot"><b>Indicative range · AUD incl. GST</b><output id="total"></output></div>
+      <p class="disc hint" id="disclaimer"></p>
+      <div class="acts">
+        <button class="btn primary" id="open-lead" type="button">Prepare quote request</button>
+        <button class="btn" id="print-estimate" type="button">Print / save estimate PDF</button>
+      </div>
+    </section>
+  </aside>
+</div>
+<footer class="foot" id="contact"></footer>
+<div class="mobile"><div><span class="hint">AUD incl. GST</span><output id="mobile-total" aria-live="off"></output></div><a class="btn primary" href="#estimate">View estimate</a></div>
+
+<dialog id="lead" aria-labelledby="lead-title" aria-describedby="lead-note">
+  <div class="sheethead"><h1 id="lead-title">Prepare quote request</h1><form method="dialog"><button class="btn close" aria-label="Close quote request">Close</button></form></div>
+  <div class="body">
+    <p class="hint" id="lead-note">Preview and copy the request here. This demo keeps your contact details on this page.</p>
+    <form id="lead-form" class="form">
+      <label>Full name <input name="name" autocomplete="name" maxlength="100" required autofocus></label>
+      <div class="fields">
+        <label>Postcode <input name="postcode" autocomplete="postal-code" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" title="Enter a four-digit Australian postcode" required></label>
+        <label>Email <input name="email" type="email" autocomplete="email" maxlength="160" required></label>
+      </div>
+      <label>Phone (optional) <input name="phone" type="tel" autocomplete="tel" maxlength="30"></label>
+      <button class="btn primary" type="submit">Generate request preview</button>
+    </form>
+    <section id="lead-result" hidden>
+      <h2 id="lead-summary" tabindex="-1">Request preview</h2>
+      <p class="hint" id="lead-config"></p>
+      <pre id="lead-json" tabindex="0" aria-label="Request JSON"></pre>
+      <button class="btn primary" id="copy-lead" type="button">Copy lead JSON</button>
+      <button class="btn" id="edit-lead" type="button">Edit contact details</button>
+      <p class="hint" id="copy-status" role="status"></p>
+    </section>
+  </div>
+</dialog>
+<div class="print" id="print-sheet"></div>
+<script id="company" type="application/json">{"name": "Golden Touch Joinery", "slug": "golden-touch-joinery", "location": "Sydney, NSW, AU", "currency": "AUD", "unit": "m", "url": "https://goldentouchjoinery.com.au", "ref": "GTJ", "detail": "Mon–Fri 9am–5pm", "credentials": "Polytec / Laminex / Formica / Dulux finishes", "phone": "1300 290 200", "tel": "1300290200", "run": {"label": "Total linear run", "min": 2000, "max": 9000, "initial": 4200, "step": 50}, "height": {"label": "Overall height", "min": 2400, "max": 2700, "initial": 2600, "step": 50}, "series": [{"name": "Walk-in Wardrobe (L / U / Galley)", "description": "Open storage with optional fitted fronts", "rate": 1150, "kind": "robe", "profile": "open", "layouts": ["straight", "l", "u", "galley"], "island": false}, {"name": "Sliding / Hinged Wardrobe", "description": "Choose swing doors or a sliding track", "rate": 1170, "kind": "robe", "profile": "sliding", "layouts": ["straight"], "island": false}, {"name": "Custom Kitchen Joinery", "description": "Base and wall cabinetry with worktop options", "rate": 1780, "kind": "counter", "profile": "flat", "layouts": ["straight", "l", "u", "galley"], "island": true}, {"name": "Laundry & Vanity Cabinetry", "description": "Base storage, bench and upper cabinets", "rate": 1510, "kind": "counter", "profile": "flat", "layouts": ["straight", "l", "u", "galley"], "island": false}], "profiles": {"sliding": ["sliding", "flat", "shaker"], "closed": ["flat", "shaker", "groove"], "open": ["open", "flat"]}, "finishes": [{"name": "Melamine", "rate": 0, "colour": "#E7EBEF"}, {"name": "Polytec Woodmatt", "rate": 165, "colour": "#B6B3AD"}, {"name": "2-Pac polyurethane", "rate": 275, "colour": "#D0D9E0"}], "tops": [["No benchtop", 0, 0], ["Laminate", 270, 33], ["Porcelain", 680, 20]], "drawer_label": "Blum drawer groups", "drawer_price": 345, "extras": [{"key": "led", "name": "Sensor LED strip", "price": 105, "linear": true, "kinds": null}, {"key": "handles", "name": "Upgraded handles", "price": 90, "linear": true, "kinds": null}], "domain": "goldentouchjoinery.com.au"}</script>
+<script>
+(() => {
+  "use strict";
+  const $ = id => document.getElementById(id);
+  const C = JSON.parse($("company").textContent);
+  const layouts = {straight:"Straight", l:"L-Shape", u:"U-Shape", galley:"Galley"};
+  const profiles = {
+    sliding:["Sliding overlap panels", 0], "sliding-mirror":["Mirrored sliding panels", 170],
+    flat:[C.ref === "ECC" ? "Flat Poly" : "Flat panel", 0], shaker:["Shaker period profile", 140],
+    beadboard:["Beadboard period profile", 195], groove:["Routed finger pull", 110], open:["Open shelving", 0]
+  };
+  const demoNote = "Sample rates for budgeting. Site measure, final materials and installation scope determine the supplier’s quote.";
+  const planNote = "Schematic only · north shown for orientation";
+  const state = {series:0, run:C.run.initial, height:C.height.initial, layout:"straight",
+    profile:C.series[0].profile, finish:0, top:0, drawers:2, island:false, extras:new Set(), view:"both"};
+  const mmFormat = new Intl.NumberFormat("en-AU");
+  const moneyFormat = new Intl.NumberFormat("en-AU", {style:"currency", currency:C.currency, maximumFractionDigits:0});
+  const m = mm => `${(mm / 1000).toFixed(2)} ${C.unit}`;
+  const money = value => moneyFormat.format(value);
+  const escape = value => String(value).replace(/[&<>"']/g, char => ({
+    "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
+  })[char]);
+  const activeSeries = () => C.series[state.series];
+  const hasTop = () => Boolean(C.tops && ["counter", "vanity"].includes(activeSeries().kind));
+  const isSliding = () => state.profile.startsWith("sliding");
+  const track = event => {
+    try { window.umami?.track?.(event, {company: C.slug})?.catch?.(() => {}); }
+    catch { /* The estimate also runs offline. */ }
+  };
+  let dimensionTimer;
+  function trackDimensions() {
+    clearTimeout(dimensionTimer);
+    dimensionTimer = setTimeout(() => track("configure-dimensions"), 400);
+  }
+
+  const phone = C.phone ? `<a href="tel:${escape(C.tel)}">${escape(C.phone)}</a>` : "";
+  $("identity").textContent = [C.detail, C.location].filter(Boolean).join(" · ");
+  $("credentials").textContent = C.credentials;
+  $("contact").innerHTML = [`<a href="${escape(C.url)}">${escape(C.domain)}</a>`, phone].filter(Boolean).join(" · ");
+  $("identity").insertAdjacentHTML("beforeend", ` · ${phone || $("contact").innerHTML}`);
+  $("disclaimer").textContent = demoNote;
+
+  // The run is the sum of usable cabinet fronts. Corner blocks are drawn once, outside that sum.
+  function splitRun() {
+    const ratios = {straight:[1], l:[.60,.40], u:[.44,.28,.28], galley:[.52,.48]}[state.layout];
+    let assigned = 0;
+    return ratios.map((ratio, index) => {
+      const remaining = ratios.length-index-1;
+      const preferred = Math.round(state.run * ratio / 50) * 50;
+      const length = remaining ? Math.min(state.run-assigned-450*remaining,Math.max(450,preferred)) : state.run-assigned;
+      assigned += length;
+      return length;
+    });
+  }
+
+  function makeBays(length) {
+    const count = Math.max(1, Math.min(Math.ceil(length / 600), Math.floor(length / 450)));
+    const usable = Math.min(length, count * 600);
+    const bays = Array.from({length:count}, (_, index) => {
+      const start = Math.round(index * usable / count);
+      return {start, width:Math.round((index + 1) * usable / count) - start, groups:0};
+    });
+    if (usable < length) bays.push({start:usable, width:length - usable, filler:true, groups:0});
+    return bays;
+  }
+
+  function geometry() {
+    const series = activeSeries();
+    const counter = hasTop();
+    const base = series.kind === "vanity" ? 820 : 900;
+    const upperBottom = base + (series.kind === "vanity" ? 700 : 650);
+    const height = C.overhead ? upperBottom + state.height : state.height;
+    const depth = 600;
+    const legs = splitRun().map((length, index) => ({
+      length, label:String.fromCharCode(65 + index), bays:makeBays(length)
+    }));
+    const eligible = legs.flatMap(leg => leg.bays).filter(bay => !bay.filler);
+    const stacksPerBay = counter ? 2 : 4;
+    const maxDrawers = Math.min(8, eligible.length * stacksPerBay);
+    state.drawers = Math.min(maxDrawers, state.drawers);
+    for (let index = 0; index < state.drawers; index++) eligible[index % eligible.length].groups++;
+    const trim = counter ? 0 : state.extras.has("cornice") ? 125 : 55;
+    const top = counter ? C.tops[state.top] : null;
+    const island = series.island && state.island && top?.[2] ? {width:1800, depth:900} : null;
+    for (const leg of legs) {
+      if (isSliding()) {
+        const count = Math.max(2, Math.ceil(leg.length / 1020));
+        const pitch = (leg.length - 35) / count;
+        leg.panels = Array.from({length:count}, (_, index) => ({start:index * pitch, width:pitch + 35}));
+      } else {
+        leg.panels = leg.bays.filter(bay => !bay.filler && (counter || state.profile !== "open")).map(bay => ({
+          ...bay, lowerDoor:!bay.groups
+        }));
+      }
+    }
+    const panels = legs.reduce((sum, leg) => sum + leg.panels.reduce((n, panel) => (
+      n + (counter && panel.lowerDoor ? 2 : 1)
+    ), 0), 0) + (series.kind === "shelf" && state.profile === "open"
+      ? eligible.filter(bay => !bay.groups).length : 0);
+    return {series, legs, counter, base, upperBottom, height, depth, trim, top, island, bays:eligible.length,
+      maxDrawers, panels};
+  }
+
+  // SVG primitives accept millimetres via the projection in each view. Labels stay in screen units.
+  const n = value => Number(value.toFixed(2));
+  const line = (x1,y1,x2,y2,cls="fine") =>
+    `<line x1="${n(x1)}" y1="${n(y1)}" x2="${n(x2)}" y2="${n(y2)}" class="${cls}"/>`;
+  const box = (x,y,w,h,cls,fill="none") =>
+    `<rect x="${n(x)}" y="${n(y)}" width="${n(w)}" height="${n(h)}" class="${cls}" fill="${fill}"/>`;
+  const path = (d,cls) => `<path d="${d}" class="${cls}"/>`;
+  const text = (x,y,label,anchor="start",cls="") =>
+    `<text x="${n(x)}" y="${n(y)}" text-anchor="${anchor}" class="${cls}">${escape(label)}</text>`;
+  const svg = (width,height,title,content) =>
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="${escape(title)}">${content}</svg>`;
+
+  function horizontalDim(left, right, y, witness, label) {
+    return line(left,witness,left,y+5,"dim") + line(right,witness,right,y+5,"dim") + line(left,y,right,y,"dim")
+      + line(left-3,y+3,left+3,y-3,"dim") + line(right-3,y+3,right+3,y-3,"dim")
+      + text((left+right)/2,y+14,label,"middle");
+  }
+
+  function verticalDim(top, bottom, x, witness, label) {
+    const mid = (top + bottom) / 2;
+    return line(witness,top,x-5,top,"dim") + line(witness,bottom,x-5,bottom,"dim") + line(x,top,x,bottom,"dim")
+      + line(x-3,top+3,x+3,top-3,"dim") + line(x-3,bottom+3,x+3,bottom-3,"dim")
+      + `<g transform="rotate(-90 ${n(x-7)} ${n(mid)})">${text(x-7,mid,label,"middle")}</g>`;
+  }
+
+  function fronts(x, y, w, h, profile, scale, colour, handleClass) {
+    const material = box(x,y,w,h,"edge",colour);
+    const inset = Math.min(48*scale,w*.17,h*.17);
+    const mid = x+w/2;
+    if (profile === "open") {
+      return box(x,y,w,h,"void") + [1,2,3].map(i => line(x,y+h*i/4,x+w,y+h*i/4)).join("");
+    }
+    let drawing = material;
+    if (profile === "shaker" || profile === "beadboard") {
+      drawing += box(x+inset,y+inset,w-2*inset,h-2*inset,"fine");
+    }
+    if (profile === "beadboard") {
+      drawing += [1,2,3].map(i => {
+        const bead = x+inset+(w-2*inset)*i/4;
+        return line(bead,y+inset,bead,y+h-inset);
+      }).join("");
+    }
+    if (profile === "mirror") {
+      drawing += line(x+w*.35,y+h*.69,x+w*.65,y+h*.47,"gridline");
+      drawing += line(x+w*.35,y+h*.75,x+w*.65,y+h*.53,"gridline");
+    }
+    const handle = Math.min(w*.62, (state.extras.has("handles") ? 190 : 120)*scale);
+    if (profile === "groove") return drawing + line(x+inset,y+inset,x+w-inset,y+inset,"outline");
+    if (profile.startsWith("sliding")) {
+      return drawing + line(x+w*.82,y+h*.45,x+w*.82,y+h*.55,handleClass);
+    }
+    return drawing + line(mid-handle/2,y+h*.21,mid+handle/2,y+h*.21,handleClass);
+  }
+
+  function drawElevation(g, width) {
+    const compact = width < 510;
+    const left = 39;
+    const right = 14;
+    const scale = Math.min((width-left-right)/state.run, (compact ? 153 : 220)/g.height);
+    const drawingWidth = state.run*scale;
+    const x0 = left+(width-left-right-drawingWidth)/2;
+    const y0 = 22;
+    const y = height => y0+(g.height-height)*scale;
+    const colour = C.finishes[state.finish].colour;
+    const handleClass = state.extras.has("handles") ? "track" : "outline";
+    const trimName = state.extras.has("cornice") ? "Cornice · 125 mm" : "Bulkhead · 55 mm";
+    let art = "";
+    for (let height = 0; height <= g.height; height += 300) {
+      art += line(x0-8,y(height),x0+drawingWidth+8,y(height),"gridline");
+    }
+    let offset = 0;
+    g.legs.forEach(leg => {
+      const start = x0+offset*scale;
+      const runWidth = leg.length*scale;
+      const frontTop = g.counter ? g.base-(g.top?.[2] || 0) : g.height-g.trim;
+      const openingTop = y(frontTop);
+      if (g.legs.length > 1) art += text(start+runWidth/2,12,leg.label,"middle","detail");
+      art += box(start,y(100),runWidth,100*scale,"void");
+      if (g.counter) {
+        if (state.extras.has("splash")) art += box(start,y(g.upperBottom),runWidth,(g.upperBottom-g.base)*scale,"splash","var(--tint)");
+        if (g.top[2]) art += box(start,y(g.base),runWidth,g.top[2]*scale,"worktop");
+        if (state.extras.has("led")) art += line(start,y(g.upperBottom)+2,start+runWidth,y(g.upperBottom)+2,"track");
+      } else {
+        art += box(start,y(g.height),runWidth,g.trim*scale,"void");
+        if (state.extras.has("cornice")) {
+          art += line(start,y(g.height-45),start+runWidth,y(g.height-45),"outline");
+          art += line(start,y(g.height-85),start+runWidth,y(g.height-85));
+        }
+      }
+
+      leg.bays.forEach((bay,index) => {
+        const x = start+bay.start*scale;
+        const w = bay.width*scale;
+        const lower = y(100);
+        const gap = Math.min(.7,w*.08);
+        if (g.counter) {
+          art += bay.filler ? box(x,y(g.height),w,(g.height-g.upperBottom)*scale,"void")
+            : fronts(x+gap,y(g.height),w-2*gap,(g.height-g.upperBottom)*scale,state.profile,scale,colour,handleClass);
+        }
+        if (bay.filler) {
+          art += box(x,openingTop,w,lower-openingTop,"void");
+          return;
+        }
+        if (isSliding()) {
+          art += box(x,openingTop,w,lower-openingTop,"gridline");
+        } else if (!bay.groups) {
+          const profile = state.extras.has("mirror") && leg === g.legs[0] && index === 0 ? "mirror" : state.profile;
+          const displayShelf = g.series.kind === "shelf" && profile === "open";
+          const frontHeight = lower-openingTop;
+          art += fronts(x+gap,openingTop,w-2*gap,displayShelf ? frontHeight*.73 : frontHeight,profile,scale,colour,handleClass);
+          if (displayShelf) art += fronts(x+gap,openingTop+frontHeight*.73,w-2*gap,frontHeight*.27,"flat",scale,colour,handleClass);
+        }
+        if (bay.groups) {
+          const drawerHeight = (g.counter ? 150 : 130)*scale;
+          const stackHeight = drawerHeight*bay.groups*2;
+          if (!isSliding() && lower-stackHeight > openingTop) {
+            art += fronts(x+gap,openingTop,w-2*gap,lower-stackHeight-openingTop,g.counter ? "open" : state.profile,scale,colour,handleClass);
+          }
+          for (let drawer = 0; drawer < bay.groups*2; drawer++) {
+            art += fronts(x+gap,lower-(drawer+1)*drawerHeight,w-2*gap,drawerHeight,"flat",scale,colour,handleClass);
+          }
+        }
+      });
+
+      if (isSliding()) {
+        leg.panels.forEach((panel,index) => {
+          const x = start+panel.start*scale;
+          const w = panel.width*scale;
+          const profile = state.profile === "sliding-mirror" ||
+            (state.extras.has("mirror") && leg === g.legs[0] && index === 0) ? "sliding-mirror" : "sliding";
+          const panelHeight = y(100)-openingTop;
+          art += box(x,openingTop,w,panelHeight,"outline");
+          art += line(x+w*.85,openingTop+panelHeight*.45,x+w*.85,openingTop+panelHeight*.55,"track");
+          if (profile === "sliding-mirror") {
+            art += line(x+w*.30,openingTop+panelHeight*.63,x+w*.65,openingTop+panelHeight*.38,"fine");
+            art += line(x+w*.30,openingTop+panelHeight*.69,x+w*.65,openingTop+panelHeight*.44,"fine");
+          }
+        });
+        art += line(start,y(100)-2,start+runWidth,y(100)-2,"track");
+        art += line(start,y(100)+2,start+runWidth,y(100)+2,"track");
+      } else if (!g.counter && state.extras.has("led")) {
+        art += line(start,openingTop+3,start+runWidth,openingTop+3,"track");
+      }
+      if (offset) art += line(start,y0-4,start,y(0)+3,"track");
+      offset += leg.length;
+    });
+
+    art += line(x0-11,y(0),x0+drawingWidth+11,y(0),"outline");
+    art += verticalDim(y(g.height),y(0),Math.max(24,x0-18),x0-3,`${mmFormat.format(g.height)} mm`);
+    art += horizontalDim(x0,x0+drawingWidth,y(0)+12,y(0)+1,`${mmFormat.format(state.run)} mm · ${g.bays} bays`);
+    const topNote = g.counter ? (g.top[2] ? `Benchtop ${g.top[2]} mm` : "No benchtop") : trimName;
+    const splashNote = state.extras.has("splash") ? " · Splashback" : "";
+    art += text(width/2,y(0)+44,`Kickboard 100 mm · ${topNote}${splashNote}`,"middle","detail");
+    return svg(width,Math.ceil(y(0)+53),"Front cabinet elevation",art);
+  }
+
+  function planPosition(g) {
+    const d = g.depth;
+    const [first, second, third] = g.legs;
+    const width = first.length;
+    const a = {leg:first,x:0,y:0,angle:0};
+    if (state.layout === "straight") return {runs:[a], corners:[]};
+    if (state.layout === "galley") {
+      return {runs:[a,{leg:second,x:second.length,y:2400,angle:180}],corners:[]};
+    }
+    const b = {leg:second,x:-d,y:d+second.length,angle:-90};
+    const corners = [{x:-d,y:0}];
+    if (state.layout === "l") return {runs:[a,b],corners};
+    corners.push({x:width,y:0});
+    return {runs:[a,b,{leg:third,x:width+d,y:d,angle:90}],corners};
+  }
+
+  function drawPlan(g, width, patternId = "live-wall-hatch") {
+    const d = g.depth;
+    const {runs,corners} = planPosition(g);
+    const compact = width < 510;
+    const galley = state.layout === "galley";
+    const hinged = !isSliding() && state.profile !== "open";
+    const hasDoors = hinged || g.series.kind === "shelf";
+    const reach = hasDoors ? 600 : 90;
+    const widthMm = g.legs[0].length;
+    const left = (corners.length ? -d : 0) - 95;
+    const right = widthMm + (corners.length === 2 ? d : 0) + 95;
+    let extentY = galley ? 2400 : Math.max(d+reach,...g.legs.slice(1).map(leg => d+leg.length));
+    const islandY = extentY + (galley ? 1000 : 850);
+    if (g.island) extentY = islandY + g.island.depth;
+    const islandLeft = g.island ? (widthMm-g.island.width)/2 : 0;
+    const xmin = g.island ? Math.min(left,islandLeft) : left;
+    const xmax = g.island ? Math.max(right,islandLeft+g.island.width) : right;
+    const scale = Math.min((width-66)/(xmax-xmin), (compact ? 172 : 232)/(extentY+110));
+    const x0 = (width-(xmax-xmin)*scale)/2-xmin*scale;
+    const y0 = 33+110*scale;
+    const X = value => x0+value*scale;
+    const Y = value => y0+value*scale;
+    const colour = C.finishes[state.finish].colour;
+    let art = `<defs><pattern id="${patternId}" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M 2.5 0 V 5" stroke="var(--rule)" stroke-width=".6"/></pattern></defs>`;
+    const hatch = `url(#${patternId})`;
+
+    runs.forEach(({leg,x,y,angle}) => {
+      art += `<g transform="translate(${n(X(x))} ${n(Y(y))}) rotate(${angle})">`;
+      art += box(0,-95*scale,leg.length*scale,95*scale,"wall-section",hatch);
+      leg.bays.forEach(bay => {
+        art += box(bay.start*scale,0,bay.width*scale,d*scale,"edge",bay.filler ? "var(--step)" : colour);
+      });
+      if (isSliding()) {
+        art += line(0,d*scale-3,leg.length*scale,d*scale-3,"track");
+        art += line(0,d*scale,leg.length*scale,d*scale,"track");
+        leg.panels.forEach((panel,index) => {
+          const lane = d*scale-(index%2 ? 3 : 0);
+          art += line(panel.start*scale,lane,(panel.start+panel.width)*scale,lane,"track");
+          art += line((panel.start+panel.width)*scale,lane-2,(panel.start+panel.width)*scale,lane+2,"track");
+        });
+      } else if (hasDoors) {
+        leg.bays.filter(bay => !bay.filler).forEach(bay => {
+          if (bay.groups && (g.counter || state.profile === "open")) return;
+          const x1 = bay.start*scale;
+          const leaf = bay.width*scale;
+          const y1 = d*scale;
+          art += path(`M ${n(x1+leaf)} ${n(y1)} A ${n(leaf)} ${n(leaf)} 0 0 1 ${n(x1)} ${n(y1+leaf)} L ${n(x1)} ${n(y1)}`,"swing");
+        });
+      }
+      art += "</g>";
+      if (runs.length > 1) {
+        const middle = leg.length*scale/2;
+        const label = `${leg.label} · ${mmFormat.format(leg.length)}`;
+        if (angle === 0) art += text(X(x)+middle,Y(y)-95*scale-5,label,"middle","detail");
+        if (angle === 180) art += text(X(x)-middle,Y(y)+95*scale+12,label,"middle","detail");
+        if (Math.abs(angle) === 90) {
+          const labelX = X(x)+(angle === 90 ? 95*scale+13 : -95*scale-8);
+          const labelY = Y(y)+(angle === 90 ? middle : -middle);
+          art += `<g transform="rotate(-90 ${n(labelX)} ${n(labelY)})">${text(labelX,labelY,label,"middle","detail")}</g>`;
+        }
+      }
+    });
+    corners.forEach(corner => {
+      art += box(X(corner.x),Y(corner.y),d*scale,d*scale,"edge",colour);
+      art += box(X(corner.x),Y(corner.y)-95*scale,d*scale,95*scale,"wall-section",hatch);
+      art += line(X(corner.x),Y(d),X(corner.x+d),Y(0));
+    });
+    if (g.island) {
+      art += box(X(islandLeft),Y(islandY),g.island.width*scale,g.island.depth*scale,"edge",colour);
+      art += text(X(widthMm/2),Y(islandY+g.island.depth)+12,"Island · 1800 × 900","middle","detail");
+    }
+
+    const northX = width-17;
+    art += path(`M ${northX-4} 29 L ${northX} 21 L ${northX+4} 29 M ${northX} 22 V 44`,"outline");
+    art += text(northX,17,"N","middle");
+    if (runs.length === 1) {
+      art += verticalDim(Y(0),Y(d),Math.max(25,X(0)-12),X(0)-2,`${d} mm`);
+    }
+    const dimY = Y(extentY)+(g.island ? 27 : 20);
+    if (runs.length === 1 && !g.island) {
+      art += horizontalDim(X(0),X(widthMm),dimY,Y(extentY)+4,`Total linear run ${m(state.run)}`);
+    } else {
+      art += text(width/2,dimY+13,`Total linear run ${m(state.run)}`,"middle");
+    }
+    return svg(width,Math.ceil(dimY+23),"Floor plan and cabinet door movement",art);
+  }
+
+  function extraOptions() {
+    return C.extras.filter(option => (!option.kinds || option.kinds.includes(activeSeries().kind)) &&
+      (option.key !== "mirror" || !["open", "sliding-mirror"].includes(state.profile)));
+  }
+
+  function estimate(g) {
+    const run = state.run / 1000;
+    const finish = C.finishes[state.finish];
+    const add = (label, price, detail = "") => ({label, price:Math.round(price), detail});
+    const perMetre = rate => `${money(rate)} / m`;
+    const cut = g.counter ? 1550 : 2450;
+    const raised = Math.max(0, (C.overhead ? state.height-600 : g.height-cut)/1000);
+    const lines = [
+      add("Cabinetry, standard fit", g.series.rate*run, `${m(state.run)} × ${perMetre(g.series.rate)}`),
+      add("Panel finish", finish.rate*run, finish.name),
+      add("Door profile", profiles[state.profile][1]*run, profiles[state.profile][0]),
+      add(C.drawer_label, state.drawers*C.drawer_price, `${state.drawers} × ${money(C.drawer_price)}`)
+    ];
+    if (raised) lines.push(add(C.overhead ? "Overhead height allowance" : "Tall cabinet allowance", 315*raised*run));
+    if (g.legs.length > 1 && state.layout !== "galley") {
+      lines.push(add("Corner cabinets", (g.legs.length-1)*420, `${g.legs.length-1} × ${money(420)}`));
+    }
+    if (g.top?.[2]) lines.push(add("Benchtop", g.top[1]*run, g.top[0]));
+    if (g.island) lines.push(add("Island cabinetry & top", 2250+g.top[1]*1.8, "1800 × 900 mm"));
+    extraOptions().filter(option => state.extras.has(option.key)).forEach(option =>
+      lines.push(add(option.name, option.price*(option.linear ? run : 1), option.linear ? perMetre(option.price) : "")));
+    const allowance = lines.reduce((sum, item) => sum+item.price, 0);
+    const low = Math.floor(allowance*.92/50)*50;
+    const high = Math.ceil(allowance*1.14/50)*50;
+    const spec = [["Series",g.series.name],["Layout",layouts[state.layout]],
+      ["Run × overall height",`${m(state.run)} × ${m(g.height)}`],["Cabinet depth",m(g.depth)]];
+    if (C.overhead) spec.push(["Overhead cabinet height",m(state.height)]);
+    if (g.legs.length > 1) spec.push(["Front lengths",g.legs.map(leg => `${leg.label} ${m(leg.length)}`).join(" / ")]);
+    return {lines, allowance, low, high, spec, total:`${money(low)} – ${money(high)}`};
+  }
+
+  function summaryHTML(quote) {
+    return quote.spec.map(([label,value]) => `<dt>${escape(label)}</dt><dd>${escape(value)}</dd>`).join("");
+  }
+
+  function itemsHTML(quote) {
+    const row = ({label,price,detail}) => `<tr class="quote-line"><th scope="row">${escape(label)}${detail ? `<span>${escape(detail)}</span>` : ""}</th><td class="amount mono">${money(price)}</td></tr>`;
+    return quote.lines.map(row).join("") + row({label:"Base estimate incl. GST",price:quote.allowance});
+  }
+
+  const date = new Intl.DateTimeFormat("en-AU", {day:"2-digit", month:"short", year:"numeric"}).format(new Date());
+  const reference = `${C.ref}-EST`;
+  $("ref").textContent = reference;
+
+  function stepControls(g) {
+    $("drawer-count").value = state.drawers;
+    $("drawer-note").textContent = `0–${g.maxDrawers} groups · 2 drawers per group`;
+    $("drawer-minus").disabled = state.drawers === 0;
+    $("drawer-plus").disabled = state.drawers === g.maxDrawers;
+  }
+
+  function drawings(g) {
+    const width = Math.max(270, Math.floor($("elevation-svg").clientWidth || $("plan-svg").clientWidth));
+    $("elevation-svg").innerHTML = drawElevation(g, width);
+    $("plan-svg").innerHTML = drawPlan(g, width);
+  }
+
+  function setView(view) {
+    state.view = view;
+    $("elevation").hidden = view === "plan";
+    $("plan").hidden = view === "elev";
+    document.querySelectorAll("[data-view]").forEach(button =>
+      button.setAttribute("aria-pressed", String(button.dataset.view === view)));
+  }
+
+  function render() {
+    const g = geometry();
+    const quote = estimate(g);
+    drawings(g);
+    $("elevation-note").textContent = g.legs.length > 1 ? "Unfolded fronts · relative scale" : "Relative scale · dimensions in mm";
+    $("plan-note").textContent = `${layouts[state.layout]} · ${planNote}`;
+    $("stat-run").textContent = m(state.run);
+    $("stat-height").textContent = m(g.height);
+    $("stat-bays").textContent = g.bays;
+    $("stat-panels").textContent = g.panels;
+    $("quote-spec").innerHTML = summaryHTML(quote);
+    $("quote-lines").innerHTML = itemsHTML(quote);
+    $("total").value = quote.total;
+    $("mobile-total").value = quote.total;
+    $("depth").textContent = g.legs.length > 1
+      ? "Fixed 0.60 m depth. Linear run is the sum of the cabinet fronts. Corner blocks are shown separately."
+      : "Fixed cabinet depth · 0.60 m";
+    stepControls(g);
+  }
+
+  function selectField(id, label, choices, selected) {
+    const options = choices.map(([key,name]) =>
+      `<option value="${escape(key)}"${key === selected ? " selected" : ""}>${escape(name)}</option>`).join("");
+    return `<label for="${id}">${label}<select id="${id}">${options}</select></label>`;
+  }
+
+  function profileOptions(series) {
+    const group = series.profile.startsWith("sliding") ? "sliding" : series.profile === "open" ? "open" : "closed";
+    return C.profiles[group].map(key => [key,profiles[key][0]]);
+  }
+
+  function renderMaterials() {
+    const series = activeSeries();
+    $("materials").innerHTML =
+      selectField("profile","Door profile",profileOptions(series),state.profile) +
+      selectField("finish","Panel finish",C.finishes.map((finish,index) => [index,finish.name]),state.finish) +
+      (hasTop() ? selectField("top","Benchtop material",C.tops.map(([name],index) => [index,name]),state.top) : "");
+    $("material-note").hidden = !(C.overhead && state.top === 1);
+    $("material-note").textContent = "Confirm the selected product and crystalline silica content with the supplier.";
+  }
+
+  function renderExtras() {
+    const options = extraOptions();
+    $("extras").innerHTML = options.map(option =>
+      `<div class="row"><label><input type="checkbox" data-extra="${option.key}"${state.extras.has(option.key) ? " checked" : ""}>${escape(option.name)}</label><span class="mono">${money(option.price)}${option.linear ? " / m" : ""}</span></div>`).join("");
+    if (activeSeries().island && hasTop() && C.tops[state.top][2]) {
+      $("extras").insertAdjacentHTML("afterbegin",
+        `<div class="row"><label><input type="checkbox" id="island"${state.island ? " checked" : ""}> Add island · 1.80 × 0.90 m</label></div>`);
+    }
+  }
+
+  C.series.forEach((series,index) => {
+    $("series").insertAdjacentHTML("beforeend", `<button class="choice" type="button" data-series="${index}" aria-pressed="${index === state.series}"><b>${escape(series.name)}</b><span>${escape(series.description)}</span></button>`);
+  });
+
+  for (const key of ["run","height"]) {
+    const spec = C[key];
+    $("dimensions").insertAdjacentHTML("beforeend",
+      `<div class="dimension"><label for="${key}">${escape(spec.label)}</label><output for="${key}" id="${key}-value">${m(state[key])}</output>
+      <input id="${key}" type="range" min="${spec.min}" max="${spec.max}" step="${spec.step}" value="${state[key]}">
+      <div class="range mono" aria-hidden="true"><span>${m(spec.min)}</span><span>${m(spec.max)}</span></div></div>`);
+    $(key).setAttribute("aria-valuetext", m(state[key]));
+    $(key).addEventListener("input", event => {
+      state[key] = event.target.valueAsNumber;
+      $(`${key}-value`).value = m(state[key]);
+      event.target.setAttribute("aria-valuetext", m(state[key]));
+      render();
+      trackDimensions();
+    });
+  }
+
+  function renderSeries() {
+    const series = activeSeries();
+    const label = C.ref === "GTJ" ? "Layout shape" : "Layout";
+    $("layout-field").innerHTML = series.layouts.length > 1
+      ? selectField("layout",label,series.layouts.map(key => [key,layouts[key]]),state.layout) : "";
+    renderMaterials();
+    renderExtras();
+    render();
+  }
+
+  $("drawer-label").textContent = C.drawer_label;
+  $("series").addEventListener("click", event => {
+    const button = event.target.closest("[data-series]");
+    if (!button || Number(button.dataset.series) === state.series) return;
+    state.series = Number(button.dataset.series);
+    const series = activeSeries();
+    state.layout = C.ref === "GTJ" && state.series === 0 ? "l" :
+      series.layouts.includes(state.layout) ? state.layout : series.layouts[0];
+    state.profile = series.profile;
+    if (!series.island) state.island = false;
+    if (!extraOptions().some(option => option.key === "mirror")) state.extras.delete("mirror");
+    document.querySelectorAll("[data-series]").forEach(item =>
+      item.setAttribute("aria-pressed", String(item === button)));
+    renderSeries();
+    track("select-series");
+  });
+
+  $("layout-field").addEventListener("change", event => {
+    state.layout = event.target.value;
+    render();
+    trackDimensions();
+  });
+
+  $("materials").addEventListener("change", event => {
+    const {id,value} = event.target;
+    state[id] = id === "profile" ? value : Number(value);
+    if (id === "profile") {
+      if (!extraOptions().some(option => option.key === "mirror")) state.extras.delete("mirror");
+      renderExtras();
+    }
+    if (id === "top") {
+      if (!C.tops[state.top][2]) state.island = false;
+      $("material-note").hidden = !(C.overhead && state.top === 1);
+      renderExtras();
+    }
+    render();
+  });
+
+  $("extras").addEventListener("change", event => {
+    const {checked, dataset, id} = event.target;
+    if (id === "island") state.island = checked;
+    else if (checked) state.extras.add(dataset.extra);
+    else state.extras.delete(dataset.extra);
+    render();
+  });
+  $("drawer-minus").addEventListener("click", () => { state.drawers--; render(); });
+  $("drawer-plus").addEventListener("click", () => { state.drawers++; render(); });
+  document.querySelectorAll("[data-view]").forEach(button =>
+    button.addEventListener("click", () => { setView(button.dataset.view); drawings(geometry()); }));
+
+  function populatePrintSheet() {
+    const g = geometry();
+    const quote = estimate(g);
+    const siteContact = [C.detail,C.location,C.phone || C.domain].filter(Boolean).join(" · ");
+    $("print-sheet").innerHTML = `<div class="sheethead">
+      <div><h2>${escape(C.name)}</h2><p>${escape(siteContact)}</p></div>
+      <div class="mono">ESTIMATE · ${reference}<br>${escape(date)}</div>
+      </div>
+      <h3>Project specification</h3><dl class="spec">${summaryHTML(quote)}</dl>
+      <h3>Itemised estimate · AUD incl. GST</h3>
+      <table><tbody>${itemsHTML(quote)}</tbody></table>
+      <div class="tot"><b>Indicative range</b><output>${quote.total}</output></div>
+      <p class="disc">${escape(demoNote)}</p>
+      <section class="drawing-sheet">
+        <div class="sheethead"><h2>Joinery drawings</h2><span class="mono">${reference} · ${escape(date)}</span></div>
+        <figure class="draw"><figcaption><b>Front cabinet elevation</b><span>Dimensions in mm</span></figcaption>${drawElevation(g,690)}</figure>
+        <figure class="draw"><figcaption><b>Floor plan</b><span>${escape(planNote)}</span></figcaption>${drawPlan(g,690,"print-wall-hatch")}</figure>
+        <div class="legend">${document.querySelector(".legend").innerHTML}</div>
+      </section>`;
+  }
+
+  $("print-estimate").addEventListener("click", () => {
+    track("print-estimate");
+    window.print();
+  });
+  window.addEventListener("beforeprint", populatePrintSheet);
+
+  const leadDialog = $("lead");
+  const leadForm = $("lead-form");
+  function editLead() {
+    leadForm.hidden = false;
+    $("lead-result").hidden = true;
+    $("lead-json").textContent = "";
+    $("copy-status").textContent = "";
+  }
+  $("open-lead").addEventListener("click", () => {
+    editLead();
+    leadDialog.showModal();
+    track("open-lead-modal");
+  });
+  $("edit-lead").addEventListener("click", () => {
+    editLead();
+    leadForm.elements.name.focus();
+  });
+  leadForm.addEventListener("submit", event => {
+    event.preventDefault();
+    const name = leadForm.elements.name;
+    if (!name.value.trim()) {
+      name.setCustomValidity("Enter your name.");
+      name.reportValidity();
+      return;
+    }
+    const contact = Object.fromEntries(Array.from(new FormData(leadForm), ([key,value]) => [key,value.trim()]));
+    const g = geometry();
+    const quote = estimate(g);
+    const configuration = {
+      series:g.series.name, layout:layouts[state.layout], linear_run_mm:state.run,
+      front_lengths_mm:g.legs.map(leg => leg.length), overall_height_mm:g.height,
+      overhead_height_mm:C.overhead ? state.height : null, cabinet_depth_mm:g.depth,
+      bays:g.bays, door_panels:g.panels, profile:profiles[state.profile][0], finish:C.finishes[state.finish].name,
+      drawer_groups:state.drawers, benchtop:g.top?.[0] ?? null,
+      island_mm:g.island, extras:extraOptions().filter(option => state.extras.has(option.key)).map(option => option.name)
+    };
+    const payload = {company:C.slug, reference, contact, configuration,
+      estimate:{currency:C.currency, includes_gst:true, demo_rates:true,
+        items:quote.lines.map(({label,price}) => ({label,amount:price})),
+        base:quote.allowance, low:quote.low, high:quote.high}};
+    $("lead-config").textContent = `${configuration.series} · ${m(state.run)} · ${quote.total} AUD incl. GST`;
+    $("lead-json").textContent = JSON.stringify(payload,null,2);
+    leadForm.hidden = true;
+    $("lead-result").hidden = false;
+    $("lead-summary").focus();
+    track("submit-lead-form");
+  });
+  leadForm.elements.name.addEventListener("input", event => event.target.setCustomValidity(""));
+  $("copy-lead").addEventListener("click", async () => {
+    const preview = $("lead-json");
+    try {
+      await navigator.clipboard.writeText(preview.textContent);
+      $("copy-status").textContent = "JSON copied.";
+    } catch {
+      const range = document.createRange();
+      range.selectNodeContents(preview);
+      const selection = window.getSelection();
+      selection.removeAllRanges();
+      selection.addRange(range);
+      $("copy-status").textContent = "JSON selected. Use your device’s Copy command.";
+    }
+  });
+
+  if (C.ref === "GTJ") state.layout = "l";
+  renderSeries();
+  new ResizeObserver(() => drawings(geometry())).observe($("elevation").parentElement);
+})();
+</script>
+</body>
+</html>
