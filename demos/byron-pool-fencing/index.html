@@ -1,0 +1,1201 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Configure glazing and review a dimensioned drawing and itemised estimate for Byron Pool Fencing.">
+<title>Architectural Glazing Estimator | Byron Pool Fencing</title>
+<script defer src="https://cloud.umami.is/script.js" data-website-id="8c5bff8f-b019-4099-b883-ada9404f56fa"></script>
+<style>
+:root {
+  --brand: #221E1B;
+  --accent: #221E1B;
+  --bg: #F6F5F1;
+  --ink: #212b35;
+  --muted: #4b5967;
+  --paper: #fff;
+  --step: #f0f3f6;
+  --line: #d5dce4;
+  --rule: #8794a1;
+  --heading: "Barlow", Archivo, "Avenir Next", "Trebuchet MS", sans-serif;
+  --body: "IBM Plex Sans", "Avenir Next", Arial, sans-serif;
+  --mono: "IBM Plex Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { scroll-padding-block: 20px 90px; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 14px/1.5 var(--body);
+  font-variant-numeric: tabular-nums;
+}
+button, input, select, textarea { font: inherit; color: inherit; }
+a { color: var(--brand); text-underline-offset: 3px; }
+button { cursor: pointer; }
+button:disabled { cursor: default; }
+:focus-visible { outline: 2px solid var(--brand); outline-offset: 3px; }
+h1, h2, h3, p, dl, dd { margin: 0; }
+h1, h2, h3 { color: var(--brand); font-family: var(--heading); }
+.measure, output, .rate, #total, #mobileTotal, .estimate-lines :last-child:not(small) {
+  font-variant-numeric: tabular-nums;
+}
+.measure, output, .rate, #total, #mobileTotal, .estimate-lines td:last-child {
+  font-family: var(--mono);
+}
+
+.mast, .workspace, .page-footer { width: min(100% - 48px, 1376px); margin-inline: auto; }
+.mast {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 20px 32px;
+  padding-block: 30px 24px;
+}
+.brand-name {
+  margin-bottom: 5px;
+  color: var(--brand);
+  font-weight: 700;
+}
+.brand-name::before {
+  display: inline-block;
+  width: 13px;
+  height: 11px;
+  margin-right: 8px;
+  border: 1px solid var(--brand);
+  background: linear-gradient(135deg, transparent 47%, var(--accent) 48% 54%, transparent 55%);
+  content: "";
+}
+.mast h1 {
+  font-size: clamp(29px, 4vw, 45px);
+  font-weight: 700;
+  letter-spacing: -.035em;
+  line-height: 1.06;
+}
+.strap { margin-top: 8px; color: var(--muted); }
+.contact { flex: none; text-align: right; color: var(--muted); }
+.contact a { display: inline-block; margin-top: 4px; font-weight: 700; }
+
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 345px);
+  align-items: start;
+  gap: 20px;
+}
+.work-column { display: grid; min-width: 0; gap: 20px; }
+.panel { min-width: 0; border: 1px solid var(--line); border-radius: 2px; background: var(--paper); }
+.panel-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px 16px;
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--line);
+}
+.panel-header h2, legend, .print-drawing h2 {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .065em;
+  text-transform: uppercase;
+}
+.muted { color: var(--muted); }
+.panel-header .muted { font-size: 12px; }
+.view-switch {
+  display: inline-flex;
+  max-width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+}
+.view-switch button {
+  min-height: 34px;
+  border: 0;
+  background: var(--paper);
+  padding: 5px 9px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.view-switch button + button { border-left: 1px solid var(--line); }
+.view-switch button[aria-pressed="true"] { background: var(--brand); color: var(--paper); }
+.view-switch button:hover:not([aria-pressed="true"]) { background: var(--step); }
+.view-switch button:focus-visible { position: relative; z-index: 1; }
+
+#drawing { padding: 10px; background: #f8fafb; }
+.glazing-sheet { min-width: 0; }
+.glazing-sheet--both {
+  display: grid;
+  grid-template-columns: minmax(0, 2.25fr) minmax(0, 1fr);
+  align-items: start;
+}
+.glazing-sheet--both .glazing-detail { border-left: 1px solid var(--line); }
+.glazing-sheet--detail { width: min(100%, 470px); margin-inline: auto; }
+.glazing-sheet svg { display: block; width: 100%; height: auto; }
+.glazing-sheet svg text { font-family: var(--mono); }
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-top: 1px solid var(--line);
+  background: var(--paper);
+}
+.stats > div { min-width: 0; padding: 11px 13px; }
+.stats > div + div { border-left: 1px solid var(--line); }
+.stats dt { font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); }
+.stats dd { margin-top: 4px; color: var(--brand); font-size: 14px; font-weight: 700; overflow-wrap: anywhere; }
+.warning {
+  padding: 10px 15px;
+  border-top: 1px solid var(--line);
+  background: var(--step);
+  color: var(--ink);
+  font-size: 12px;
+}
+
+.controls { padding: 16px; }
+fieldset { min-width: 0; margin: 0; padding: 0; border: 0; }
+fieldset + fieldset { margin-top: 20px; }
+legend { margin-bottom: 9px; padding: 0; font-family: var(--heading); color: var(--brand); }
+.series {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.series button {
+  min-height: 46px;
+  padding: 8px 11px;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: var(--paper);
+  font-weight: 600;
+  text-align: left;
+}
+.series button:hover { border-color: var(--rule); }
+.series button[aria-pressed="true"] {
+  border-color: var(--brand);
+  background: var(--step);
+  color: var(--brand);
+}
+.form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.field, .range-row {
+  display: grid;
+  min-width: 0;
+  gap: 4px;
+}
+.field label, .range-row label { font-size: 13px; font-weight: 600; }
+.range-row { grid-template-columns: minmax(0, 1fr) auto; align-items: center; }
+.range-row output { color: var(--brand); text-align: right; font-size: 13px; font-weight: 700; }
+.range-row input { grid-column: 1 / -1; }
+input[type="range"] {
+  appearance: none;
+  width: 100%;
+  height: 36px;
+  margin: 0;
+  background: transparent;
+  cursor: ew-resize;
+}
+input[type="range"]::-webkit-slider-runnable-track { height: 2px; background: var(--rule); }
+input[type="range"]::-moz-range-track { height: 2px; background: var(--rule); }
+input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  width: 15px;
+  height: 15px;
+  margin-top: -7px;
+  border: 1px solid var(--paper);
+  border-radius: 2px;
+  background: var(--brand);
+}
+input[type="range"]::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border: 1px solid var(--paper);
+  border-radius: 2px;
+  background: var(--brand);
+}
+input[type="range"]:disabled { opacity: .6; cursor: default; }
+.field select, .lead-form input, #leadJson {
+  width: 100%;
+  min-height: 42px;
+  padding: 7px 9px;
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  background: var(--paper);
+  font-size: 14px;
+}
+.gate-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+  font-weight: 600;
+}
+.stepper { display: inline-flex; align-items: center; border: 1px solid var(--line); border-radius: 2px; }
+.stepper button {
+  width: 40px;
+  height: 38px;
+  border: 0;
+  background: var(--paper);
+  font-size: 17px;
+}
+.stepper button:hover:enabled { background: var(--step); }
+.stepper button:disabled { color: #606b77; background: var(--step); }
+.stepper output { padding-inline: 10px; border-inline: 1px solid var(--line); text-align: right; }
+#extras > * + * { border-top: 1px solid var(--line); }
+#extras label {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 37px;
+  padding-block: 6px;
+  cursor: pointer;
+}
+#extras input { width: 16px; height: 16px; margin: 0; flex: none; accent-color: var(--brand); }
+#extras small { margin-left: auto; text-align: right; color: var(--muted); }
+
+.estimate { position: sticky; top: 16px; }
+.estimate-spec {
+  display: grid;
+  grid-template-columns: minmax(84px, auto) minmax(0, 1fr);
+  gap: 3px 10px;
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--line);
+  background: var(--step);
+  font-size: 12px;
+}
+.estimate-spec dt { color: var(--muted); }
+.estimate-spec dd { text-align: right; font-weight: 600; overflow-wrap: anywhere; }
+.estimate-lines { width: 100%; border-collapse: collapse; font-size: 13px; }
+.estimate-lines th, .estimate-lines td {
+  padding: 7px 16px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+}
+.estimate-lines th { font-size: 11px; color: var(--muted); }
+.estimate-lines th:last-child, .estimate-lines td:last-child { text-align: right; white-space: nowrap; }
+.estimate-lines small { display: block; margin-top: 1px; color: var(--muted); }
+.estimate-total {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px 10px;
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--line);
+  color: var(--brand);
+}
+.estimate-total span { font-size: 12px; font-weight: 700; }
+#total { font-size: 24px; font-weight: 700; letter-spacing: -.035em; }
+.estimate-actions { display: grid; gap: 8px; padding: 12px 16px 15px; }
+.estimate-actions p { padding-bottom: 2px; color: var(--muted); font-size: 12px; }
+.button {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 42px;
+  padding: 8px 12px;
+  border: 1px solid var(--brand);
+  border-radius: 2px;
+  background: var(--paper);
+  color: var(--brand);
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+}
+.button:hover { background: var(--step); }
+.button-primary { background: var(--brand); color: var(--paper); }
+.button-primary:hover { text-decoration: underline; background: var(--brand); }
+.page-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px 24px;
+  align-items: center;
+  padding-block: 16px 27px;
+  color: var(--muted);
+  font-size: 12px;
+}
+.mobile-bar { display: none; }
+
+dialog {
+  width: min(530px, calc(100% - 28px));
+  max-height: calc(100% - 32px);
+  padding: 0;
+  border: 1px solid var(--brand);
+  border-radius: 2px;
+  background: var(--paper);
+  color: var(--ink);
+  overflow: auto;
+}
+dialog::backdrop { background: rgb(18 28 40 / .55); }
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--line);
+}
+.dialog-header h2 { font-size: 19px; letter-spacing: -.02em; }
+.dialog-header .button { min-height: 38px; }
+.dialog-body { padding: 15px 16px; }
+.dialog-body > p { margin-bottom: 12px; }
+.lead-form, #leadPreview { display: grid; gap: 10px; }
+.lead-form label, #leadPreview label { display: grid; gap: 4px; min-width: 0; font-weight: 600; }
+#leadJson {
+  resize: vertical;
+  min-height: 190px;
+  background: var(--step);
+  font: 12px/1.5 var(--mono);
+}
+.dialog-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+#copyStatus { min-height: 1.5em; color: var(--muted); }
+
+#printSheet { display: none; }
+@media screen and (max-width: 1000px) {
+  .workspace { grid-template-columns: minmax(0, 1fr) minmax(280px, 31%); gap: 13px; }
+  .stats dd { font-size: 13px; }
+}
+@media screen and (max-width: 850px) {
+  .workspace { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  .estimate { position: static; }
+  .mobile-bar {
+    position: fixed;
+    z-index: 2;
+    inset: auto 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 8px 16px calc(8px + env(safe-area-inset-bottom));
+    border-top: 1px solid var(--rule);
+    background: var(--paper);
+  }
+  .mobile-bar small { display: block; color: var(--muted); }
+  #mobileTotal { color: var(--brand); font-weight: 700; }
+  body { padding-bottom: calc(68px + env(safe-area-inset-bottom)); }
+}
+@media screen and (max-width: 540px) {
+  .mast, .workspace, .page-footer { width: calc(100% - 24px); }
+  .mast { flex-wrap: wrap; align-items: flex-start; padding-block: 20px 15px; gap: 9px; }
+  .contact { display: flex; flex-wrap: wrap; column-gap: 10px; align-items: baseline; text-align: left; font-size: 13px; }
+  .contact a { margin: 0; }
+  .work-column { gap: 14px; }
+  .panel-header { padding-inline: 11px; }
+  .view-switch button { min-height: 38px; }
+  .glazing-sheet--both { display: block; }
+  .glazing-sheet--both .glazing-detail { margin-top: 5px; border-left: 0; border-top: 1px solid var(--line); }
+  .glazing-sheet--both .glazing-detail { width: min(100%, 328px); margin-inline: auto; }
+  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stats > div:nth-child(3) { border-left: 0; }
+  .stats > div:nth-child(n + 3) { border-top: 1px solid var(--line); }
+  .series button { min-height: 52px; }
+  .form-grid { grid-template-columns: minmax(0, 1fr); }
+  .page-footer { flex-wrap: wrap; }
+}
+@page { size: A4; margin: 12mm; }
+@media print {
+  body { padding: 0; background: #fff; }
+  body > :not(#printSheet) { display: none !important; }
+  #printSheet { display: block; color: var(--ink); font-size: 9pt; print-color-adjust: exact; }
+  #printSheet header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 3pt 16pt;
+    padding-bottom: 7pt;
+    border-bottom: .75pt solid var(--brand);
+  }
+  #printSheet h1 { line-height: 1.08; font-size: 17pt; }
+  #printSheet h2 { margin-top: 7pt; font-size: 10pt; }
+  #printSheet p { margin-top: 6pt; }
+  #printSheet table { width: 100%; margin-top: 6pt; border-collapse: collapse; }
+  #printSheet caption { text-align: left; font-weight: 700; color: var(--brand); }
+  #printSheet th, #printSheet td {
+    padding: 3pt 5pt;
+    border-bottom: .5pt solid var(--line);
+    text-align: left;
+    vertical-align: top;
+  }
+  #printSheet .rate, #printSheet td:last-child, #printSheet th:last-child { text-align: right; }
+  #printSheet tfoot td, #printSheet tfoot th { font-weight: 700; border-top: .75pt solid var(--brand); }
+  #printSheet dl { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 2pt 10pt; margin-top: 6pt; }
+  #printSheet dd { text-align: right; }
+  #printSheet .print-drawing { margin-top: 8pt; break-inside: avoid; }
+  #printSheet .print-drawing svg { max-height: 65mm; }
+  #printSheet table small { display: block; color: var(--muted); }
+  #printSheet tr { break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+<header class="mast">
+  <div>
+    <p class="brand-name">Byron Pool Fencing</p>
+    <h1>Architectural Glazing Estimator</h1>
+  </div>
+  <div class="contact">
+    <div>Byron Bay, NSW, AU</div>
+  </div>
+</header>
+
+<main class="workspace">
+  <div class="work-column">
+    <section class="panel" aria-labelledby="drawingHeading">
+      <header class="panel-header">
+        <h2 id="drawingHeading">Glazing Drawing</h2>
+        <div class="view-switch" role="group" aria-label="Drawing view">
+          <button type="button" data-view="both" aria-pressed="true">Elevation + Detail</button>
+          <button type="button" data-view="elev" aria-pressed="false">Elevation</button>
+          <button type="button" data-view="detail" aria-pressed="false">Plan / Section</button>
+        </div>
+      </header>
+      <div id="drawing"></div>
+      <dl id="stats" class="stats"></dl>
+      <p id="warning" class="warning" role="status"></p>
+    </section>
+
+    <section class="panel" aria-labelledby="controlsHeading">
+      <header class="panel-header">
+        <h2 id="controlsHeading">Configuration</h2>
+        <span class="muted">Dimensions in metres</span>
+      </header>
+      <div class="controls">
+        <fieldset>
+          <legend>Series</legend>
+          <div id="series" class="series"></div>
+        </fieldset>
+        <fieldset>
+          <legend>Dimensions</legend>
+          <div class="form-grid">
+            <div class="range-row">
+              <label for="width"><span id="widthLabel">Total Run Length</span></label>
+              <output id="widthValue" for="width" aria-live="off"></output>
+              <input id="width" type="range" data-umami-event="configure-dimensions" step="0.05">
+            </div>
+            <div class="range-row" id="heightRow">
+              <label for="height" id="heightLabel">Glass Height</label>
+              <output id="heightValue" for="height" aria-live="off"></output>
+              <input id="height" type="range" data-umami-event="configure-dimensions" step="0.05">
+            </div>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend>Glass &amp; fittings</legend>
+          <div class="form-grid">
+            <div class="field" id="layoutRow">
+              <label for="layout">Screen / Door Configuration</label>
+              <select id="layout"></select>
+            </div>
+            <div class="field">
+              <label for="glass" id="glassLabel">Glass specification</label>
+              <select id="glass"></select>
+            </div>
+            <div class="field">
+              <label for="finish">Hardware Finish</label>
+              <select id="finish"></select>
+            </div>
+          </div>
+          <div class="gate-row" id="gateRow" hidden>
+            <span id="gateLabel">Self-Closing Gates</span>
+            <div class="stepper" role="group" aria-labelledby="gateLabel">
+              <button id="gateDown" type="button" aria-label="Remove one self-closing gate">&minus;</button>
+              <output id="gateCount" aria-live="polite"></output>
+              <button id="gateUp" type="button" aria-label="Add one self-closing gate">+</button>
+            </div>
+          </div>
+        </fieldset>
+        <div id="extras" hidden></div>
+      </div>
+    </section>
+  </div>
+
+  <aside class="panel estimate" id="quote" aria-labelledby="estimateHeading">
+    <header class="panel-header">
+      <h2 id="estimateHeading">Itemised Estimate</h2>
+      <span class="muted">AUD</span>
+    </header>
+    <dl id="quoteSpec" class="estimate-spec"></dl>
+    <table class="estimate-lines" aria-label="Estimate breakdown">
+      <thead><tr><th scope="col">Scope</th><th scope="col">Amount</th></tr></thead>
+      <tbody id="quoteLines"></tbody>
+    </table>
+    <div class="estimate-total">
+      <span>Indicative total</span>
+      <strong id="total"></strong>
+    </div>
+    <div class="estimate-actions">
+      <p>Illustrative rates. Final pricing and fixings are subject to site measure and supplier confirmation.</p>
+      <button class="button button-primary" id="openLead" data-umami-event="open-lead-modal" type="button">Prepare Measure &amp; Quote Request</button>
+      <button class="button" id="printEstimate" data-umami-event="print-estimate" type="button">Print / Save A4 Estimate</button>
+    </div>
+  </aside>
+</main>
+
+<footer class="page-footer">
+  <p>Pricing demo for Byron Pool Fencing. Rates are examples for budgeting and need the supplier’s price list before use in a live quote.</p>
+</footer>
+
+<div class="mobile-bar">
+  <div><small>Indicative total · AUD</small><strong id="mobileTotal"></strong></div>
+  <a href="#quote" class="button button-primary">View estimate</a>
+</div>
+
+<dialog id="leadDialog" aria-labelledby="leadHeading">
+  <header class="dialog-header">
+    <h2 id="leadHeading">Measure &amp; Quote Request</h2>
+    <form method="dialog"><button type="submit" class="button">Close</button></form>
+  </header>
+  <div class="dialog-body">
+    <p class="muted">Preview your contact details and current glazing estimate together. The request stays on this page.</p>
+    <form method="dialog" id="leadForm" class="lead-form">
+      <label>Full name<input id="name" name="name" autocomplete="name" required autofocus></label>
+      <div class="form-grid">
+        <label>Email<input id="email" name="email" type="email" autocomplete="email" required></label>
+        <label>Postcode<input id="postcode" name="postcode" autocomplete="postal-code" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" title="Enter a four-digit Australian postcode" required></label>
+      </div>
+      <label>Phone (optional)<input id="phone" name="phone" type="tel" autocomplete="tel"></label>
+      <button type="submit" data-umami-event="submit-lead-form" class="button button-primary">Preview request</button>
+    </form>
+    <div id="leadPreview" hidden>
+      <label for="leadJson">Request JSON</label>
+      <textarea id="leadJson" readonly rows="9" spellcheck="false"></textarea>
+      <div class="dialog-actions">
+        <button id="copyLead" type="button" class="button button-primary">Copy request JSON</button>
+        <button id="editLead" type="button" class="button">Edit details</button>
+      </div>
+      <p id="copyStatus" role="status"></p>
+    </div>
+  </div>
+</dialog>
+
+<div id="printSheet"></div>
+<script>
+(() => {
+  'use strict';
+
+  document.body.addEventListener('click', event => {
+    if (event.target.closest('[data-umami-event]')) event.stopPropagation();
+  });
+  const C = {"slug": "byron-pool-fencing", "name": "Byron Pool Fencing", "location": "Byron Bay, NSW, AU", "currency": "AUD", "unit": "m", "website": "https://byronpoolfencing.com.au/", "layouts": {"fixed": "Fixed Panels", "inline": "Inline Fixed + Hinged Door", "corner": "90\u00b0 Corner Return", "walkin": "Walk-in Fixed Panel", "slide2": "2-Panel Sliding Robe", "slide3": "3-Panel Sliding Robe"}, "series": [{"id": "spigot", "mode": "spigot", "label": "Frameless glass pool fencing", "width": [2.0, 25.0, 6.4], "height": [1.2, 1.2, 1.2], "maxPanel": 1.6, "layouts": ["fixed"], "glasses": ["clear12", "lowiron12"], "pool": true, "install": 145, "fixing": 98, "minInstall": 550}, {"id": "channel", "mode": "channel", "label": "Hidden channel glass pool fencing", "width": [2.0, 25.0, 6.4], "height": [1.2, 1.2, 1.2], "maxPanel": 1.6, "layouts": ["fixed"], "glasses": ["clear12", "lowiron12"], "pool": true, "install": 175, "fixing": 145, "minInstall": 700}], "finishes": [{"id": "marine", "label": "Marine 2205 Brushed Stainless", "swatch": "#87949D", "multiplier": 1}, {"id": "black", "label": "Matte Black", "swatch": "#2A2D31", "multiplier": 1.16}, {"id": "brass", "label": "Brushed Brass", "swatch": "#A99061", "multiplier": 1.25}, {"id": "chrome", "label": "Polished Chrome", "swatch": "#BEC8D1", "multiplier": 1.1}], "glasses": {"clear12": {"label": "12mm Clear Toughened", "rate": 205}, "lowiron12": {"label": "12mm Low-Iron Ultra Clear", "rate": 280}}, "extras": []};
+
+  // Panel bays are nominal dimensions. Installation gaps and fixing sizes require site measure.
+  const gateLeafWidth = 0.90;
+  const minFixedBay = 0.25;
+  const slidingOverlap = 0.03;
+
+  function glazingGateLimit(span) {
+    return Math.max(0, Math.min(3, Math.floor((span - minFixedBay + 1e-8) / (gateLeafWidth + minFixedBay))));
+  }
+
+  function glazingModel(product, width, height, layout, gates) {
+    const panels = [];
+    const hardware = [];
+    const addHardware = (label, qty) => {
+      if (qty) hardware.push({ label, qty });
+    };
+    const maxPanel = product.maxPanel || 1.2;
+    const { mode } = product;
+    const isScreen = mode === 'shower' || mode === 'semi';
+    const corner = isScreen && layout === 'corner';
+    const returnWidth = corner ? 0.90 : 0;
+    let note = corner ? 'Estimate includes a nominal 0.90 m return. Confirm return width and swing on site.' : '';
+    let position = 0;
+
+    function addPanel(span, type, start = position) {
+      panels.push({ start, width: span, type });
+      position = start + span;
+    }
+
+    function addFixedBays(span, type = 'fixed') {
+      if (span <= 1e-8) return;
+      const count = Math.ceil(span / maxPanel - 1e-8);
+      for (let i = 0; i < count; i++) addPanel(span / count, type);
+    }
+
+    gates = product.pool ? Math.min(Math.max(0, gates || 0), glazingGateLimit(width)) : 0;
+    if (mode === 'robe') {
+      const selected = layout === 'slide2' ? 2 : 3;
+      const needed = Math.ceil((width - slidingOverlap) / (maxPanel - slidingOverlap) - 1e-8);
+      const count = Math.max(selected, needed);
+      const leafWidth = (width + slidingOverlap * (count - 1)) / count;
+      for (let i = 0; i < count; i++) addPanel(leafWidth, 'sliding', i * (leafWidth - slidingOverlap));
+      addHardware('Track rails', 2);
+      addHardware('Rollers', 2 * count);
+      layout = count === 2 ? 'slide2' : 'slide3';
+      if (width + slidingOverlap > 2 * maxPanel + 1e-8) {
+        note = 'This opening uses three sliding panels to stay within the indicative leaf width.';
+      }
+    } else if (isScreen && layout !== 'walkin' && layout !== 'fixed') {
+      addPanel(Math.min(0.75, width - minFixedBay), 'door');
+      addFixedBays(width - position);
+      addHardware('Wall hinges', 2);
+      addHardware('Pull handles', 1);
+    } else {
+      const fixedBay = (width - gates * gateLeafWidth) / (gates + 1);
+      addFixedBays(fixedBay);
+      for (let i = 0; i < gates; i++) {
+        addPanel(gateLeafWidth, 'gate');
+        addFixedBays(fixedBay);
+      }
+    }
+
+    if (corner) panels.push({ start: 0, width: returnWidth, type: 'return' });
+    const fixed = panels.filter(panel => panel.type === 'fixed' || panel.type === 'return').length;
+    if (mode === 'spigot' || mode === 'balustrade') addHardware('Spigots', fixed * 2);
+    if (mode === 'channel') addHardware('Recessed channels', fixed);
+    if (mode === 'shower') addHardware('Glass clamps', fixed * 2);
+    if (mode === 'semi') addHardware('Frame sets', 1);
+    if (mode === 'splash') addHardware('Bonding kit', 1);
+    addHardware('Self-closing hinges', gates * 2);
+    addHardware(gates === 1 ? 'Safety latch' : 'Safety latches', gates);
+
+    const area = panels.reduce((total, panel) => total + panel.width * height, 0);
+    return { width, height, layout, panels, hardware, area, gates, returnWidth, mode, note, pool: !!product.pool };
+  }
+
+  let glazingDrawId = 0;
+  function glazingDraw(model, glassLabel, finishLabel, view) {
+    const id = `glazing-${++glazingDrawId}`;
+    const brand = 'var(--brand, #1b3b5c)';
+    const detailInk = '#334b59';
+    const dimensionInk = '#435865';
+    const light = '#d8e4ea';
+    const finish = {
+      'Marine 2205 Brushed Stainless': '#86a0ad',
+      'Matte Black': '#27343c',
+      'Brushed Brass': '#ab8857',
+      'Polished Chrome': '#adbfc8',
+      'Chrome': '#adbfc8',
+      'Brushed Nickel': '#96a1a6'
+    }[finishLabel] || '#819ba9';
+    const measure = n => `${n.toFixed(2)} m`;
+    const thickness = glassLabel.match(/\b\d+\s?mm\b/i)?.[0] || 'Glass';
+    const line = (x1, y1, x2, y2, stroke = detailInk, sw = 1, extras = '') =>
+      `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${stroke}" stroke-width="${sw}" ${extras}/>`;
+    const rect = (x, y, width, height, fill, stroke = 'none', sw = 1) =>
+      `<rect x="${x}" y="${y}" width="${width}" height="${height}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"/>`;
+    const label = (x, y, value, size = 12, align = 'start', extras = '') =>
+      `<text x="${x}" y="${y}" font-size="${size}" text-anchor="${align}" ${extras}>${esc(value)}</text>`;
+    const title = (x, y, value) =>
+      label(x, y, value, 14, 'start', `fill="${brand}" font-weight="700" letter-spacing="0.65"`);
+    const path = (d, stroke = detailInk, sw = 1, extras = '') =>
+      `<path d="${d}" fill="none" stroke="${stroke}" stroke-width="${sw}" ${extras}/>`;
+    const leader = (x, y, turnX, textY, value) =>
+      path(`M ${x} ${y} L ${turnX} ${textY + 3} H 276`, '#657a85', .7) +
+      label(turnX + 4, textY, value, 11);
+    const svg = (kind, w, h, description, body) =>
+      `<svg class="glazing-${kind}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" role="img" aria-label="${esc(description)}" font-family="'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace" fill="${detailInk}">${body}</svg>`;
+
+    function elevation() {
+      const footY = 245;
+      const scale = Math.min(542 / model.width, 172 / model.height);
+      const span = model.width * scale;
+      const high = model.height * scale;
+      const start = (640 - span) / 2 + 9;
+      const end = start + span;
+      const top = footY - high;
+      const floorInset = model.pool || model.mode === 'balustrade' ? .045 : model.mode === 'robe' ? .015 : .012;
+      const glassBottom = footY - Math.max(floorInset * scale, 1.2);
+      const mirror = /mirror/i.test(glassLabel);
+      const fluted = /fluted|reeded/i.test(glassLabel);
+      const glassFill = `url(#${id}-glass)`;
+      const area = model.panels.filter(panel => panel.type !== 'return');
+      const parts = [
+        `<defs>
+          <linearGradient id="${id}-glass" x2=".76" y2="1">
+            <stop stop-color="${mirror ? '#f3f7f9' : '#f0fafb'}" stop-opacity="${mirror ? 1 : .68}"/>
+            <stop offset=".58" stop-color="${mirror ? '#d3dfe6' : '#b7dce3'}" stop-opacity="${mirror ? 1 : .86}"/>
+            <stop offset="1" stop-color="${mirror ? '#b2c5cf' : '#91c2cd'}"/>
+          </linearGradient>
+          <pattern id="${id}-grid" width="22" height="22" patternUnits="userSpaceOnUse">
+            <path d="M 0 22 V 0 H 22" fill="none" stroke="#c5d6df" stroke-width=".55" opacity=".65"/>
+          </pattern>
+          <pattern id="${id}-flute" width="4" height="12" patternUnits="userSpaceOnUse">
+            <path d="M 1 0 V 12" fill="none" stroke="#769dab" stroke-width=".55" opacity=".45"/>
+          </pattern>
+        </defs>`,
+        rect(0, 0, 640, 335, '#f5f9fb'),
+        title(20, 27, 'FRONT GLAZING ELEVATION'),
+        label(620, 27, '01 / ELEVATION', 11, 'end'),
+        line(20, 39, 620, 39, light),
+        rect(20, 47, 600, 196, `url(#${id}-grid)`),
+        rect(20, footY + 1, 600, 9, '#e2eaef'),
+        line(20, footY, 620, footY, detailInk, 1.05)
+      ];
+
+      area.forEach((panel, index) => {
+        const sliding = panel.type === 'sliding';
+        const operable = panel.type === 'gate' || panel.type === 'door';
+        const gap = sliding ? 0 : Math.max(.8, .018 * scale);
+        const x = start + panel.start * scale + gap / 2;
+        const w = panel.width * scale - gap;
+        const h = glassBottom - top;
+        const edge = x + w;
+        const mid = x + w / 2;
+        const reflection = Math.min(w * .40, h * .32);
+        parts.push(rect(x, top, w, h, glassFill, '#356170', operable ? 1.3 : 1));
+        if (fluted) parts.push(rect(x, top, w, h, `url(#${id}-flute)`));
+        if (h > 24 && w > 16) {
+          parts.push(path(`M ${x + w * .15} ${top + h * .48} l ${reflection} ${-reflection}
+            m ${-reflection + w * .075} ${reflection + Math.min(10, h * .14)} l ${reflection * .62} ${-reflection * .62}`,
+          '#ffffff', 1, 'opacity=".84"'));
+        }
+        if (panel.type === 'fixed' && ['spigot', 'balustrade'].includes(model.mode)) {
+          const sw = Math.min(w / 4, Math.max(3.4, .066 * scale));
+          const sh = Math.max(3.0, .135 * scale);
+          [x + w * .23, x + w * .77].forEach(anchor => {
+            parts.push(rect(anchor - sw / 2, footY - sh, sw, sh, finish, brand, .85));
+            parts.push(line(anchor - sw * .75, footY - .6, anchor + sw * .75, footY - .6, brand, 1.1));
+            parts.push(line(anchor - sw / 4, footY - sh + 1, anchor - sw / 4, footY - 2, '#e5ecf0', .7));
+          });
+        }
+        if (panel.type === 'fixed' && model.mode === 'channel') {
+          const ch = Math.max(3, .075 * scale);
+          parts.push(rect(x, footY - ch * .52, w, ch, finish, brand, .8), line(x, footY - .55, edge, footY - .55, brand));
+        }
+        if (panel.type === 'fixed' && model.mode === 'shower') {
+          [x + w * .18, x + w * .82].forEach(anchor => {
+            parts.push(rect(anchor - 3.5, footY - 6.5, 7, 6.5, finish, brand, .8));
+          });
+        }
+        if (panel.type === 'fixed' && model.mode === 'semi') {
+          parts.push(rect(x, top, w, h, 'none', finish, 3));
+        }
+        if (operable) {
+          const clamp = Math.min(13, Math.max(3, w * .14));
+          [.23, .74].forEach(fraction => {
+            parts.push(rect(x - 1, top + h * fraction, clamp, Math.min(6, h * .18), finish, brand, .85));
+          });
+          if (panel.type === 'gate') {
+            parts.push(rect(edge - Math.max(4, clamp * .67), top + h * .14, Math.max(4, clamp * .67), Math.max(3, h * .08), finish, brand, .8));
+          } else {
+            const pull = Math.min(14, h * .16);
+            parts.push(line(edge - 7, top + h / 2 - pull / 2, edge - 7, top + h / 2 + pull / 2, brand, 2.3));
+          }
+          if (w > 48 && h > 38) {
+            parts.push(path(`M ${x + 3} ${top + .15 * h} L ${edge - 5} ${top + .5 * h} L ${x + 3} ${top + .85 * h}`, brand, .75, 'stroke-dasharray="3 3" opacity=".55"'));
+            parts.push(label(mid, top + h * .75 + 4, panel.type === 'gate' ? 'GATE' : 'DOOR', 9, 'middle'));
+          }
+        }
+        if (sliding && w > 32) {
+          const direction = index % 2 ? -1 : 1;
+          parts.push(path(`M ${mid - 13 * direction} ${top + h * .55} h ${26 * direction} m 0 0 l ${-4 * direction} -4 m ${4 * direction} 4 l ${-4 * direction} 4`, brand, 1.1));
+        }
+      });
+
+      if (model.mode === 'robe') {
+        parts.push(rect(start - 2, top - 2, span + 4, 4, finish, brand, .8));
+        parts.push(rect(start - 2, footY - 3, span + 4, 4, finish, brand, .8));
+      }
+      if (model.mode === 'shower' || model.mode === 'semi') {
+        parts.push(path(`M ${start - 5} ${footY} V ${top - 8} M ${end + 5} ${footY} V ${top - 8}`, '#6f8794', .85, 'stroke-dasharray="3 2"'));
+      }
+      const dimX = start - 24;
+      const dimY = footY + 28;
+      parts.push(line(start, footY + 6, start, dimY + 6, dimensionInk, .7),
+        line(end, footY + 6, end, dimY + 6, dimensionInk, .7),
+        line(start, dimY, end, dimY, dimensionInk, .75),
+        path(`M ${start - 3} ${dimY + 3} l 6 -6 M ${end - 3} ${dimY + 3} l 6 -6`, dimensionInk, 1),
+        label((start + end) / 2, dimY + 17, `${measure(model.width)} overall`, 14, 'middle', 'font-weight="700"'),
+        line(dimX - 6, top, start - 4, top, dimensionInk, .7),
+        line(dimX - 6, footY, start - 4, footY, dimensionInk, .7),
+        line(dimX, top, dimX, footY, dimensionInk, .75),
+        path(`M ${dimX - 3} ${top + 3} l 6 -6 M ${dimX - 3} ${footY + 3} l 6 -6`, dimensionInk, 1));
+      const midY = (top + footY) / 2;
+      // Long runs have an intentionally small vertical dimension on the to-scale elevation.
+      parts.push(high < 57
+        ? label(start, top - 11, `${measure(model.height)} overall height`, 12)
+        : label(dimX - 7, midY, `${measure(model.height)} high`, 12, 'middle', `transform="rotate(-90 ${dimX - 7} ${midY})"`));
+      parts.push(line(20, 306, 620, 306, light),
+        label(20, 324, glassLabel, 11),
+        label(620, 324, `${model.panels.length} glass panels  /  AS 1288 reference`, 11, 'end'));
+      return svg('elevation', 640, 335,
+        `Front glazing elevation: ${measure(model.width)} wide by ${measure(model.height)} high, ${model.panels.length} glass panels${model.pool ? `, ${model.gates} pool gates` : ''}`, parts.join(''));
+    }
+
+    function swingPlan(x, y, width, outward) {
+      const yEnd = y + (outward ? width : -width);
+      const markerY = y + (outward ? width * .71 : -width * .71);
+      const markerX = x + width * .71;
+      const markerEnd = x + width * .62;
+      const markerEndY = y + (outward ? width * .78 : -width * .78);
+      return path(`M ${x + width} ${y} A ${width} ${width} 0 0 ${outward ? 1 : 0} ${x} ${yEnd}`, brand, 1.05, 'stroke-dasharray="3 3"') +
+        line(x, y, x, yEnd, brand, 1.8, 'stroke-dasharray="4 3"') +
+        path(`M ${markerX + 2} ${markerY + (outward ? -1 : 1)} L ${markerEnd} ${markerEndY} l 7 ${outward ? 0 : -1}`, brand) +
+        `<circle cx="${x}" cy="${y}" r="2.4" fill="${brand}"/>`;
+    }
+
+    function detail() {
+      const section = [rect(0, 0, 300, 335, '#f6f9fb'),
+        title(17, 27, 'PLAN / SECTION'),
+        label(281, 27, '02', 11, 'end'),
+        line(17, 39, 282, 39, light)];
+      const tile = `url(#${id}-cut)`;
+      section.push(`<defs><pattern id="${id}-cut" width="5.5" height="5.5" patternUnits="userSpaceOnUse" patternTransform="rotate(40)">
+        <path d="M 0 0 V 5.5" stroke="#8ca1ad" stroke-width=".7" opacity=".69"/>
+      </pattern></defs>`);
+      const caption = (value, y = 61) => label(17, y, value, 11, 'start', `fill="${brand}" font-weight="700" letter-spacing=".2"`);
+
+      if (['spigot', 'balustrade', 'channel'].includes(model.mode)) {
+        const channel = model.mode === 'channel';
+        const bottom = model.gates ? 176 : 249;
+        const datum = bottom - 43;
+        section.push(caption(channel ? 'RECESSED U-CHANNEL' : 'BASE-MOUNTED SPIGOT'));
+        section.push(rect(22, datum, 102, 43, tile, dimensionInk, 1),
+          line(19, datum, 132, datum, dimensionInk, 1.2));
+        if (channel) {
+          section.push(path(`M 51 ${datum} V ${datum + 32} H 91 V ${datum} M 57 ${datum} V ${datum + 26} H 85 V ${datum}`, brand, 1.5),
+            rect(52, datum + 1, 5, 30, finish, brand, .7),
+            rect(85, datum + 1, 5, 30, finish, brand, .7),
+            rect(57, datum + 26, 28, 5, finish, brand, .7),
+            rect(57, datum + 1, 11, 25, '#d9e4e8'),
+            rect(74, datum + 1, 11, 25, '#d9e4e8'),
+            rect(67, 76, 8, datum + 25 - 76, '#d6e7ec', brand, 1.2),
+            leader(76, 90, 133, 86, `${thickness} glazing`),
+            leader(86, datum + 11, 137, datum - 2, 'U-channel + packers'),
+            leader(97, datum + 31, 139, bottom - 5, 'Rebated substrate'));
+        } else {
+          section.push(rect(66, 76, 8, datum - 9 - 76, '#d6e7ec', brand, 1.2),
+            rect(51, datum - 41, 14, 37, finish, brand, 1),
+            rect(75, datum - 41, 14, 37, finish, brand, 1),
+            rect(44, datum - 5, 52, 5, finish, brand, 1),
+            rect(49, datum, 4, 21, finish, brand, .9),
+            rect(87, datum, 4, 21, finish, brand, .9),
+            leader(74, 85, 134, 78, `${thickness} glazing`),
+            leader(90, datum - 25, 136, datum - 20, 'Spigot clamp'),
+            leader(92, datum + 20, 135, bottom - 10, 'Anchor into substrate'));
+        }
+        if (model.gates) {
+          const x = 85;
+          const y = 232;
+          const w = 51;
+          section.push(line(17, 191, 282, 191, light), caption('POOL GATE PLAN', 210),
+            line(24, y, 245, y, dimensionInk, .7, 'stroke-dasharray="3 3"'),
+            line(26, y, x - 2, y, brand, 3),
+            line(x + w + 2, y, 180, y, brand, 3),
+            line(x, y, x + w, y, brand, 2),
+            swingPlan(x, y, w, true),
+            label(37, 222, 'Pool side', 10),
+            label(152, 258, 'Outward swing', 11),
+            label(152, 276, `${model.gates} × ${measure(gateLeafWidth)} nominal`, 10));
+        } else {
+          section.push(label(22, 276, channel ? 'Continuous support to fixed panels' : 'Two supports per fixed panel', 11));
+        }
+      } else if (model.mode === 'robe') {
+        section.push(caption('SLIDING ROBE / TRACK SECTION'),
+          rect(25, 92, 150, 22, tile, dimensionInk),
+          rect(25, 228, 150, 24, tile, dimensionInk),
+          line(34, 119, 166, 119, brand, 2), line(34, 223, 166, 223, brand, 2),
+          rect(53, 121, 11, 100, '#c9dce3', brand, 1.1),
+          rect(98, 121, 11, 100, '#d9e5eb', brand, 1.1),
+          rect(50, 121, 17, 8, finish, brand, .8),
+          rect(95, 121, 17, 8, finish, brand, .8),
+          rect(50, 210, 17, 11, finish, brand, .8),
+          rect(95, 210, 17, 11, finish, brand, .8),
+          leader(167, 119, 189, 119, 'Head guide'),
+          leader(110, 166, 156, 161, 'Offset glass leaves'),
+          leader(107, 217, 169, 220, 'Roller + sill track'),
+          label(25, 277, `${model.panels.length} sliding leaves  /  two rails`, 11));
+      } else if (model.mode === 'splash') {
+        section.push(caption('WALL-BONDED GLASS SECTION'),
+          rect(28, 85, 65, 154, tile, dimensionInk),
+          rect(93, 97, 12, 130, '#dce7eb', dimensionInk),
+          rect(105, 97, 11, 129, '#c5e2e9', brand, 1),
+          rect(27, 239, 147, 16, '#dce6eb', brand),
+          rect(101, 227, 18, 12, '#e1eaee', dimensionInk, .8),
+          leader(111, 110, 150, 104, `${thickness} glazing`),
+          leader(100, 162, 153, 158, 'Bonding layer'),
+          leader(113, 231, 145, 217, 'Perimeter seal'),
+          label(27, 278, 'Confirm cut-outs after measure', 11));
+      } else {
+        section.push(caption(model.returnWidth ? '90° CORNER SHOWER PLAN' : 'SHOWER SCREEN PLAN'));
+        const door = model.panels.find(panel => panel.type === 'door');
+        const x = 43;
+        const y = 170;
+        const scale = Math.min(172 / model.width, 96 / (model.returnWidth || 1));
+        const right = x + model.width * scale;
+        section.push(rect(28, 78, 15, 107, tile, dimensionInk),
+          line(43, y, 267, y, dimensionInk, .6, 'stroke-dasharray="3 3"'));
+        model.panels.filter(panel => panel.type !== 'return').forEach(panel => {
+          const pX = x + panel.start * scale;
+          section.push(line(pX + 1, y, pX + panel.width * scale - 1, y, brand, panel.type === 'door' ? 2 : 3.5));
+        });
+        if (model.returnWidth) {
+          const up = y - model.returnWidth * scale;
+          section.push(rect(right - 26, up - 13, 56, 13, tile, dimensionInk),
+            line(right, y, right, up, brand, 3.5),
+            label(right + 9, up + 14, 'Return', 10),
+            label(right + 9, up + 28, measure(model.returnWidth), 10),
+            path(`M ${right - 10} ${y} v -10 h 10`, brand, .8));
+        }
+        if (door) {
+          const leaf = door.width * scale;
+          section.push(swingPlan(x, y, leaf, true),
+            leader(x + 3, y, 97, 190, 'Wall hinges'),
+            label(x + leaf + 16, 213, 'Door swing', 11));
+        } else {
+          section.push(leader(x + 6, y, 103, 194, 'Fixed panel'));
+        }
+        section.push(label(29, 278, model.mode === 'semi' ? 'Semi-frameless perimeter profile' : 'Confirm hinge side and seals on site', 11));
+      }
+
+      section.push(line(17, 306, 282, 306, light),
+        label(17, 324, 'Typical detail · indicative', 10),
+        label(282, 324, 'NTS', 10, 'end'));
+      return svg('detail', 300, 335, 'Typical fixing section or opening plan for selected glazing', section.join(''));
+    }
+
+    const views = { both: [elevation, detail], elev: [elevation], detail: [detail] };
+    return `<div class="glazing-sheet glazing-sheet--${view}">${views[view].map(draw => draw()).join('')}</div>`;
+  }
+  const byId = id => document.getElementById(id);
+  const esc = value => String(value).replace(/[&<>"']/g, char =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
+  const money = new Intl.NumberFormat('en-AU', {
+    style: 'currency', currency: C.currency, maximumFractionDigits: 0,
+  });
+  const meters = value => `${value.toFixed(2)} ${C.unit}`;
+  const priceNote = 'Illustrative rates in AUD. Final pricing is confirmed after a site measure.';
+  const drawingNote = 'Indicative geometry. Confirm fixings, substrate and clearances on site before fabrication.';
+  const poolNote = 'Pool barrier layout requires site verification against AS 1926 and glazing requirements under AS 1288. Check clearances, climbable zones and self-closing, self-latching gates.';
+  const selections = new Map();
+  const selectedExtras = new Set();
+  let product = C.series[0];
+  let view = 'both';
+  let gates = 1;
+  let estimate;
+  let dimensionTimer;
+
+  function track(name) {
+    try {
+      Promise.resolve(window.umami?.track(name, { company: C.slug })).catch(() => {});
+    } catch {
+      // Analytics is optional for local and offline use.
+    }
+  }
+
+  function selectOptions(id, choices, selected) {
+    const control = byId(id);
+    control.replaceChildren(...choices.map(([value, label]) => new Option(label, value)));
+    if (choices.some(([value]) => value === selected)) control.value = selected;
+  }
+
+  function setRange(id, [min, max, initial], previous) {
+    Object.assign(byId(id), { min, max, step: 0.1, value: previous ?? initial });
+  }
+
+  function selectSeries(next) {
+    const previous = selections.get(next.id);
+    product = next;
+    setRange('width', product.width, previous?.width);
+    setRange('height', product.height, previous?.height);
+    const runMode = ['spigot','channel','balustrade'].includes(product.mode);
+    byId('widthLabel').textContent = runMode ? 'Total Run Length' : 'Opening Width';
+    byId('height').disabled = product.height[0] === product.height[1];
+    byId('heightLabel').textContent = product.pool ? 'Glass Height · AS 1926 Pool' : (runMode ? 'Glass Height' : 'Height');
+    byId('glassLabel').textContent = runMode ? 'Glass Spec' : 'Glass Type';
+    byId('layoutRow').hidden = product.layouts.length === 1 && product.layouts[0] === 'fixed';
+    selectOptions('layout', product.layouts.map(id => [id, C.layouts[id]]), previous?.layout);
+    selectOptions('glass', product.glasses.map(id => [id, C.glasses[id].label]), previous?.glass);
+    byId('gateRow').hidden = !product.pool;
+    gates = previous?.gates ?? 1;
+    byId('extras').innerHTML = C.extras.filter(extra => extra.modes.includes(product.mode)).map(extra =>
+      `<label class="extra"><input type="checkbox" value="${esc(extra.id)}" ${selectedExtras.has(extra.id) ? 'checked' : ''}>
+        <span>${esc(extra.label)}</span><small>${money.format(extra.rate)}${extra.unit === 'sqm' ? ' / m²' : ''}</small></label>`).join('');
+    byId('series').querySelectorAll('button').forEach(button =>
+      button.setAttribute('aria-pressed', String(button.value === product.id)));
+    update();
+  }
+
+  function calculate(model, glass, finish, extras) {
+    const area = model.area.toFixed(2);
+    const pricingArea = Number(area);
+    const rows = [
+      { label: 'Glass supply', detail: `${area} m² × ${money.format(glass.rate)} / m²`, amount: Math.round(pricingArea * glass.rate) },
+      ...model.hardware.map(({ label, qty }) => ({
+        label,
+        detail: `${qty} × ${money.format(Math.round(product.fixing * finish.multiplier))}`,
+        amount: qty * Math.round(product.fixing * finish.multiplier),
+      })),
+      {
+        label: 'Installation allowance',
+        detail: pricingArea * product.install < product.minInstall ? 'Minimum site allowance' : `${area} m² × ${money.format(product.install)} / m²`,
+        amount: Math.round(Math.max(product.minInstall, pricingArea * product.install)),
+      },
+      ...extras.map(extra => ({
+        label: extra.label,
+        detail: extra.unit === 'sqm' ? `${area} m² × ${money.format(extra.rate)} / m²` : 'Site allowance',
+        amount: Math.round(extra.rate * (extra.unit === 'sqm' ? pricingArea : 1)),
+      })),
+    ];
+    return { rows, total: rows.reduce((sum, row) => sum + row.amount, 0) };
+  }
+
+  function quoteRows(rows) {
+    return rows.map(({ label, detail, amount }) => `<tr><th scope="row">${esc(label)}<small>${esc(detail)}</small></th>
+      <td>${money.format(amount)}</td></tr>`).join('');
+  }
+
+  function showDrawing() {
+    byId('drawing').innerHTML = glazingDraw(estimate.model, estimate.glass.label, estimate.finish.label, view);
+  }
+
+  function update() {
+    const width = byId('width').valueAsNumber;
+    const height = byId('height').valueAsNumber;
+    const layoutControl = byId('layout');
+    const glass = C.glasses[byId('glass').value];
+    const finish = C.finishes.find(item => item.id === byId('finish').value);
+    const extras = C.extras.filter(extra => selectedExtras.has(extra.id) && extra.modes.includes(product.mode));
+    const limit = product.pool ? glazingGateLimit(width) : 0;
+    gates = product.pool ? Math.min(gates, limit) : 0;
+    const model = glazingModel(product, width, height, layoutControl.value, gates);
+    if (product.mode === 'robe') {
+      layoutControl.options[0].disabled = width + slidingOverlap > 2 * product.maxPanel + 1e-8;
+      layoutControl.value = model.layout;
+    }
+    const hardware = model.hardware.map(({ label, qty }) => `${qty} ${label.toLowerCase()}`).join(' · ');
+    const span = model.returnWidth ? `${meters(width)} + ${meters(model.returnWidth)} return` : meters(width);
+    const options = extras.map(extra => extra.label);
+    const spec = [
+      ['Series', product.label],
+      ['Span × height', `${span} × ${meters(height)}`],
+      ['Configuration', C.layouts[model.layout]],
+      ['Glass', glass.label],
+      ['Finish', finish.label],
+      ...(product.pool ? [['Self-closing gates', gates]] : []),
+      ...(options.length ? [['Extras', options.join(' · ')]] : []),
+    ];
+    const warning = [product.pool ? poolNote : drawingNote, model.note].filter(Boolean).join(' ');
+    estimate = { model, glass, finish, extras, spec, warning, ...calculate(model, glass, finish, extras) };
+    selections.set(product.id, { width, height, layout: model.layout, glass: byId('glass').value, gates });
+    byId('widthValue').textContent = meters(width);
+    byId('heightValue').textContent = meters(height);
+    byId('gateCount').textContent = gates;
+    byId('gateDown').disabled = gates === 0;
+    byId('gateUp').disabled = gates >= limit;
+    byId('warning').textContent = warning;
+    byId('warning').hidden = false;
+    byId('stats').innerHTML = [
+      ['Total Span', span], ['Glass Panels', model.panels.length],
+      ['Glass Spec', glass.label], ['Hardware', hardware],
+    ].map(([label, value]) => `<div><dt>${label}</dt><dd>${esc(value)}</dd></div>`).join('');
+    byId('quoteSpec').innerHTML = spec.map(([label, value]) => `<dt>${label}</dt><dd>${esc(value)}</dd>`).join('');
+    byId('quoteLines').innerHTML = quoteRows(estimate.rows);
+    byId('total').textContent = byId('mobileTotal').textContent = money.format(estimate.total);
+    showDrawing();
+  }
+
+  byId('series').replaceChildren(...C.series.map(series => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.value = series.id;
+    button.dataset.umamiEvent = 'select-series';
+    button.textContent = series.label;
+    button.addEventListener('click', () => {
+      if (product === series) return;
+      selectSeries(series);
+      track('select-series');
+    });
+    return button;
+  }));
+  selectOptions('finish', C.finishes.map(finish => [finish.id, finish.label]));
+  ['width', 'height'].forEach(id => byId(id).addEventListener('input', () => {
+    update();
+    clearTimeout(dimensionTimer);
+    dimensionTimer = setTimeout(() => track('configure-dimensions'), 350);
+  }));
+  ['glass', 'finish', 'layout'].forEach(id => byId(id).addEventListener('change', update));
+  byId('gateDown').addEventListener('click', () => { gates -= 1; update(); });
+  byId('gateUp').addEventListener('click', () => { gates += 1; update(); });
+  byId('extras').addEventListener('change', event => {
+    const input = event.target;
+    if (input.checked) selectedExtras.add(input.value);
+    else selectedExtras.delete(input.value);
+    update();
+  });
+  document.querySelectorAll('[data-view]').forEach(button => button.addEventListener('click', () => {
+    view = button.dataset.view;
+    document.querySelectorAll('[data-view]').forEach(item =>
+      item.setAttribute('aria-pressed', String(item === button)));
+    showDrawing();
+  }));
+
+  const dialog = byId('leadDialog');
+  const leadForm = byId('leadForm');
+  function showLeadPreview(visible) {
+    leadForm.hidden = visible;
+    byId('leadPreview').hidden = !visible;
+    byId('copyStatus').textContent = '';
+    if (dialog.open) (visible ? byId('leadJson') : leadForm.elements.namedItem('name')).focus();
+  }
+
+  byId('openLead').addEventListener('click', () => {
+    showLeadPreview(false);
+    dialog.showModal();
+    track('open-lead-modal');
+  });
+  leadForm.addEventListener('submit', event => {
+    event.preventDefault();
+    const fields = new FormData(leadForm);
+    const name = String(fields.get('name')).trim();
+    if (!name) {
+      const nameInput = leadForm.elements.namedItem('name');
+      nameInput.setCustomValidity('Enter your name.');
+      nameInput.reportValidity();
+      return;
+    }
+    const { model, glass, finish, extras, rows, total } = estimate;
+    const lead = {
+      company: C.slug,
+      lead: { name, email: fields.get('email'), phone: String(fields.get('phone') || '').trim() || null, postcode: fields.get('postcode') },
+      configuration: {
+        series: product.label, span_m: model.width, height_m: model.height,
+        return_m: model.returnWidth || null, layout: C.layouts[model.layout], glass: glass.label,
+        glass_panels: model.panels.length, hardware_finish: finish.label, hardware: model.hardware,
+        self_closing_gates: model.gates, extras: extras.map(extra => extra.label),
+      },
+      estimate: { currency: C.currency, gst_included: true, indicative: true, total, line_items: rows },
+    };
+    byId('leadJson').value = JSON.stringify(lead, null, 2);
+    showLeadPreview(true);
+    track('submit-lead-form');
+  });
+  leadForm.elements.namedItem('name').addEventListener('input', event => event.target.setCustomValidity(''));
+  byId('editLead').addEventListener('click', () => showLeadPreview(false));
+  byId('copyLead').addEventListener('click', async () => {
+    const preview = byId('leadJson');
+    try {
+      await navigator.clipboard.writeText(preview.value);
+      byId('copyStatus').textContent = 'Copied to clipboard.';
+    } catch {
+      preview.focus();
+      preview.select();
+      byId('copyStatus').textContent = 'JSON selected. Use your device’s Copy command.';
+    }
+  });
+
+  window.addEventListener('beforeprint', () => {
+    const { model, glass, finish, spec, rows, total, warning } = estimate;
+    byId('printSheet').innerHTML = `<header><div><h1>${esc(C.name)}</h1>
+      <p>${esc(C.location)} · ${esc(C.website)}</p></div>
+      <div><strong>Glazing estimate</strong><br>${esc(new Date().toLocaleDateString('en-AU'))}</div></header>
+      <table><caption>Configuration</caption><tbody>${spec.map(([label, value]) =>
+        `<tr><th scope="row">${label}</th><td>${esc(value)}</td></tr>`).join('')}</tbody></table>
+      <div class="print-drawing">${glazingDraw(model, glass.label, finish.label, 'both')}</div>
+      <table><caption>Estimate · AUD</caption><thead><tr><th scope="col">Item</th><th scope="col">Amount</th></tr></thead>
+      <tbody>${quoteRows(rows)}</tbody><tfoot><tr><th scope="row">Indicative total</th><td>${money.format(total)}</td></tr></tfoot></table>
+      <p>${esc(priceNote)} ${esc(warning)}</p>`;
+  });
+  byId('printEstimate').addEventListener('click', () => {
+    track('print-estimate');
+    window.print();
+  });
+  selectSeries(product);
+})();
+</script>
+</body>
+</html>
