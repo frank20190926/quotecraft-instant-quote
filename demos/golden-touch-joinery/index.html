@@ -37,7 +37,7 @@ h1,h2,h3,p{margin:0}
 .tools>a{font-size:12px;font-weight:600}
 .seg,.stepper{display:inline-flex;border:1px solid var(--rule);border-radius:2px}
 .seg button,.stepper button{border:0;background:var(--card);padding:7px 10px}
-.seg button{font-size:12px;white-space:nowrap}
+.seg button{font-size:12px;white-space:nowrap;min-height:40px}
 .seg button+button,.stepper>*+*{border-left:1px solid var(--line)}
 .seg button[aria-pressed=true]{background:var(--brand);color:white}
 .draw{margin:0;padding:0 10px 2px;background:var(--card)}
@@ -83,13 +83,13 @@ svg .splash{stroke:var(--line);stroke-width:.8}
 .dimension{display:grid;grid-template-columns:1fr auto;align-items:center;gap:1px 12px;margin-top:9px}
 .dimension label{font-weight:600}
 .dimension output{text-align:right;font-weight:600}
-.dimension input{grid-column:1/-1;width:100%;margin:2px 0;min-height:26px;accent-color:var(--brand)}
+.dimension input{grid-column:1/-1;width:100%;margin:2px 0;min-height:44px;touch-action:pan-y;accent-color:var(--brand)}
 .range{grid-column:1/-1;display:flex;justify-content:space-between;color:var(--muted);font-size:11px}
 .row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--line)}
 .row:last-child{border:0}
 .row label{display:flex;align-items:center;gap:8px;min-height:28px}
 .row input{accent-color:var(--brand);width:16px;height:16px;margin:0;flex-shrink:0}
-.stepper button{min-width:36px;min-height:36px;padding:0;font-size:17px}
+.stepper button{min-width:40px;min-height:40px;padding:0;font-size:17px}
 .stepper button:disabled{background:var(--step);color:var(--muted);cursor:default}
 .stepper output{display:grid;place-items:center;min-width:36px}
 aside{position:sticky;top:14px;max-height:calc(100dvh - 28px);overflow:auto;scrollbar-width:thin}
@@ -108,7 +108,7 @@ table{width:100%;border-collapse:collapse}
 .tot output{font-weight:700;font-size:clamp(19px,2vw,24px);color:var(--brand);letter-spacing:-.05em;white-space:nowrap}
 .disc{padding:9px 16px 0}
 .acts{padding:11px 16px 15px;display:grid;gap:7px}
-.btn{padding:8px 12px;border:1px solid var(--brand);border-radius:2px;background:var(--card);color:var(--brand);text-align:center;font-weight:600;text-decoration:none}
+.btn{padding:8px 12px;min-height:40px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--brand);border-radius:2px;background:var(--card);color:var(--brand);text-align:center;font-weight:600;text-decoration:none}
 .btn:hover{background:var(--step)}
 .primary{background:var(--brand);color:white}
 .primary:hover{background:var(--brandDark)}
